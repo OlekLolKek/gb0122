@@ -11,10 +11,46 @@ public sealed class PlayFabLogin : MonoBehaviour
     [SerializeField] private Button _button;
     [SerializeField] private Color _successColor;
     [SerializeField] private Color _failureColor;
-    
+
+    private string _username;
+    private string _password;
+    private string _email;
+
     private void Start()
     {
         _button.onClick.AddListener(TryLogin);
+    }
+
+    public void UpdatePassword(string password)
+    {
+        _password = password;
+    }
+
+    public void UpdateUsername(string username)
+    {
+        _username = username;
+    }
+
+    public void UpdateEmail(string email)
+    {
+        _email = email;
+    }
+
+    public void CreateAccount()
+    {
+        PlayFabClientAPI.RegisterPlayFabUser(new RegisterPlayFabUserRequest
+        {
+            Username = _username,
+            Email = _email,
+            Password = _password,
+            RequireBothUsernameAndEmail = true
+        }, result =>
+        {
+            Debug.Log("Success");
+        }, error =>
+        {
+            Debug.LogError($"Error: {error}");
+        });
     }
 
     private void OnDestroy()
