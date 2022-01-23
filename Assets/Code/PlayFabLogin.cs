@@ -1,7 +1,9 @@
+using System;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
@@ -15,6 +17,8 @@ public sealed class PlayFabLogin : MonoBehaviour
     private string _username;
     private string _password;
     private string _email;
+
+    private const string AUTH_KEY = "player-unique-id";
 
     private void Start()
     {
@@ -52,6 +56,21 @@ public sealed class PlayFabLogin : MonoBehaviour
             Debug.LogError($"Error: {error}");
         });
     }
+    
+    public void Login()
+    {
+        PlayFabClientAPI.LoginWithPlayFab(new LoginWithPlayFabRequest
+        {
+            Username = _username,
+            Password = _password,
+        }, result =>
+        {
+            Debug.Log($"Success: {_username}");
+        }, error =>
+        {
+            Debug.LogError($"Error: {error}");
+        });
+    }
 
     private void OnDestroy()
     {
@@ -66,8 +85,20 @@ public sealed class PlayFabLogin : MonoBehaviour
             Debug.Log("Successfully set the title ID.");
         }
 
-        var request = new LoginWithCustomIDRequest { CustomId = "lesson3", CreateAccount = false };
-        PlayFabClientAPI.LoginWithCustomID(request, OnLoginSuccess, OnLoginFail);
+        var needCreation = !PlayerPrefs.HasKey(AUTH_KEY);
+        Debug.Log($"needCreation: {needCreation}");
+        var id = PlayerPrefs.GetString(AUTH_KEY, Guid.NewGuid().ToString());
+        Debug.Log($"id: {id}");
+        var request = new LoginWithCustomIDRequest { CustomId = id, CreateAccount = needCreation };
+        PlayFabClientAPI.LoginWithCustomID(request, result =>
+        {
+            var message = "PlayFab Success";
+            _text.text = message;
+            _text.color = _successColor;
+            PlayerPrefs.SetString(AUTH_KEY, id);
+            Debug.Log(message);
+            SceneManager.LoadScene("MainProfile");
+        }, OnLoginFail);
     }
 
     private void OnLoginSuccess(LoginResult result)
