@@ -12,6 +12,7 @@ public sealed class PlayFabLogin : MonoBehaviour
     [SerializeField] private TMP_Text _text;
     [SerializeField] private Button _button;
     [SerializeField] private Color _successColor;
+    [SerializeField] private Color _loadingColor;
     [SerializeField] private Color _failureColor;
 
     private string _username;
@@ -99,6 +100,8 @@ public sealed class PlayFabLogin : MonoBehaviour
             Debug.Log(message);
             SceneManager.LoadScene("MainProfile");
         }, OnLoginFail);
+        _text.text = "Signing in...";
+        _text.color = _loadingColor;
     }
 
     private void OnLoginSuccess(LoginResult result)

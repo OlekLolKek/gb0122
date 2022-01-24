@@ -4169,6 +4169,7 @@ MonoBehaviour:
   _text: {fileID: 1705407679}
   _button: {fileID: 824249129}
   _successColor: {r: 0.23718405, g: 0.8490566, b: 0.1481844, a: 1}
+  _loadingColor: {r: 1, g: 0.8581352, b: 0, a: 1}
   _failureColor: {r: 0.8584906, g: 0.17827256, b: 0.14173192, a: 1}
 --- !u!4 &1438423521
 Transform:
