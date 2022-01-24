@@ -9,8 +9,10 @@ using UnityEngine.UI;
 
 public sealed class PlayFabLogin : MonoBehaviour
 {
+    [SerializeField] private TMP_Text _buttonText;
     [SerializeField] private TMP_Text _text;
-    [SerializeField] private Button _button;
+    [SerializeField] private Button _signInButton;
+    [SerializeField] private Button _deleteAccountButton;
     [SerializeField] private Color _successColor;
     [SerializeField] private Color _loadingColor;
     [SerializeField] private Color _failureColor;
@@ -23,7 +25,21 @@ public sealed class PlayFabLogin : MonoBehaviour
 
     private void Start()
     {
-        _button.onClick.AddListener(TryLogin);
+        _signInButton.onClick.AddListener(TryLogin);
+        _deleteAccountButton.onClick.AddListener(DeleteAccount);
+        CheckAccount();
+    }
+
+    private void CheckAccount()
+    {
+        if (PlayerPrefs.HasKey(AUTH_KEY))
+        {
+            _buttonText.text = "Sign in";
+        }
+        else
+        {
+            _buttonText.text = "Create account";
+        }
     }
 
     public void UpdatePassword(string password)
@@ -39,6 +55,40 @@ public sealed class PlayFabLogin : MonoBehaviour
     public void UpdateEmail(string email)
     {
         _email = email;
+    }
+
+    private void TryLogin()
+    {
+        if (string.IsNullOrEmpty(PlayFabSettings.staticSettings.TitleId))
+        {
+            PlayFabSettings.staticSettings.TitleId = "70913";
+            Debug.Log("Successfully set the title ID.");
+        }
+
+        var needCreation = !PlayerPrefs.HasKey(AUTH_KEY);
+        Debug.Log($"needCreation: {needCreation}");
+        
+        var id = PlayerPrefs.GetString(AUTH_KEY, Guid.NewGuid().ToString());
+        Debug.Log($"id: {id}");
+        
+        var request = new LoginWithCustomIDRequest { CustomId = id, CreateAccount = needCreation };
+        PlayFabClientAPI.LoginWithCustomID(request, result =>
+        {
+            var message = "PlayFab Success";
+            _text.text = message;
+            _text.color = _successColor;
+            PlayerPrefs.SetString(AUTH_KEY, id);
+            Debug.Log(message);
+            SceneManager.LoadScene("MainProfile");
+        }, OnLoginFail);
+        _text.text = "Signing in...";
+        _text.color = _loadingColor;
+    }
+
+    private void DeleteAccount()
+    {
+        PlayerPrefs.DeleteKey(AUTH_KEY);
+        CheckAccount();
     }
 
     public void CreateAccount()
@@ -57,7 +107,7 @@ public sealed class PlayFabLogin : MonoBehaviour
             Debug.LogError($"Error: {error}");
         });
     }
-    
+
     public void Login()
     {
         PlayFabClientAPI.LoginWithPlayFab(new LoginWithPlayFabRequest
@@ -71,37 +121,6 @@ public sealed class PlayFabLogin : MonoBehaviour
         {
             Debug.LogError($"Error: {error}");
         });
-    }
-
-    private void OnDestroy()
-    {
-        _button.onClick.RemoveListener(TryLogin);
-    }
-
-    private void TryLogin()
-    {
-        if (string.IsNullOrEmpty(PlayFabSettings.staticSettings.TitleId))
-        {
-            PlayFabSettings.staticSettings.TitleId = "70913";
-            Debug.Log("Successfully set the title ID.");
-        }
-
-        var needCreation = !PlayerPrefs.HasKey(AUTH_KEY);
-        Debug.Log($"needCreation: {needCreation}");
-        var id = PlayerPrefs.GetString(AUTH_KEY, Guid.NewGuid().ToString());
-        Debug.Log($"id: {id}");
-        var request = new LoginWithCustomIDRequest { CustomId = id, CreateAccount = needCreation };
-        PlayFabClientAPI.LoginWithCustomID(request, result =>
-        {
-            var message = "PlayFab Success";
-            _text.text = message;
-            _text.color = _successColor;
-            PlayerPrefs.SetString(AUTH_KEY, id);
-            Debug.Log(message);
-            SceneManager.LoadScene("MainProfile");
-        }, OnLoginFail);
-        _text.text = "Signing in...";
-        _text.color = _loadingColor;
     }
 
     private void OnLoginSuccess(LoginResult result)
@@ -118,5 +137,11 @@ public sealed class PlayFabLogin : MonoBehaviour
         _text.text = message;
         _text.color = _failureColor;
         Debug.LogError($"{message}: {error}");
+    }
+
+    private void OnDestroy()
+    {
+        _signInButton.onClick.RemoveListener(TryLogin);
+        _deleteAccountButton.onClick.RemoveListener(DeleteAccount);
     }
 }
