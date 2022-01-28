@@ -1,0 +1,139 @@
+{
+  "CatalogVersion": "1.0",
+  "Catalog": [
+    {
+      "ItemId": "m4a1",
+      "ItemClass": "rifle",
+      "CatalogVersion": "1.0",
+      "DisplayName": "M4A1",
+      "Description": "A simple AR-15 platform rifle.",
+      "VirtualCurrencyPrices": {},
+      "RealCurrencyPrices": {},
+      "Tags": [
+        "rifle",
+        "ranged"
+      ],
+      "CustomData": null,
+      "Consumable": {
+        "UsageCount": null,
+        "UsagePeriod": null,
+        "UsagePeriodGroup": null
+      },
+      "Container": null,
+      "Bundle": null,
+      "CanBecomeCharacter": false,
+      "IsStackable": false,
+      "IsTradable": false,
+      "ItemImageUrl": null,
+      "IsLimitedEdition": false,
+      "InitialLimitedEditionCount": 0,
+      "ActivatedMembership": null
+    },
+    {
+      "ItemId": "akm",
+      "ItemClass": "rifle",
+      "CatalogVersion": "1.0",
+      "DisplayName": "AKM",
+      "Description": "A simple AK platform rifle.",
+      "VirtualCurrencyPrices": {},
+      "RealCurrencyPrices": {},
+      "Tags": [
+        "rifle",
+        "ranged"
+      ],
+      "CustomData": null,
+      "Consumable": {
+        "UsageCount": null,
+        "UsagePeriod": null,
+        "UsagePeriodGroup": null
+      },
+      "Container": null,
+      "Bundle": null,
+      "CanBecomeCharacter": false,
+      "IsStackable": false,
+      "IsTradable": false,
+      "ItemImageUrl": null,
+      "IsLimitedEdition": false,
+      "InitialLimitedEditionCount": 0,
+      "ActivatedMembership": null
+    },
+    {
+      "ItemId": "gun_container_key",
+      "ItemClass": "key",
+      "CatalogVersion": "1.0",
+      "DisplayName": "Gun Container Key",
+      "Description": "You can use it to open a Gun Container.",
+      "VirtualCurrencyPrices": {
+        "SB": 10
+      },
+      "RealCurrencyPrices": {},
+      "Tags": [],
+      "CustomData": null,
+      "Consumable": {
+        "UsageCount": null,
+        "UsagePeriod": null,
+        "UsagePeriodGroup": null
+      },
+      "Container": null,
+      "Bundle": null,
+      "CanBecomeCharacter": false,
+      "IsStackable": false,
+      "IsTradable": false,
+      "ItemImageUrl": null,
+      "IsLimitedEdition": false,
+      "InitialLimitedEditionCount": 0,
+      "ActivatedMembership": null
+    },
+    {
+      "ItemId": "rifle_container",
+      "ItemClass": null,
+      "CatalogVersion": "1.0",
+      "DisplayName": "Rifle Container",
+      "Description": "A container with a few rifles of different rarities.",
+      "VirtualCurrencyPrices": {
+        "SB": 40
+      },
+      "RealCurrencyPrices": {},
+      "Tags": [],
+      "CustomData": null,
+      "Consumable": {
+        "UsageCount": 1,
+        "UsagePeriod": null,
+        "UsagePeriodGroup": null
+      },
+      "Container": {
+        "KeyItemId": "gun_container_key",
+        "ItemContents": [],
+        "ResultTableContents": [
+          "rifle_container_drop_table"
+        ],
+        "VirtualCurrencyContents": null
+      },
+      "Bundle": null,
+      "CanBecomeCharacter": false,
+      "IsStackable": false,
+      "IsTradable": false,
+      "ItemImageUrl": null,
+      "IsLimitedEdition": false,
+      "InitialLimitedEditionCount": 0,
+      "ActivatedMembership": null
+    }
+  ],
+  "DropTables": [
+    {
+      "TableId": "rifle_container_drop_table",
+      "Nodes": [
+        {
+          "ResultItemType": "ItemId",
+          "ResultItem": "m4a1",
+          "Weight": 2
+        },
+        {
+          "ResultItemType": "ItemId",
+          "ResultItem": "akm",
+          "Weight": 1
+        }
+      ]
+    }
+  ]
+}
