@@ -1,28 +1,26 @@
+using System.Collections.Generic;
 using Photon.Pun;
-using TMPro;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private Button _connectButton;
+    [SerializeField] private PlayersElement _elementPrefab;
+    [SerializeField] private GameObject _playerListPanel;
+    [SerializeField] private GameObject _createRoomPanel;
+    [SerializeField] private GameObject _inventoryPanel;
 
-    private TMP_Text _buttonText;
-    private Image _buttonImage;
-
+    private string _roomName;
+    
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
-        _connectButton.onClick.AddListener(Connect);
-        _buttonText = _connectButton.GetComponentInChildren<TMP_Text>();
-        _buttonImage = _connectButton.GetComponentInChildren<Image>();
-        SwitchButton(ConnectionState.Disconnected);
     }
 
-    private void OnDestroy()
+    private void Start()
     {
-        _connectButton.onClick.RemoveAllListeners();
+        Connect();
     }
 
     public void Connect()
@@ -35,57 +33,55 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         {
             PhotonNetwork.ConnectUsingSettings();
         }
-
-        SwitchButton(ConnectionState.Connecting);
-    }
-
-    private void Disconnect()
-    {
-        if (PhotonNetwork.InRoom)
-        {
-            PhotonNetwork.LeaveRoom();
-            Debug.Log("Photon left room.");
-        }
-        else
-        {
-            PhotonNetwork.Disconnect();
-            Debug.Log("Photon disconnected.");
-        }
-
-        SwitchButton(ConnectionState.Disconnected);
-    }
-
-    private void SwitchButton(ConnectionState state)
-    {
-        switch (state)
-        {
-            case ConnectionState.Disconnected:
-                _connectButton.onClick.RemoveAllListeners();
-                _connectButton.onClick.AddListener(Connect);
-                _connectButton.interactable = true;
-                _buttonImage.color = Color.cyan;
-                _buttonText.text = "Connect";
-                break;
-            case ConnectionState.Connected:
-                _connectButton.onClick.RemoveAllListeners();
-                _connectButton.onClick.AddListener(Disconnect);
-                _connectButton.interactable = true;
-                _buttonImage.color = Color.red;
-                _buttonText.text = "Disconnect";
-                break;
-            case ConnectionState.Connecting:
-                _connectButton.onClick.RemoveAllListeners();
-                _connectButton.interactable = false;
-                _buttonImage.color = Color.yellow;
-                _buttonText.text = "Connecting...";
-                break;
-        }
     }
 
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
         Debug.Log("Photon Connected to master.");
-        SwitchButton(ConnectionState.Connected);
+    }
+
+    public override void OnCreateRoomFailed(short returnCode, string message)
+    {
+        Debug.LogError($"Create room failed! Code: {returnCode}, message: {message}");
+    }
+
+    public override void OnJoinedRoom()
+    {
+        Debug.Log($"OnJoinedRoom success! {_roomName}");
+        foreach (var player in PhotonNetwork.PlayerList)
+        {
+            Debug.Log($"Added player {player.NickName} | {player.UserId}");
+
+            var newElement = Instantiate(_elementPrefab, _playerListPanel.transform);
+            newElement.gameObject.SetActive(true);
+            newElement.SetPlayer(player);
+        }
+
+        _createRoomPanel.SetActive(false);
+        _inventoryPanel.SetActive(false);
+        _playerListPanel.SetActive(true);
+    }
+
+    public void OnStartGameButtonClicked()
+    {
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.CurrentRoom.IsVisible = false;
+        PhotonNetwork.LoadLevel("Game");
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        Debug.Log("OnRoomListUpdate success");
+    }
+
+    public void UpdateRoomName(string roomName)
+    {
+        _roomName = roomName;
+    }
+
+    public void OnCreateRoomButtonClicked()
+    {
+        PhotonNetwork.CreateRoom(string.IsNullOrWhiteSpace(_roomName) ? $"Room {Random.Range(0, 10000)}" : _roomName);
     }
 }
