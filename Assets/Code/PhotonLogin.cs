@@ -54,13 +54,15 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         }
         
         PhotonNetwork.CreateRoom(roomName, new RoomOptions {MaxPlayers = maxPlayers});
-        
-        Debug.Log("Created room");
+
+        _roomListPanelView.gameObject.SetActive(false);
     }
 
     private void JoinSelectedRoom(RoomInfo room)
     {
         PhotonNetwork.JoinRoom(room.Name);
+        
+        _roomListPanelView.gameObject.SetActive(false);
     }
 
     private void OnShowRoomsButtonClicked()

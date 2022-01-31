@@ -17,11 +17,12 @@ public sealed class ProfileManager : MonoBehaviour
         _idText.color = Color.yellow;
         PlayFabClientAPI.GetAccountInfo(new GetAccountInfoRequest(), success =>
         {
-            _idText.text = $"Welcome back, Player {success.AccountInfo.PlayFabId}\n{GetPlayerInfo(success.AccountInfo)}";
+            _idText.text = $"{success.AccountInfo.Username}\nID: {success.AccountInfo.PlayFabId}";
             _idText.color = Color.white;
         }, error =>
         {
             _idText.text = $"Something went wrong: {error}";
+            _idText.color = Color.red;
         });
         
         _backButton.onClick.AddListener(GoToBootstrap);
@@ -30,11 +31,6 @@ public sealed class ProfileManager : MonoBehaviour
     private void GoToBootstrap()
     {
         SceneManager.LoadScene("Bootstrap");
-    }
-
-    private string GetPlayerInfo(UserAccountInfo info)
-    {
-        return $"Account created on {info.Created}\nCustom id: {info.CustomIdInfo.CustomId}\nUsername: {info.Username}";
     }
 
     private void OnDestroy()
