@@ -14,7 +14,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     [SerializeField] private PlayerListPanelView _playerListPanelView;
     [SerializeField] private RoomAdminPanelView _roomAdminPanelView;
     [SerializeField] private RoomListPanelView _roomListPanelView;
-    [SerializeField] private Transform _playerListRoot;
     [SerializeField] private GameObject _inventoryPanel;
 
     [SerializeField] private Button _showRoomsButton;
@@ -51,21 +50,21 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         }
     }
 
-    private void CreateRoom(string roomName, byte maxPlayers)
+    private void CreateRoom(string roomName, byte maxPlayers, bool isVisible)
     {
         if (string.IsNullOrWhiteSpace(roomName))
         {
             roomName = $"Room {Random.Range(0, 100000)}";
         }
         
-        PhotonNetwork.CreateRoom(roomName, new RoomOptions {MaxPlayers = maxPlayers});
-
-        _roomListPanelView.gameObject.SetActive(false);
+        var roomOptions = new RoomOptions { IsVisible = isVisible, MaxPlayers = maxPlayers};
+        
+        PhotonNetwork.CreateRoom(roomName, roomOptions);
     }
 
-    private void JoinSelectedRoom(RoomInfo room)
+    private void JoinSelectedRoom(string roomName)
     {
-        PhotonNetwork.JoinRoom(room.Name);
+        PhotonNetwork.JoinRoom(roomName);
 
         _roomListPanelView.gameObject.SetActive(false);
     }
@@ -90,6 +89,7 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     public override void OnCreatedRoom()
     {
         base.OnCreatedRoom();
+        _roomListPanelView.gameObject.SetActive(false);
         _roomAdminPanelView.gameObject.SetActive(true);
         _roomAdminPanelView.OnPrivacyButtonClicked += SwitchRoomPrivacy;
         _roomAdminPanelView.OnStartButtonClicked += OnStartGameButtonClicked;

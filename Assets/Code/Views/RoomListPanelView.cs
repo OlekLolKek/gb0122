@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
 using UnityEngine;
@@ -15,6 +16,10 @@ public sealed class RoomListPanelView : MonoBehaviour
     [SerializeField] private Transform _elementsRoot;
     [SerializeField] private Button _createRoomPanelButton;
 
+    [Header("Direct connect")]
+    [SerializeField] private TMP_InputField _roomToConnectInputField;
+    [SerializeField] private Button _connectDirectlyButton;
+
     [Header("Create room panel")]
     [SerializeField] private GameObject _createRoomPanel;
     [SerializeField] private TMP_InputField _roomNameInputField;
@@ -22,11 +27,12 @@ public sealed class RoomListPanelView : MonoBehaviour
     [SerializeField] private TMP_Text _maxPlayersText;
     [SerializeField] private Button _createRoomButton;
     [SerializeField] private Button _roomListPanelButton;
+    [SerializeField] private Toggle _privateRoomToggle;
 
     private readonly List<RoomListElementView> _roomListElements = new List<RoomListElementView>();
     
-    public event Action<RoomInfo> OnJoinRoomButtonClicked = delegate {  };
-    public event Action<string, byte> OnCreateRoomButtonClicked = delegate {  };
+    public event Action<string> OnJoinRoomButtonClicked = delegate {  };
+    public event Action<string, byte, bool> OnCreateRoomButtonClicked = delegate {  };
 
     private void Start()
     {
@@ -34,12 +40,24 @@ public sealed class RoomListPanelView : MonoBehaviour
         
         _createRoomPanelButton.onClick.AddListener(OnCreateRoomPanelButtonClicked);
         _roomListPanelButton.onClick.AddListener(OnRoomListPanelButtonClicked);
-        
-        _maxPlayersSlider.onValueChanged.AddListener(OnMaxPlayersSliderValueChanged);
-        
         _createRoomButton.onClick.AddListener(CreateRoomButtonClicked);
+        _connectDirectlyButton.onClick.AddListener(ConnectDirectlyButtonClicked);
+
+        _maxPlayersSlider.onValueChanged.AddListener(OnMaxPlayersSliderValueChanged);
 
         OnMaxPlayersSliderValueChanged(_maxPlayersSlider.value);
+    }
+
+    private void OnDestroy()
+    {
+        _backButton.onClick.RemoveListener(OnBackButtonClicked);
+        
+        _createRoomPanelButton.onClick.RemoveListener(OnCreateRoomPanelButtonClicked);
+        _roomListPanelButton.onClick.RemoveListener(OnRoomListPanelButtonClicked);
+        _createRoomButton.onClick.RemoveListener(CreateRoomButtonClicked);
+        _connectDirectlyButton.onClick.RemoveListener(ConnectDirectlyButtonClicked);
+
+        _maxPlayersSlider.onValueChanged.RemoveListener(OnMaxPlayersSliderValueChanged);
     }
 
     private void OnBackButtonClicked()
@@ -62,18 +80,6 @@ public sealed class RoomListPanelView : MonoBehaviour
     private void OnMaxPlayersSliderValueChanged(float value)
     {
         _maxPlayersText.text = $"Max players: {value}";
-    }
-
-    private void OnDestroy()
-    {
-        _backButton.onClick.RemoveListener(OnBackButtonClicked);
-        
-        _createRoomPanelButton.onClick.RemoveListener(OnCreateRoomPanelButtonClicked);
-        _roomListPanelButton.onClick.RemoveListener(OnRoomListPanelButtonClicked);
-        
-        _maxPlayersSlider.onValueChanged.RemoveListener(OnMaxPlayersSliderValueChanged);
-        
-        _createRoomButton.onClick.RemoveListener(CreateRoomButtonClicked);
     }
 
     public void SetRooms(List<RoomInfo> roomList)
@@ -108,11 +114,16 @@ public sealed class RoomListPanelView : MonoBehaviour
 
     private void JoinRoomButtonClicked(RoomInfo roomInfo)
     {
-        OnJoinRoomButtonClicked.Invoke(roomInfo);
+        OnJoinRoomButtonClicked.Invoke(roomInfo.Name);
+    }
+
+    private void ConnectDirectlyButtonClicked()
+    {
+        OnJoinRoomButtonClicked.Invoke(_roomToConnectInputField.text);
     }
 
     private void CreateRoomButtonClicked()
     {
-        OnCreateRoomButtonClicked.Invoke(_roomNameInputField.text, (byte)_maxPlayersSlider.value);
+        OnCreateRoomButtonClicked.Invoke(_roomNameInputField.text, (byte)_maxPlayersSlider.value, !_privateRoomToggle.isOn);
     }
 }
