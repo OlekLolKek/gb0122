@@ -25,12 +25,10 @@ public sealed class CatalogItemsElement : MonoBehaviour
             : string.Empty;
         
         _buyButton.onClick.AddListener(ButtonPressed);
-        Debug.Log("Set button");
     }
 
     private void ButtonPressed()
     {
-        Debug.Log("Button pressed");
         OnButtonPressed.Invoke(_item);
     }
 }
