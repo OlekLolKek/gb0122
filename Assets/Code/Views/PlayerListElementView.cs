@@ -10,8 +10,8 @@ public sealed class PlayerListElementView : MonoBehaviour
     [SerializeField] private TMP_Text _usernameText;
     [SerializeField] private Button _kickButton;
 
-    private int _roomOwnerID;
-    
+    public int PlayerActorNumber { get; private set; }
+
     public event Action OnKickButtonClicked = delegate {  };
 
     private void Start()
@@ -29,9 +29,9 @@ public sealed class PlayerListElementView : MonoBehaviour
         OnKickButtonClicked.Invoke();
     }
 
-    public void Initialize(int roomOwnerID, string playerUsername)
+    public void Initialize(int playerActorNumber, string playerUsername)
     {
-        _roomOwnerID = roomOwnerID;
+        PlayerActorNumber = playerActorNumber;
 
         _usernameText.text = playerUsername;
     }

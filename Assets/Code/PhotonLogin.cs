@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -17,6 +18,8 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _inventoryPanel;
 
     [SerializeField] private Button _showRoomsButton;
+
+    private List<PlayerListElementView> _playerElements = new List<PlayerListElementView>();
 
     private void Awake()
     {
@@ -115,6 +118,8 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         Debug.LogError($"Create room failed! Code: {returnCode}, message: {message}");
     }
 
+    
+    //TODO: Move methods below to PlayerListManager or something
     public override void OnJoinedRoom()
     {
         foreach (var player in PhotonNetwork.PlayerList)
@@ -124,12 +129,32 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
             var newElement = Instantiate(_playerListElementPrefab, _playerListPanelView.ElementsRoot);
             newElement.gameObject.SetActive(true);
             newElement.Initialize(player.ActorNumber, player.NickName);
+            _playerElements.Add(newElement);
         }
         
         _inventoryPanel.SetActive(false);
         
         _playerListPanelView.SetRoomName(PhotonNetwork.CurrentRoom.Name);
         _playerListPanelView.gameObject.SetActive(true);
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        base.OnPlayerEnteredRoom(newPlayer);
+        var newElement = Instantiate(_playerListElementPrefab, _playerListPanelView.ElementsRoot);
+        newElement.gameObject.SetActive(true);
+        newElement.Initialize(newPlayer.ActorNumber, newPlayer.NickName);
+        _playerElements.Add(newElement);
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        base.OnPlayerLeftRoom(otherPlayer);
+        var elementToDelete = _playerElements.FirstOrDefault(element => element.PlayerActorNumber == otherPlayer.ActorNumber);
+        if (elementToDelete)
+        {
+            Destroy(elementToDelete.gameObject);
+        }
     }
 
     private void OnStartGameButtonClicked()

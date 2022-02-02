@@ -1,10 +1,12 @@
 using System;
+using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 
 public sealed class PlayFabLogin : MonoBehaviour
@@ -79,10 +81,27 @@ public sealed class PlayFabLogin : MonoBehaviour
             _text.color = _successColor;
             PlayerPrefs.SetString(AUTH_KEY, id);
             Debug.Log(message);
-            SceneManager.LoadScene("MainProfile");
+            if (needCreation)
+            {
+                CreateInitialUsername();
+            }
+            else
+            {
+                SceneManager.LoadScene("MainProfile");
+            }
         }, OnLoginFail);
+        
         _text.text = "Signing in...";
         _text.color = _loadingColor;
+    }
+
+    private void CreateInitialUsername()
+    {
+        PlayFabClientAPI.UpdateUserTitleDisplayName(new UpdateUserTitleDisplayNameRequest { DisplayName = $"Player {Random.Range(1000, 10000)}" },
+            result =>
+            {
+                SceneManager.LoadScene("MainProfile");
+            }, Debug.LogError);
     }
 
     private void DeleteAccount()

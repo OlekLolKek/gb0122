@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
@@ -26,10 +28,14 @@ public sealed class ProfileManager : MonoBehaviour
         _changeUsernamePanelView.OnConfirmButtonClicked += ChangeUsername;
     }
 
-    private void UpdateUserInfo()
+    private async void UpdateUserInfo()
     {
+        // PlayFab information needs some time to update, so the delay is necessary to get the most recent info
+        await Task.Delay(250);
+        
         PlayFabClientAPI.GetPlayerProfile(new GetPlayerProfileRequest(), result =>
         {
+            SetPhotonNickname(result.PlayerProfile.DisplayName);
             SetUsernameText(result.PlayerProfile.DisplayName);
             SetIdText(result.PlayerProfile.PlayerId);
         }, Debug.LogError);
@@ -47,6 +53,11 @@ public sealed class ProfileManager : MonoBehaviour
         _idText.color = Color.white;
     }
 
+    private void SetPhotonNickname(string nickName)
+    {
+        PhotonNetwork.NickName = nickName;
+    }
+
     private void OpenChangeUsernamePanel()
     {
         _changeUsernamePanelView.gameObject.SetActive(true);
@@ -59,6 +70,7 @@ public sealed class ProfileManager : MonoBehaviour
             result =>
             {
                 SetUsernameText(result.DisplayName);
+                SetPhotonNickname(result.DisplayName);
             }, Debug.LogError);
     }
 
