@@ -87,9 +87,6 @@ public sealed class MoveController : IExecutable, ICleanable
             _rigidbody.AddForce(_transform.forward *
                                 (_vertical * _moveSpeed * _deltaTime * multiplier * multiplierForward));
             _rigidbody.AddForce(_transform.right * (_horizontal * _moveSpeed * _deltaTime * multiplier));
-            
-            Debug.Log($"Moved C: {_isCrouching} G: {_isGrounded} J: {_isReadyToJump}");
-            Debug.Log($"V: {_vertical} MS: {_moveSpeed} DT: {_deltaTime} MP: {multiplier} MPF: {multiplierForward}");
         }
         else
         {

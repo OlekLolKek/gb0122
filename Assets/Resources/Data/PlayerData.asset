@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b365a9adbfe42f9b49cdcc252a919fa, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
+  _playerPrefab: {fileID: 2446654402756951890, guid: e9bcdf8dfa6b5db4c932916db432683f, type: 3}
+  _usePrefab: 1
   _physicMaterial: {fileID: 13400000, guid: bcb242014e489c34cbde7b118a7a54b0, type: 2}
   _groundLayerMask:
     serializedVersion: 2
@@ -20,11 +22,11 @@ MonoBehaviour:
   _spawnPosition: {x: 25, y: 0, z: -25}
   _playerScale: {x: 0.8, y: 1.1, z: 0.8}
   _crouchScale: {x: 0.8, y: 0.6, z: 0.8}
-  _headPosition: {x: 0, y: 0.9, z: 0}
+  _headPosition: {x: 0, y: 0.6, z: 0}
   _playerMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   _playerName: Player
   _headName: Head
-  _speed: 40000
+  _speed: 25000
   _jumpForce: 4500
   _mass: 20
   _playerLayerID: 3

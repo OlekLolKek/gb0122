@@ -4,6 +4,11 @@
 [CreateAssetMenu(fileName = "PlayerData", menuName = "Data/PlayerData")]
 public sealed class PlayerData : ScriptableObject, IData
 {
+    [Header("Prefab")]
+    [SerializeField] private PlayerView _playerPrefab;
+    [SerializeField] private bool _usePrefab;
+
+    [Header("Factory parameters")]
     [SerializeField] private PhysicMaterial _physicMaterial;
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private Material _playerMaterial;
@@ -20,6 +25,9 @@ public sealed class PlayerData : ScriptableObject, IData
     [SerializeField] private int _playerLayerID;
 
 
+    public PlayerView PlayerPrefab => _playerPrefab;
+    public bool UsePrefab => _usePrefab;
+    
     public PhysicMaterial PhysicMaterial => _physicMaterial;
     public LayerMask GroundLayerMask => _groundLayerMask;
     public Material PlayerMaterial => _playerMaterial;
