@@ -4,19 +4,11 @@ using UnityEngine;
 
 public sealed class PlayerView : MonoBehaviour
 {
+    [SerializeField] private CharacterController _characterController;
+    [SerializeField] private GameObject _groundCheck;
     [SerializeField] private GameObject _head;
-    
+
+    public CharacterController CharacterController => _characterController;
+    public GameObject GroundCheck => _groundCheck;
     public GameObject Head => _head;
-
-    public event Action<Collision> OnCollisionStayEvent = delegate {  };
-
-    private void OnCollisionStay(Collision other)
-    {
-        OnCollisionStayEvent.Invoke(other);
-    }
-
-    public void SetHead(GameObject head)
-    {
-        _head = head;
-    }
 }

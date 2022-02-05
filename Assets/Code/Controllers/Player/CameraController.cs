@@ -1,22 +1,17 @@
 ﻿using UnityEngine;
 
 
-public sealed class CameraController : IExecutable, ICleanable
+public sealed class CameraController : IExecutable
 {
-    private float _xRotation;
-    private float _mouseX;
-    private float _mouseY;
-    
-    private readonly Camera _camera;
     private readonly Transform _cameraTransform;
     private readonly Transform _playerTransform;
     private readonly Transform _headTransform;
-    private readonly Rigidbody _rigidbody;
-
-    private readonly float _fovChangeMultiplier;
+    
     private readonly float _sensitivity;
-    private readonly float _sensitivityMultiplier;
-    private readonly float _baseFOV;
+    
+    private float _xRotation;
+    private float _mouseX;
+    private float _mouseY;
 
     private const float MIN_X_ROTATION = -90.0f;
     private const float MAX_X_ROTATION = 90.0f;
@@ -24,17 +19,12 @@ public sealed class CameraController : IExecutable, ICleanable
     public CameraController(CameraModel cameraModel, CameraData cameraData,
         PlayerModel playerModel, InputModel inputModel)
     {
-        _camera = cameraModel.Camera;
         _cameraTransform = cameraModel.CameraTransform;
         _playerTransform = playerModel.Transform;
-        _headTransform = playerModel.Head;
-        _rigidbody = playerModel.Rigidbody;
+        _headTransform = playerModel.Head.transform;
 
-        _fovChangeMultiplier = cameraData.FOVChangeMultiplier;
         _sensitivity = cameraData.Sensitivity;
-        _sensitivityMultiplier = cameraData.SensitivityMultiplier;
-        _baseFOV = cameraData.FOV;
-            
+
         var mouseX = inputModel.MouseX;
         var mouseY = inputModel.MouseY;
         mouseX.OnAxisChanged += ChangeMouseX;
@@ -42,13 +32,10 @@ public sealed class CameraController : IExecutable, ICleanable
     }
 
 
-    #region Methods
-
     public void Execute(float deltaTime)
     {
         MoveCamera();
-        RotateCamera(deltaTime);
-        ChangeFOV();
+        RotateCamera();
     }
 
     private void MoveCamera()
@@ -56,17 +43,10 @@ public sealed class CameraController : IExecutable, ICleanable
         _cameraTransform.position = _headTransform.position;
     }
 
-    private void ChangeFOV()
+    private void RotateCamera()
     {
-        var velocity = _rigidbody.velocity.magnitude;
-        var newFOV = _baseFOV + velocity * _fovChangeMultiplier;
-        _camera.fieldOfView = newFOV;
-    }
-
-    private void RotateCamera(float deltaTime)
-    {
-        var mouseX = _mouseX * _sensitivity * _sensitivityMultiplier * deltaTime;
-        var mouseY = _mouseY * _sensitivity * _sensitivityMultiplier * deltaTime;
+        var mouseX = _mouseX * _sensitivity;
+        var mouseY = _mouseY * _sensitivity;
 
         var rotation = _cameraTransform.localRotation.eulerAngles;
         var desiredX = rotation.y + mouseX;
@@ -87,10 +67,4 @@ public sealed class CameraController : IExecutable, ICleanable
     {
         _mouseY = value;
     }
-
-    public void Cleanup()
-    {
-    }
-
-    #endregion
 }

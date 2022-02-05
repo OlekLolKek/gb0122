@@ -3,17 +3,23 @@
 
 public sealed class PlayerModel
 {
-    public Rigidbody Rigidbody { get; }
+    public CharacterController CharacterController { get; }
+    public GameObject GroundCheck { get; }
+    public GameObject Head { get; }
     public Transform Transform { get; }
-    public Transform Head { get; }
-    public PlayerView PlayerView { get; }
+
+
+    public bool IsPressingJumpButton { get; set; }
+    public bool IsCrouching { get; set; }
+    public bool IsGrounded { get; set; }
 
     public PlayerModel(PlayerFactory factory)
     {
         factory.Create();
-        Rigidbody = factory.Rigidbody;
-        Transform = factory.Transform;
+
+        CharacterController = factory.CharacterController;
+        GroundCheck = factory.GroundCheck;
         Head = factory.Head;
-        PlayerView = factory.PlayerView;
+        Transform = factory.PlayerView.transform;
     }
 }

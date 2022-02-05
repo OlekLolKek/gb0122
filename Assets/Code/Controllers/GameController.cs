@@ -52,6 +52,11 @@ public sealed class GameController : MonoBehaviour
         _controllers.LateExecute(deltaTime);
     }
 
+    private void FixedUpdate()
+    {
+        _controllers.FixedExecute();
+    }
+
     private void OnDestroy()
     {
         _controllers.Cleanup();

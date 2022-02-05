@@ -12,12 +12,10 @@ public sealed class CameraData : ScriptableObject, IData
     [SerializeField] private LayerMask _weaponCameraCullingLayerMask;
     [SerializeField] private string _cameraName;
     [SerializeField] private string _weaponCameraName;
-    [SerializeField] private float _fovChangeMultiplier;
     [SerializeField, Range(1, 179)] private float _fov;
     [SerializeField, Range(0.01f, 5000)] private float _clippingPlaneFar;
     [SerializeField, Range(0.01f, 5000)] private float _clippingPlaneNear;
     [SerializeField] private float _sensitivity;
-    [SerializeField] private float _sensitivityMultiplier;
 
 
     //public PostProcessResources PostProcessResources => _postProcessResources;
@@ -26,10 +24,8 @@ public sealed class CameraData : ScriptableObject, IData
     public LayerMask WeaponCameraCullingLayerMask => _weaponCameraCullingLayerMask;
     public string CameraName => _cameraName;
     public string WeaponCameraName => _weaponCameraName;
-    public float FOVChangeMultiplier => _fovChangeMultiplier;
     public float FOV => _fov;
     public float ClippingPlaneFar => _clippingPlaneFar;
     public float ClippingPlaneNear => _clippingPlaneNear;
     public float Sensitivity => _sensitivity;
-    public float SensitivityMultiplier => _sensitivityMultiplier;
 }

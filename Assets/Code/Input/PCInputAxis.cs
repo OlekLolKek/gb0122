@@ -15,6 +15,6 @@ public sealed class PCInputAxis : IInputAxisChange
 
     public void GetAxis()
     {
-        OnAxisChanged.Invoke(Input.GetAxisRaw(_axis));
+        OnAxisChanged.Invoke(Input.GetAxis(_axis));
     }
 }

@@ -1,22 +1,15 @@
 ﻿using System.Collections.Generic;
 
 
-public sealed class Controllers : IInitialization, IExecutable, ILateExecutable, ICleanable
+public sealed class Controllers : IInitialization, IExecutable, ILateExecutable, IFixedExecutable, ICleanable
 {
-    private readonly List<IInitialization> _initializationList;
-    private readonly List<IExecutable> _executableList;
-    private readonly List<ILateExecutable> _lateExecutableList;
-    private readonly List<ICleanable> _cleanableList;
-        
-        
-    public Controllers()
-    {
-        _initializationList = new List<IInitialization>();
-        _executableList = new List<IExecutable>();
-        _lateExecutableList = new List<ILateExecutable>();
-        _cleanableList = new List<ICleanable>();
-    }
+    private readonly List<IInitialization> _initializationList = new List<IInitialization>();
+    private readonly List<IExecutable> _executableList = new List<IExecutable>();
+    private readonly List<ILateExecutable> _lateExecutableList = new List<ILateExecutable>();
+    private readonly List<IFixedExecutable> _fixedExecutables = new List<IFixedExecutable>();
+    private readonly List<ICleanable> _cleanableList = new List<ICleanable>();
 
+    
     internal Controllers Add(IControllable controller)
     {
         if (controller is IInitialization init)
@@ -28,6 +21,9 @@ public sealed class Controllers : IInitialization, IExecutable, ILateExecutable,
         if (controller is ILateExecutable lateExecutable)
             _lateExecutableList.Add(lateExecutable);
 
+        if (controller is IFixedExecutable fixedExecutable)
+            _fixedExecutables.Add(fixedExecutable);
+        
         if (controller is ICleanable cleanup)
             _cleanableList.Add(cleanup);
 
@@ -50,6 +46,12 @@ public sealed class Controllers : IInitialization, IExecutable, ILateExecutable,
     {
         foreach (var controller in _lateExecutableList)
             controller.LateExecute(deltaTime);
+    }
+
+    public void FixedExecute()
+    {
+        foreach (var controller in _fixedExecutables) 
+            controller.FixedExecute();
     }
 
     public void Cleanup()

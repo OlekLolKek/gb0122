@@ -1,79 +1,68 @@
-﻿using System.Collections;
-using UniRx;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 public sealed class JumpController : IExecutable, ICleanable
 {
-    private readonly PlayerJumpModel _playerJumpModel;
-    private readonly LayerMask _groundLayer;
-    private readonly Rigidbody _rigidbody;
+    private readonly CharacterController _characterController;
+    private readonly PlayerModel _playerModel;
+    private readonly LayerMask _groundMask;
     private readonly IInputKeyHold _jump;
-    
+
+    private readonly float _groundCheckRadius;
     private readonly float _jumpForce;
 
-    private const float JUMP_NORMAL_MULTIPLIER = 0.5f;
-    private const float JUMP_UP_MULTIPLIER = 1.5f;
-    private const float JUMP_COOLDOWN = 0.25f;
+    private const float GROUNDED_GRAVITY = -2.0f;
+    private const float GRAVITY = -9.81f;
+    
+    private Vector3 _velocity;
 
-    private Vector3 _normalVector = Vector3.up;
-        
-    private bool _isReadyToJump = true;
-    private bool _isGrounded;
-
-    public JumpController(PlayerModel playerModel, PlayerData playerData,
-        InputModel inputModel, PlayerJumpModel jumpModel)
+    public JumpController(PlayerModel playerModel, PlayerData playerData, InputModel inputModel)
     {
-        _rigidbody = playerModel.Rigidbody;
+        _playerModel = playerModel;
+        _characterController = _playerModel.CharacterController;
 
+        _groundMask = playerData.GroundLayerMask;
+        _groundCheckRadius = playerData.GroundCheckRadius;
         _jumpForce = playerData.JumpForce;
 
-        _playerJumpModel = jumpModel;
-            
         _jump = inputModel.Jump;
         _jump.OnKeyHeld += IsJumpButtonHeld;
     }
-        
+
     public void Execute(float deltaTime)
     {
         GetValues();
-        Jump();
+        Jump(deltaTime);
     }
 
-    private void Jump()
+    private void Jump(float deltaTime)
     {
-        if (!_isReadyToJump || !_playerJumpModel.IsPressingJumpButton || !_isGrounded) 
-            return;
-            
-        _isReadyToJump = false;
-        _rigidbody.AddForce(Vector2.up * (_jumpForce * JUMP_UP_MULTIPLIER));
-        _rigidbody.AddForce(_normalVector * (_jumpForce * JUMP_NORMAL_MULTIPLIER));
+        if (_playerModel.IsGrounded && _velocity.y < 0)
+        {
+            _velocity.y = GROUNDED_GRAVITY;
 
-        ResetJump().ToObservable().Subscribe();
+            if (_playerModel.IsPressingJumpButton)
+            {
+                _velocity.y = Mathf.Sqrt(_jumpForce * -2.0f * GRAVITY);
+            }
+        }
+        else
+        {
+            _velocity.y -= GRAVITY * -2.0f * deltaTime;
+        }
+
+        _characterController.Move(_velocity * deltaTime);
     }
 
     private void GetValues()
     {
-        _isGrounded = _playerJumpModel.IsGrounded;
-        _normalVector = _playerJumpModel.NormalVector;
+        _playerModel.IsGrounded = Physics.CheckSphere(_playerModel.GroundCheck.transform.position,
+            _groundCheckRadius, _groundMask);
     }
 
-    private IEnumerator ResetJump()
-    {
-        yield return new WaitForSeconds(JUMP_COOLDOWN);
-        _isReadyToJump = true;
-    }
-        
     private void IsJumpButtonHeld(bool isButtonPressed)
     {
-        if (isButtonPressed)
-        {
-            _playerJumpModel.IsPressingJumpButton = true;
-        }
-        else
-        {
-            _playerJumpModel.IsPressingJumpButton = false;
-        }
+        _playerModel.IsPressingJumpButton = isButtonPressed;
     }
 
     public void Cleanup()
