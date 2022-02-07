@@ -147,6 +147,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f57565a77d4c440a87fce5ca3eff4e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _characterController: {fileID: 3925682032940776838}
+  _photonView: {fileID: 7445710555537451111}
+  _groundCheck: {fileID: 4399800445170464413}
   _head: {fileID: 2446654401211577145}
 --- !u!114 &7445710555537451111
 MonoBehaviour:

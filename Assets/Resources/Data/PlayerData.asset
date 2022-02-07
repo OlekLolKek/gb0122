@@ -23,3 +23,5 @@ MonoBehaviour:
   _moveSpeed: 6.5
   _jumpForce: 3
   _groundCheckRadius: 0.3
+  _startHealth: 100
+  _maxHealth: 100

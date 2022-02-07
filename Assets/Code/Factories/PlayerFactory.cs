@@ -8,6 +8,7 @@ public sealed class PlayerFactory : IFactory
 
     public CharacterController CharacterController { get; private set; }
     public PlayerView PlayerView { get; private set; }
+    public PhotonView PhotonView { get; private set; }
     public GameObject GroundCheck { get; private set; }
     public GameObject Head { get; private set; }
 
@@ -23,6 +24,7 @@ public sealed class PlayerFactory : IFactory
 
         PlayerView = player.GetComponentInChildren<PlayerView>();
         CharacterController = PlayerView.CharacterController;
+        PhotonView = PlayerView.PhotonView;
         GroundCheck = PlayerView.GroundCheck;
         Head = PlayerView.Head;
 

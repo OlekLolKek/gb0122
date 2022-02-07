@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f121f8e1118b4301b2ce383b84eabd4a, type: 3}
+  m_Name: AssaultRifleData
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 6675039023914300039, guid: 119696fbaf0b24143bc94184ad927c54, type: 3}
+  _tracerPrefab: {fileID: 8839647699366514388, guid: cee4dabc50c6d1c4b8e6064aae557d30, type: 3}
+  _tracerMaterial: {fileID: 2100000, guid: d1d92fd630f96164894af21994d2c3c7, type: 2}
+  _hitLayerMask:
+    serializedVersion: 2
+    m_Bits: 63
+  _position: {x: 0.25, y: -0.38, z: 0.35}
+  _tracerName: Tracer
+  _tracerFadeMultiplier: 0.5
+  _maxShotDistance: 100
+  _tracerWidth: 0.05
+  _shootCooldown: 0.28
+  _damage: 33

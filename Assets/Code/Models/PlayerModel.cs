@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 
 
 public sealed class PlayerModel
 {
     public CharacterController CharacterController { get; }
+    public PhotonView PhotonView { get; }
     public GameObject GroundCheck { get; }
     public GameObject Head { get; }
     public Transform Transform { get; }
@@ -18,6 +20,7 @@ public sealed class PlayerModel
         factory.Create();
 
         CharacterController = factory.CharacterController;
+        PhotonView = factory.PhotonView;
         GroundCheck = factory.GroundCheck;
         Head = factory.Head;
         Transform = factory.PlayerView.transform;

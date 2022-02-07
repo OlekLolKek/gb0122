@@ -1,4 +1,7 @@
-﻿public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
+﻿using Photon.Pun;
+
+
+public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
 {
     private readonly Controllers _controllers;
 
@@ -6,19 +9,22 @@
         PlayerData playerData)
     {
         _controllers = new Controllers();
+
+        if (playerModel.PhotonView.IsMine || !PhotonNetwork.IsConnected)
+        {
+            var moveController = new MoveController(playerModel, playerData, 
+                inputModel);
+            var jumpController = new JumpController(playerModel, playerData, 
+                inputModel);
+            var crouchController = new CrouchController(inputModel, playerModel,
+                playerData);
         
-        var moveController = new MoveController(playerModel, playerData, 
-            inputModel);
-        var jumpController = new JumpController(playerModel, playerData, 
-            inputModel);
-        var crouchController = new CrouchController(inputModel, playerModel,
-            playerData);
-        
-        _controllers.Add(moveController);
-        _controllers.Add(jumpController);
-        _controllers.Add(crouchController);
+            _controllers.Add(moveController);
+            _controllers.Add(jumpController);
+            _controllers.Add(crouchController);
+        }
     }
-        
+    
     public void Execute(float deltaTime)
     {
         _controllers.Execute(deltaTime);

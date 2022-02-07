@@ -16,6 +16,8 @@ public sealed class PlayerData : ScriptableObject, IData
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _groundCheckRadius;
+    [SerializeField] private float _startHealth;
+    [SerializeField] private float _maxHealth;
 
 
     public PlayerView PlayerPrefab => _playerPrefab;
@@ -27,4 +29,6 @@ public sealed class PlayerData : ScriptableObject, IData
     public float MoveSpeed => _moveSpeed;
     public float JumpForce => _jumpForce;
     public float GroundCheckRadius => _groundCheckRadius;
+    public float StartHealth => _startHealth;
+    public float MaxHealth => _maxHealth;
 }
