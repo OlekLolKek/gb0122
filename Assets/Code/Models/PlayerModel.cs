@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class PlayerModel
 {
     public CharacterController CharacterController { get; }
+    public PlayerView PlayerView { get; }
     public PhotonView PhotonView { get; }
     public GameObject GroundCheck { get; }
     public GameObject Head { get; }
@@ -19,10 +20,11 @@ public sealed class PlayerModel
     {
         factory.Create();
 
+        PlayerView = factory.PlayerView;
         CharacterController = factory.CharacterController;
         PhotonView = factory.PhotonView;
         GroundCheck = factory.GroundCheck;
         Head = factory.Head;
-        Transform = factory.PlayerView.transform;
+        Transform = PlayerView.transform;
     }
 }

@@ -10,6 +10,7 @@ public sealed class TracerView : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+        //Debug.Log("OnPhotonSerializeView 1 11 1 1");
         if (stream.IsWriting)
         {
             stream.SendNext(_lineRenderer.endWidth);

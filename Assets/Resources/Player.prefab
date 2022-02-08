@@ -151,6 +151,7 @@ MonoBehaviour:
   _photonView: {fileID: 7445710555537451111}
   _groundCheck: {fileID: 4399800445170464413}
   _head: {fileID: 2446654401211577145}
+  _health: 0
 --- !u!114 &7445710555537451111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,10 +169,10 @@ MonoBehaviour:
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
-  observableSearch: 0
+  observableSearch: 1
   ObservedComponents:
+  - {fileID: 2446654402756951890}
   - {fileID: 3168184026959708657}
-  - {fileID: 0}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

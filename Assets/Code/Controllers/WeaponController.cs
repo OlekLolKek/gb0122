@@ -16,7 +16,7 @@
     private float _mouseY;
         
     public WeaponController(InputModel inputModel, WeaponData data,
-        CameraModel cameraModel)
+        CameraModel cameraModel, PlayerModel playerModel)
     {
         _inventory = new WeaponInventory();
         var weaponFactory = new WeaponFactory();
@@ -41,7 +41,7 @@
         _mouseYInput.OnAxisChanged += MouseYChange;
         _switchSafety.OnKeyPressed += SwitchSafety;
         
-        var weapon = new Weapon(weaponFactory, data.AssaultRifleData, cameraModel);
+        var weapon = new Weapon(weaponFactory, data.AssaultRifleData, cameraModel, playerModel);
         var safetyFactory = new SafetyFactory(data.SafetyData);
         _arSafetyProxy = new WeaponSafetyProxy(weapon, safetyFactory);
         _inventory.AddWeapon(_arSafetyProxy);
@@ -54,7 +54,7 @@
     public void Execute(float deltaTime)
     {
         var weapon = _inventory.ActiveWeapon;
-        weapon.Rotate(_mouseX, _mouseY);
+        weapon.Rotate(_mouseX, _mouseY, deltaTime);
         weapon.Execute(deltaTime);
     }
 

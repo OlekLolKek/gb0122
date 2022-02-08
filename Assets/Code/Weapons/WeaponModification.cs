@@ -41,9 +41,9 @@ public abstract class WeaponModification : IWeapon
         _weapon.Deactivate();
     }
 
-    public void Rotate(float mouseX, float mouseY)
+    public void Rotate(float mouseX, float mouseY, float deltaTime)
     {
-        _weapon.Rotate(mouseX, mouseY);
+        _weapon.Rotate(mouseX, mouseY, deltaTime);
     }
 
     public void SetModdedValues(Transform barrel, AudioSource audioSource)

@@ -27,7 +27,7 @@ public sealed class GameController : MonoBehaviour
             playerModel, inputModel);
 
         var weaponController = new WeaponController(inputModel, _weaponData, 
-            cameraModel);
+            cameraModel, playerModel);
 
         var cursorController = new CursorController();
 

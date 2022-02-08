@@ -18,10 +18,12 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
                 inputModel);
             var crouchController = new CrouchController(inputModel, playerModel,
                 playerData);
+            var healthController = new HealthController(playerModel, playerData);
         
             _controllers.Add(moveController);
             _controllers.Add(jumpController);
             _controllers.Add(crouchController);
+            _controllers.Add(healthController);
         }
     }
     

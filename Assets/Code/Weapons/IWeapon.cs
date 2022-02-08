@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 
 public interface IWeapon : IExecutable
@@ -7,7 +8,7 @@ public interface IWeapon : IExecutable
     void Fire();
     void Activate();
     void Deactivate();
-    void Rotate(float mouseX, float mouseY);
+    void Rotate(float mouseX, float mouseY, float deltaTime);
     void SetModdedValues(Transform barrel, AudioSource audioSource);
     void SetDefaultValues();
 }

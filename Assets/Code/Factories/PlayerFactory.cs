@@ -22,6 +22,8 @@ public sealed class PlayerFactory : IFactory
         var player = PhotonNetwork.Instantiate(_playerData.PlayerPrefab.name,
             _playerData.SpawnPosition, Quaternion.identity);
 
+        player.name = $"Player {Random.Range(0, 1000)}";
+
         PlayerView = player.GetComponentInChildren<PlayerView>();
         CharacterController = PlayerView.CharacterController;
         PhotonView = PlayerView.PhotonView;

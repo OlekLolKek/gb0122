@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -81,6 +82,7 @@ public sealed class PlayFabLogin : MonoBehaviour
             _text.color = _successColor;
             PlayerPrefs.SetString(AUTH_KEY, id);
             Debug.Log(message);
+            OnLoginSuccess(result);
             if (needCreation)
             {
                 CreateInitialUsername();
@@ -93,6 +95,27 @@ public sealed class PlayFabLogin : MonoBehaviour
         
         _text.text = "Signing in...";
         _text.color = _loadingColor;
+    }
+    
+    private void SetUserData() {
+        PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest() {
+                Data = new Dictionary<string, string>() {
+                    {"health", 100.ToString()},
+                }
+            },
+            result => Debug.Log("Successfully updated user data"),
+            Debug.LogError);
+    }
+    
+    private void GetUserData(string myPlayFabId) {
+        PlayFabClientAPI.GetUserData(new GetUserDataRequest() {
+            PlayFabId = myPlayFabId,
+            Keys = null
+        }, result => {
+            Debug.Log("Got user data:");
+            if (result.Data == null || !result.Data.ContainsKey("health")) Debug.Log("No health");
+            else Debug.Log("health: "+result.Data["health"].Value);
+        }, Debug.LogError);
     }
 
     private void CreateInitialUsername()
@@ -133,13 +156,7 @@ public sealed class PlayFabLogin : MonoBehaviour
         {
             Username = _username,
             Password = _password,
-        }, result =>
-        {
-            Debug.Log($"Success: {_username}");
-        }, error =>
-        {
-            Debug.LogError($"Error: {error}");
-        });
+        }, OnLoginSuccess, Debug.LogError);
     }
 
     private void OnLoginSuccess(LoginResult result)
@@ -148,6 +165,8 @@ public sealed class PlayFabLogin : MonoBehaviour
         _text.text = message;
         _text.color = _successColor;
         Debug.Log(message);
+        SetUserData();
+        GetUserData(result.PlayFabId);
     }
 
     private void OnLoginFail(PlayFabError error)
