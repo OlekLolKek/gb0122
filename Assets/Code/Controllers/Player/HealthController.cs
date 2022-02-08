@@ -24,7 +24,6 @@ public sealed class HealthController : ICleanable
 
         _playerView.OnReceivedDamage += ReceivedDamage;
         _playerView.SetHealth(_health);
-        Debug.Log($"Subscribed to onHealthChanged of {_playerView.gameObject.name}");
 
         _renderers = _playerModel.Transform.GetComponentsInChildren<Renderer>();
     }
@@ -33,7 +32,7 @@ public sealed class HealthController : ICleanable
     {
         _health -= damage;
         _playerView.SetHealth(_health);
-        Debug.Log($"Health changed to {_health}");
+        
         if (_health <= 0.0f)
         {
             _respawnCoroutine = Respawn().ToObservable().Subscribe();

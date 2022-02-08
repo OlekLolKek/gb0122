@@ -29,10 +29,8 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        Debug.Log("OnPhotonSerializeView");
         if (stream.IsWriting)
         {
-            Debug.Log($"{name} is sending health: {_health}");
             stream.SendNext(_health);
             stream.SendNext(_playerToDamageActorNumber);
             stream.SendNext(_damageToDeal);
@@ -42,7 +40,6 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             _health = (float)stream.ReceiveNext();
-            Debug.Log($"{name} read new health: {_health}");
 
             _playerToDamageActorNumber = (int)stream.ReceiveNext();
             _damageToDeal = (float)stream.ReceiveNext();

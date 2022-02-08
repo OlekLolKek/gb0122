@@ -96,7 +96,6 @@ public sealed class Weapon : IWeapon
         if (Physics.Raycast(ray, out var hit, _maxShotDistance, _hitLayerMask))
         {
             line.SetPosition(1, hit.point);
-            Debug.Log("Cheto hit");
             TryDamage(hit);
         }
         else
@@ -113,7 +112,6 @@ public sealed class Weapon : IWeapon
     {
         if (hitInfo.collider.TryGetComponent(out PlayerView playerView))
         {
-            Debug.Log($"Got playerView component from {playerView.name}, damaging...");
             _playerView.SendPlayerToDamage(playerView.OwnerActorNumber, Damage);
         }
     }
