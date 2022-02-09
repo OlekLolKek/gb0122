@@ -41,7 +41,7 @@ public sealed class PlayFabLogin : MonoBehaviour
         }
         else
         {
-            _buttonText.text = "Create account";
+            _buttonText.text = "Register";
         }
     }
 
