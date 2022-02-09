@@ -75,7 +75,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     private void OnShowRoomsButtonClicked()
     {
         _roomListPanelView.gameObject.SetActive(true);
-        PhotonNetwork.JoinLobby();
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -86,6 +85,10 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
+        if (!PhotonNetwork.InLobby)
+        {
+            PhotonNetwork.JoinLobby();
+        }
         Debug.Log("Photon Connected to master.");
     }
 

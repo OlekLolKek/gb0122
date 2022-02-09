@@ -17,10 +17,10 @@
 
     public InputModel(InputData inputData)
     {
-        Horizontal = new PCInputAxis(AxisNameStorage.HORIZONTAL);
-        Vertical = new PCInputAxis(AxisNameStorage.VERTICAL);
-        MouseX = new PCInputAxis(AxisNameStorage.MOUSE_X);
-        MouseY = new PCInputAxis(AxisNameStorage.MOUSE_Y);
+        Horizontal = new PCInputAxis(Constants.HORIZONTAL);
+        Vertical = new PCInputAxis(Constants.VERTICAL);
+        MouseX = new PCInputAxis(Constants.MOUSE_X);
+        MouseY = new PCInputAxis(Constants.MOUSE_Y);
         StartCrouch = new PCInputKeyDown(inputData.Crouch);
         StopCrouch = new PCInputKeyUp(inputData.Crouch);
         Jump = new PCInputKeyHold(inputData.Jump);
