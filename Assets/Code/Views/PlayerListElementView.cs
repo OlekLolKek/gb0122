@@ -44,4 +44,9 @@ public sealed class PlayerListElementView : MonoBehaviour
             _kickButton.gameObject.SetActive(false);
         }
     }
+
+    public void CheckNewMaster(Player newMasterClient)
+    {
+        _kickButton.gameObject.SetActive(newMasterClient.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber);
+    }
 }

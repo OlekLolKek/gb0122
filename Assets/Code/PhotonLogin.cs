@@ -17,6 +17,7 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject _inventoryPanel;
 
     [SerializeField] private Button _showRoomsButton;
+    [SerializeField] private Button _leaveRoomButton;
 
     private void Awake()
     {
@@ -24,15 +25,17 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         _roomListPanelView.OnJoinRoomButtonClicked += JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked += CreateRoom;
         _showRoomsButton.onClick.AddListener(OnShowRoomsButtonClicked);
+        _leaveRoomButton.onClick.AddListener(OnLeaveRoomButtonClicked);
 
         _playerListManager.OnKickPlayer += KickPlayer;
     }
-
+    
     private void OnDestroy()
     {
         _roomListPanelView.OnJoinRoomButtonClicked -= JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked -= CreateRoom;
         _showRoomsButton.onClick.RemoveListener(OnShowRoomsButtonClicked);
+        _leaveRoomButton.onClick.RemoveListener(OnLeaveRoomButtonClicked);
         
         _playerListManager.OnKickPlayer -= KickPlayer;
     }
@@ -104,31 +107,57 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         _roomAdminPanelView.OnStartButtonClicked += OnStartGameButtonClicked;
     }
 
+    public override void OnJoinedRoom()
+    {
+        _playerListManager.OnJoinedRoom();
+        
+        _showRoomsButton.gameObject.SetActive(false);
+        _leaveRoomButton.gameObject.SetActive(true);
+        
+        _inventoryPanel.SetActive(false);
+    }
+
     public override void OnLeftRoom()
     {
         _playerListManager.OnLeftRoom();
+        
+        _showRoomsButton.gameObject.SetActive(true);
+        _leaveRoomButton.gameObject.SetActive(false);
 
-        if (_roomAdminPanelView == null || !_roomAdminPanelView.gameObject.activeSelf) return;
-        _roomAdminPanelView.gameObject.SetActive(false);
-        _roomAdminPanelView.OnPrivacyButtonClicked -= SwitchRoomPrivacy;
-        _roomAdminPanelView.OnStartButtonClicked -= OnStartGameButtonClicked;
+        if (_roomAdminPanelView != null && _roomAdminPanelView.gameObject.activeSelf)
+        {
+            _roomAdminPanelView.gameObject.SetActive(false);
+            _roomAdminPanelView.OnPrivacyButtonClicked -= SwitchRoomPrivacy;
+            _roomAdminPanelView.OnStartButtonClicked -= OnStartGameButtonClicked;
+        }
+    }
+    
+    private void OnLeaveRoomButtonClicked()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (newMasterClient.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            _roomAdminPanelView.gameObject.SetActive(true);
+            _roomAdminPanelView.OnPrivacyButtonClicked += SwitchRoomPrivacy;
+            _roomAdminPanelView.OnStartButtonClicked += OnStartGameButtonClicked;
+        }
+
+        _playerListManager.OnMasterClientSwitched(newMasterClient);
     }
 
     private void SwitchRoomPrivacy(bool open)
     {
         PhotonNetwork.CurrentRoom.IsOpen = open;
+        PhotonNetwork.CurrentRoom.IsVisible = open;
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
     {
         Debug.LogError($"Create room failed! Code: {returnCode}, message: {message}");
-    }
-
-    public override void OnJoinedRoom()
-    {
-        _playerListManager.OnJoinedRoom();
-        
-        _inventoryPanel.SetActive(false);
     }
 
     private void KickPlayer(Player playerToKick)

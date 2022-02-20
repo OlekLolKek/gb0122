@@ -54,6 +54,14 @@ public sealed class PlayerListManager : MonoBehaviour
         _playerElements.Add(newElement);
     }
 
+    public void OnMasterClientSwitched(Player newMasterClient)
+    {
+        foreach (var element in _playerElements)
+        {
+            element.CheckNewMaster(newMasterClient);
+        }
+    }
+
     public void OnJoinedRoom()
     {
         foreach (var player in PhotonNetwork.PlayerList)
