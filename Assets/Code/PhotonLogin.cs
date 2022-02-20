@@ -19,7 +19,7 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     [SerializeField] private Button _showRoomsButton;
 
-    private List<PlayerListElementView> _playerElements = new List<PlayerListElementView>();
+    private readonly List<PlayerListElementView> _playerElements = new List<PlayerListElementView>();
 
     private void Awake()
     {
@@ -34,11 +34,17 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         _roomListPanelView.OnJoinRoomButtonClicked -= JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked -= CreateRoom;
         _showRoomsButton.onClick.RemoveListener(OnShowRoomsButtonClicked);
+
+        foreach (var element in _playerElements)
+        {
+            element.OnKickButtonClicked -= KickPlayer;
+        }
     }
 
     private void Start()
     {
         Connect();
+        PhotonNetwork.EnableCloseConnection = true;
     }
 
     public void Connect()
@@ -90,6 +96,8 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinLobby();
         }
         Debug.Log("Photon Connected to master.");
+
+        OnLeftRoom();
     }
 
     public override void OnCreatedRoom()
@@ -103,7 +111,17 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     public override void OnLeftRoom()
     {
-        base.OnLeftRoom();
+        foreach (var element in _playerElements)
+        {
+            if (element != null)
+            {
+                element.OnKickButtonClicked -= KickPlayer;
+                 Destroy(element.gameObject);
+            }
+        }
+        
+        _playerListPanelView.gameObject.SetActive(false);
+        
         if (_roomAdminPanelView == null || !_roomAdminPanelView.gameObject.activeSelf) return;
         _roomAdminPanelView.gameObject.SetActive(false);
         _roomAdminPanelView.OnPrivacyButtonClicked -= SwitchRoomPrivacy;
@@ -113,7 +131,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     private void SwitchRoomPrivacy(bool open)
     {
         PhotonNetwork.CurrentRoom.IsOpen = open;
-        Debug.Log($"Room is open set to {open}");
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -121,18 +138,13 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         Debug.LogError($"Create room failed! Code: {returnCode}, message: {message}");
     }
 
-    
     //TODO: Move methods below to PlayerListManager or something
     public override void OnJoinedRoom()
     {
         foreach (var player in PhotonNetwork.PlayerList)
         {
             Debug.Log($"Added player {player.NickName} | {player.UserId}");
-
-            var newElement = Instantiate(_playerListElementPrefab, _playerListPanelView.ElementsRoot);
-            newElement.gameObject.SetActive(true);
-            newElement.Initialize(player.ActorNumber, player.NickName);
-            _playerElements.Add(newElement);
+            CreatePlayerElement(player);
         }
         
         _inventoryPanel.SetActive(false);
@@ -141,22 +153,33 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         _playerListPanelView.gameObject.SetActive(true);
     }
 
+    private void KickPlayer(Player playerToKick)
+    {
+        PhotonNetwork.CloseConnection(playerToKick);
+    }
+
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
         base.OnPlayerEnteredRoom(newPlayer);
+        CreatePlayerElement(newPlayer);
+    }
+
+    private void CreatePlayerElement(Player newPlayer)
+    {
         var newElement = Instantiate(_playerListElementPrefab, _playerListPanelView.ElementsRoot);
         newElement.gameObject.SetActive(true);
-        newElement.Initialize(newPlayer.ActorNumber, newPlayer.NickName);
+        newElement.Initialize(newPlayer, newPlayer.NickName);
+        newElement.OnKickButtonClicked += KickPlayer;
         _playerElements.Add(newElement);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        base.OnPlayerLeftRoom(otherPlayer);
         var elementToDelete = _playerElements.FirstOrDefault(element => element.PlayerActorNumber == otherPlayer.ActorNumber);
         if (elementToDelete)
         {
             Destroy(elementToDelete.gameObject);
+            elementToDelete.OnKickButtonClicked -= KickPlayer;
         }
     }
 

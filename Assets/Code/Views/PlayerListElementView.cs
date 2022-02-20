@@ -1,5 +1,6 @@
 using System;
 using Photon.Pun;
+using Photon.Realtime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +11,11 @@ public sealed class PlayerListElementView : MonoBehaviour
     [SerializeField] private TMP_Text _usernameText;
     [SerializeField] private Button _kickButton;
 
+    private Player _player;
     public int PlayerActorNumber { get; private set; }
 
-    public event Action OnKickButtonClicked = delegate {  };
+
+    public event Action<Player> OnKickButtonClicked = delegate {  };
 
     private void Start()
     {
@@ -26,13 +29,19 @@ public sealed class PlayerListElementView : MonoBehaviour
 
     private void KickButtonClicked()
     {
-        OnKickButtonClicked.Invoke();
+        OnKickButtonClicked.Invoke(_player);
     }
 
-    public void Initialize(int playerActorNumber, string playerUsername)
+    public void Initialize(Player player, string playerUsername)
     {
-        PlayerActorNumber = playerActorNumber;
+        _player = player;
+        PlayerActorNumber = _player.ActorNumber;
 
         _usernameText.text = playerUsername;
+        
+        if (PhotonNetwork.LocalPlayer.ActorNumber == PlayerActorNumber || !PhotonNetwork.LocalPlayer.IsMasterClient)
+        {
+            _kickButton.gameObject.SetActive(false);
+        }
     }
 }
