@@ -9,14 +9,14 @@ using UnityEngine.UI;
 public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 {
     [Header("Managers")]
+    [SerializeField] private UiNavigationManager _uiNavigationManager;
     [SerializeField] private PlayerListManager _playerListManager;
     
     [Header("Panels")]
     [SerializeField] private RoomAdminPanelView _roomAdminPanelView;
     [SerializeField] private RoomListPanelView _roomListPanelView;
     [SerializeField] private GameObject _inventoryPanel;
-
-    [SerializeField] private Button _showRoomsButton;
+    
     [SerializeField] private Button _leaveRoomButton;
 
     private void Awake()
@@ -24,7 +24,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         PhotonNetwork.AutomaticallySyncScene = true;
         _roomListPanelView.OnJoinRoomButtonClicked += JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked += CreateRoom;
-        _showRoomsButton.onClick.AddListener(OnShowRoomsButtonClicked);
         _leaveRoomButton.onClick.AddListener(OnLeaveRoomButtonClicked);
 
         _playerListManager.OnKickPlayer += KickPlayer;
@@ -34,7 +33,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     {
         _roomListPanelView.OnJoinRoomButtonClicked -= JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked -= CreateRoom;
-        _showRoomsButton.onClick.RemoveListener(OnShowRoomsButtonClicked);
         _leaveRoomButton.onClick.RemoveListener(OnLeaveRoomButtonClicked);
         
         _playerListManager.OnKickPlayer -= KickPlayer;
@@ -77,11 +75,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         _roomListPanelView.gameObject.SetActive(false);
     }
 
-    private void OnShowRoomsButtonClicked()
-    {
-        _roomListPanelView.gameObject.SetActive(true);
-    }
-
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         _roomListPanelView.SetRooms(roomList);
@@ -101,7 +94,7 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
-        _roomListPanelView.gameObject.SetActive(false);
+        _uiNavigationManager.SwitchToBasicTab();
         _roomAdminPanelView.gameObject.SetActive(true);
         _roomAdminPanelView.OnPrivacyButtonClicked += SwitchRoomPrivacy;
         _roomAdminPanelView.OnStartButtonClicked += OnStartGameButtonClicked;
@@ -111,7 +104,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     {
         _playerListManager.OnJoinedRoom();
         
-        _showRoomsButton.gameObject.SetActive(false);
         _leaveRoomButton.gameObject.SetActive(true);
         
         _inventoryPanel.SetActive(false);
@@ -121,7 +113,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
     {
         _playerListManager.OnLeftRoom();
         
-        _showRoomsButton.gameObject.SetActive(true);
         _leaveRoomButton.gameObject.SetActive(false);
 
         if (_roomAdminPanelView != null && _roomAdminPanelView.gameObject.activeSelf)

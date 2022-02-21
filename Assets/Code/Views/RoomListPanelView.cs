@@ -12,9 +12,7 @@ public sealed class RoomListPanelView : MonoBehaviour
     [Header("Room list")]
     [SerializeField] private GameObject _roomListPanel;
     [SerializeField] private RoomListElementView _roomListElementPrefab;
-    [SerializeField] private Button _backButton;
     [SerializeField] private Transform _elementsRoot;
-    [SerializeField] private Button _createRoomPanelButton;
 
     [Header("Direct connect")]
     [SerializeField] private TMP_InputField _roomToConnectInputField;
@@ -26,7 +24,6 @@ public sealed class RoomListPanelView : MonoBehaviour
     [SerializeField] private Slider _maxPlayersSlider;
     [SerializeField] private TMP_Text _maxPlayersText;
     [SerializeField] private Button _createRoomButton;
-    [SerializeField] private Button _roomListPanelButton;
     [SerializeField] private Toggle _privateRoomToggle;
 
     private readonly List<RoomListElementView> _roomListElements = new List<RoomListElementView>();
@@ -36,10 +33,6 @@ public sealed class RoomListPanelView : MonoBehaviour
 
     private void Start()
     {
-        _backButton.onClick.AddListener(OnBackButtonClicked);
-        
-        _createRoomPanelButton.onClick.AddListener(OnCreateRoomPanelButtonClicked);
-        _roomListPanelButton.onClick.AddListener(OnRoomListPanelButtonClicked);
         _createRoomButton.onClick.AddListener(CreateRoomButtonClicked);
         _connectDirectlyButton.onClick.AddListener(ConnectDirectlyButtonClicked);
 
@@ -50,31 +43,10 @@ public sealed class RoomListPanelView : MonoBehaviour
 
     private void OnDestroy()
     {
-        _backButton.onClick.RemoveListener(OnBackButtonClicked);
-        
-        _createRoomPanelButton.onClick.RemoveListener(OnCreateRoomPanelButtonClicked);
-        _roomListPanelButton.onClick.RemoveListener(OnRoomListPanelButtonClicked);
         _createRoomButton.onClick.RemoveListener(CreateRoomButtonClicked);
         _connectDirectlyButton.onClick.RemoveListener(ConnectDirectlyButtonClicked);
 
         _maxPlayersSlider.onValueChanged.RemoveListener(OnMaxPlayersSliderValueChanged);
-    }
-
-    private void OnBackButtonClicked()
-    {
-        gameObject.SetActive(false);
-    }
-
-    private void OnCreateRoomPanelButtonClicked()
-    {
-        _roomListPanel.gameObject.SetActive(false);
-        _createRoomPanel.gameObject.SetActive(true);
-    }
-
-    private void OnRoomListPanelButtonClicked()
-    {
-        _roomListPanel.gameObject.SetActive(true);
-        _createRoomPanel.gameObject.SetActive(false);
     }
 
     private void OnMaxPlayersSliderValueChanged(float value)

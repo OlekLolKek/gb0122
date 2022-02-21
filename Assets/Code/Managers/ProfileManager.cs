@@ -11,9 +11,9 @@ using UnityEngine.UI;
 public sealed class ProfileManager : MonoBehaviour
 {
     [SerializeField] private ChangeUsernamePanelView _changeUsernamePanelView;
+    [SerializeField] private PauseMenuView _pauseMenuView;
     [SerializeField] private TMP_Text _usernameText;
     [SerializeField] private TMP_Text _idText;
-    [SerializeField] private Button _changeUsernameButton;
     [SerializeField] private Button _backButton;
 
     private void Start()
@@ -24,7 +24,6 @@ public sealed class ProfileManager : MonoBehaviour
         UpdateUserInfo();
 
         _backButton.onClick.AddListener(GoToBootstrap);
-        _changeUsernameButton.onClick.AddListener(OpenChangeUsernamePanel);
         _changeUsernamePanelView.OnConfirmButtonClicked += ChangeUsername;
     }
 
@@ -58,14 +57,8 @@ public sealed class ProfileManager : MonoBehaviour
         PhotonNetwork.NickName = nickName;
     }
 
-    private void OpenChangeUsernamePanel()
-    {
-        _changeUsernamePanelView.gameObject.SetActive(true);
-    }
-
     private void ChangeUsername(string newUsername)
     {
-        _changeUsernamePanelView.gameObject.SetActive(false);
         PlayFabClientAPI.UpdateUserTitleDisplayName(new UpdateUserTitleDisplayNameRequest { DisplayName = newUsername },
             result =>
             {
@@ -82,7 +75,6 @@ public sealed class ProfileManager : MonoBehaviour
     private void OnDestroy()
     {
         _backButton.onClick.RemoveListener(GoToBootstrap);
-        _changeUsernameButton.onClick.RemoveListener(OpenChangeUsernamePanel);
         _changeUsernamePanelView.OnConfirmButtonClicked -= ChangeUsername;
     }
 }

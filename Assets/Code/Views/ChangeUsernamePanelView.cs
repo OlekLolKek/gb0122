@@ -11,6 +11,7 @@ public sealed class ChangeUsernamePanelView : MonoBehaviour
     [SerializeField] private Button _backButton;
     
     public event Action<string> OnConfirmButtonClicked = delegate {  };
+    public event Action OnBackButtonClicked = delegate {  };
 
     private void Start()
     {
@@ -31,6 +32,6 @@ public sealed class ChangeUsernamePanelView : MonoBehaviour
 
     private void BackButtonClicked()
     {
-        gameObject.SetActive(false);
+        OnBackButtonClicked.Invoke();
     }
 }
