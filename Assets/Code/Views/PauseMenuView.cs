@@ -22,22 +22,6 @@ public sealed class PauseMenuView : MonoBehaviour
         _changeUsernamePanel.OnConfirmButtonClicked += ConfirmChangeUsernameButtonClicked;
     }
 
-    private void CloseChangeUsernamePanel()
-    {
-        _changeUsernamePanel.gameObject.SetActive(false);
-        
-        _changeUsernameButton.gameObject.SetActive(true);
-        _quitButton.gameObject.SetActive(true);
-    }
-    
-    private void ConfirmChangeUsernameButtonClicked(string _)
-    {
-        _changeUsernamePanel.gameObject.SetActive(false);
-        
-        _changeUsernameButton.gameObject.SetActive(true);
-        _quitButton.gameObject.SetActive(true);
-    }
-
     private void OnDestroy()
     {
         _closeMenuButton.onClick.RemoveListener(CloseMenuButtonClicked);
@@ -45,18 +29,43 @@ public sealed class PauseMenuView : MonoBehaviour
         _quitButton.onClick.RemoveListener(QuitButtonClicked);
     }
 
-    private void CloseMenuButtonClicked()
+    public void Activate()
     {
         _changeUsernamePanel.gameObject.SetActive(false);
-        gameObject.SetActive(false);
+        _changeUsernameButton.gameObject.SetActive(true);
+        _quitButton.gameObject.SetActive(true);
+        
+        gameObject.SetActive(true);
     }
 
     private void ChangeUsernameButtonClicked()
     {
         _changeUsernamePanel.gameObject.SetActive(true);
-        
         _changeUsernameButton.gameObject.SetActive(false);
         _quitButton.gameObject.SetActive(false);
+    }
+
+    private void CloseChangeUsernamePanel()
+    {
+        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernameButton.gameObject.SetActive(true);
+        _quitButton.gameObject.SetActive(true);
+    }
+
+    private void ConfirmChangeUsernameButtonClicked(string _)
+    {
+        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernameButton.gameObject.SetActive(true);
+        _quitButton.gameObject.SetActive(true);
+    }
+
+    private void CloseMenuButtonClicked()
+    {
+        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernameButton.gameObject.SetActive(false);
+        _quitButton.gameObject.SetActive(false);
+        
+        gameObject.SetActive(false);
     }
 
     private void QuitButtonClicked()

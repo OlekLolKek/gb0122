@@ -11,7 +11,6 @@ using UnityEngine.UI;
 public sealed class ProfileManager : MonoBehaviour
 {
     [SerializeField] private ChangeUsernamePanelView _changeUsernamePanelView;
-    [SerializeField] private PauseMenuView _pauseMenuView;
     [SerializeField] private TMP_Text _usernameText;
     [SerializeField] private TMP_Text _idText;
     [SerializeField] private Button _backButton;

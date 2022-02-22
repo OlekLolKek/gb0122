@@ -11,7 +11,7 @@ public sealed class UiNavigationManager : TabGroup
     [SerializeField] private Button _settingsButton;
 
     [Header("Panels")]
-    [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private PauseMenuView _pauseMenu;
 
     private TabButton _selectedTab;
 
@@ -33,7 +33,7 @@ public sealed class UiNavigationManager : TabGroup
 
     private void OnSettingsButtonClicked()
     {
-        _pauseMenu.gameObject.SetActive(true);
+        _pauseMenu.Activate();
     }
 
     public override void Subscribe(TabButton button)
