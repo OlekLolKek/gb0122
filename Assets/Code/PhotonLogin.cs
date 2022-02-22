@@ -8,37 +8,40 @@ using UnityEngine.UI;
 
 public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 {
-    [Header("Prefabs")]
-    [SerializeField] private PlayerListElementView _playerListElementPrefab;
-
+    [Header("Managers")]
+    [SerializeField] private UiNavigationManager _uiNavigationManager;
+    [SerializeField] private PlayerListManager _playerListManager;
+    
     [Header("Panels")]
-    [SerializeField] private PlayerListPanelView _playerListPanelView;
     [SerializeField] private RoomAdminPanelView _roomAdminPanelView;
     [SerializeField] private RoomListPanelView _roomListPanelView;
     [SerializeField] private GameObject _inventoryPanel;
-
-    [SerializeField] private Button _showRoomsButton;
-
-    private List<PlayerListElementView> _playerElements = new List<PlayerListElementView>();
+    
+    [SerializeField] private Button _leaveRoomButton;
 
     private void Awake()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
         _roomListPanelView.OnJoinRoomButtonClicked += JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked += CreateRoom;
-        _showRoomsButton.onClick.AddListener(OnShowRoomsButtonClicked);
-    }
+        _leaveRoomButton.onClick.AddListener(OnLeaveRoomButtonClicked);
 
+        _playerListManager.OnKickPlayer += KickPlayer;
+    }
+    
     private void OnDestroy()
     {
         _roomListPanelView.OnJoinRoomButtonClicked -= JoinSelectedRoom;
         _roomListPanelView.OnCreateRoomButtonClicked -= CreateRoom;
-        _showRoomsButton.onClick.RemoveListener(OnShowRoomsButtonClicked);
+        _leaveRoomButton.onClick.RemoveListener(OnLeaveRoomButtonClicked);
+        
+        _playerListManager.OnKickPlayer -= KickPlayer;
     }
 
     private void Start()
     {
         Connect();
+        PhotonNetwork.EnableCloseConnection = true;
     }
 
     public void Connect()
@@ -72,11 +75,6 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         _roomListPanelView.gameObject.SetActive(false);
     }
 
-    private void OnShowRoomsButtonClicked()
-    {
-        _roomListPanelView.gameObject.SetActive(true);
-    }
-
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
     {
         _roomListPanelView.SetRooms(roomList);
@@ -90,30 +88,62 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
             PhotonNetwork.JoinLobby();
         }
         Debug.Log("Photon Connected to master.");
+
+        OnLeftRoom();
     }
 
     public override void OnCreatedRoom()
     {
-        base.OnCreatedRoom();
-        _roomListPanelView.gameObject.SetActive(false);
+        _uiNavigationManager.SwitchToBasicTab();
         _roomAdminPanelView.gameObject.SetActive(true);
         _roomAdminPanelView.OnPrivacyButtonClicked += SwitchRoomPrivacy;
         _roomAdminPanelView.OnStartButtonClicked += OnStartGameButtonClicked;
     }
 
+    public override void OnJoinedRoom()
+    {
+        _playerListManager.OnJoinedRoom();
+        
+        _leaveRoomButton.gameObject.SetActive(true);
+        
+        _inventoryPanel.SetActive(false);
+    }
+
     public override void OnLeftRoom()
     {
-        base.OnLeftRoom();
-        if (_roomAdminPanelView == null || !_roomAdminPanelView.gameObject.activeSelf) return;
-        _roomAdminPanelView.gameObject.SetActive(false);
-        _roomAdminPanelView.OnPrivacyButtonClicked -= SwitchRoomPrivacy;
-        _roomAdminPanelView.OnStartButtonClicked -= OnStartGameButtonClicked;
+        _playerListManager.OnLeftRoom();
+        
+        _leaveRoomButton.gameObject.SetActive(false);
+
+        if (_roomAdminPanelView != null && _roomAdminPanelView.gameObject.activeSelf)
+        {
+            _roomAdminPanelView.gameObject.SetActive(false);
+            _roomAdminPanelView.OnPrivacyButtonClicked -= SwitchRoomPrivacy;
+            _roomAdminPanelView.OnStartButtonClicked -= OnStartGameButtonClicked;
+        }
+    }
+    
+    private void OnLeaveRoomButtonClicked()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (newMasterClient.ActorNumber == PhotonNetwork.LocalPlayer.ActorNumber)
+        {
+            _roomAdminPanelView.gameObject.SetActive(true);
+            _roomAdminPanelView.OnPrivacyButtonClicked += SwitchRoomPrivacy;
+            _roomAdminPanelView.OnStartButtonClicked += OnStartGameButtonClicked;
+        }
+
+        _playerListManager.OnMasterClientSwitched(newMasterClient);
     }
 
     private void SwitchRoomPrivacy(bool open)
     {
         PhotonNetwork.CurrentRoom.IsOpen = open;
-        Debug.Log($"Room is open set to {open}");
+        PhotonNetwork.CurrentRoom.IsVisible = open;
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -121,43 +151,19 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         Debug.LogError($"Create room failed! Code: {returnCode}, message: {message}");
     }
 
-    
-    //TODO: Move methods below to PlayerListManager or something
-    public override void OnJoinedRoom()
+    private void KickPlayer(Player playerToKick)
     {
-        foreach (var player in PhotonNetwork.PlayerList)
-        {
-            Debug.Log($"Added player {player.NickName} | {player.UserId}");
-
-            var newElement = Instantiate(_playerListElementPrefab, _playerListPanelView.ElementsRoot);
-            newElement.gameObject.SetActive(true);
-            newElement.Initialize(player.ActorNumber, player.NickName);
-            _playerElements.Add(newElement);
-        }
-        
-        _inventoryPanel.SetActive(false);
-        
-        _playerListPanelView.SetRoomName(PhotonNetwork.CurrentRoom.Name);
-        _playerListPanelView.gameObject.SetActive(true);
+        PhotonNetwork.CloseConnection(playerToKick);
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        base.OnPlayerEnteredRoom(newPlayer);
-        var newElement = Instantiate(_playerListElementPrefab, _playerListPanelView.ElementsRoot);
-        newElement.gameObject.SetActive(true);
-        newElement.Initialize(newPlayer.ActorNumber, newPlayer.NickName);
-        _playerElements.Add(newElement);
+        _playerListManager.OnPlayerEnteredRoom(newPlayer);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer)
     {
-        base.OnPlayerLeftRoom(otherPlayer);
-        var elementToDelete = _playerElements.FirstOrDefault(element => element.PlayerActorNumber == otherPlayer.ActorNumber);
-        if (elementToDelete)
-        {
-            Destroy(elementToDelete.gameObject);
-        }
+        _playerListManager.OnPlayerLeftRoom(otherPlayer);
     }
 
     private void OnStartGameButtonClicked()
