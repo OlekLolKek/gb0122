@@ -25,3 +25,14 @@ MonoBehaviour:
   _groundCheckRadius: 0.3
   _startHealth: 100
   _maxHealth: 100
+  _deathMessages:
+  - YOU ARE DEAD
+  - YOU DIED
+  - YOU DIEDED
+  - YOU ARE DED
+  - DED
+  - DEAD INSIDE
+  - POTRACHENO
+  - WASTED
+  - DEATH
+  - SMERT'

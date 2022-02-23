@@ -6,7 +6,7 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
     private readonly Controllers _controllers;
 
     public PlayerController(PlayerModel playerModel, InputModel inputModel,
-        PlayerData playerData)
+        PlayerData playerData, HudView hudView)
     {
         _controllers = new Controllers();
 
@@ -18,7 +18,8 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
                 inputModel);
             var crouchController = new CrouchController(inputModel, playerModel,
                 playerData);
-            var healthController = new HealthController(playerModel, playerData);
+            var healthController = new HealthController(playerModel, playerData,
+                hudView);
         
             _controllers.Add(moveController);
             _controllers.Add(jumpController);

@@ -18,6 +18,7 @@ public sealed class PlayerData : ScriptableObject, IData
     [SerializeField] private float _groundCheckRadius;
     [SerializeField] private float _startHealth;
     [SerializeField] private float _maxHealth;
+    [SerializeField] private string[] _deathMessages;
 
 
     public PlayerView PlayerPrefab => _playerPrefab;
@@ -31,4 +32,5 @@ public sealed class PlayerData : ScriptableObject, IData
     public float GroundCheckRadius => _groundCheckRadius;
     public float StartHealth => _startHealth;
     public float MaxHealth => _maxHealth;
+    public string[] DeathMessages => _deathMessages;
 }
