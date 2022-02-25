@@ -10,7 +10,17 @@ public sealed class WeaponFactory : IWeaponFactory
 
     public GameObject Create(IWeaponData data)
     {
-        var gun = PhotonNetwork.Instantiate(data.Prefab.name, Vector3.zero, Quaternion.identity);
+        GameObject gun;
+        
+        if (PhotonNetwork.IsConnected)
+        {
+            gun = PhotonNetwork.Instantiate(data.Prefab.name, Vector3.zero, Quaternion.identity);
+        }
+        else
+        { 
+            gun = Object.Instantiate(data.Prefab, Vector3.zero, Quaternion.identity).gameObject;
+        }
+        
         var view = gun.GetComponentInChildren<WeaponView>();
         BarrelTransform = view.Muzzle.transform;
         ScopeRailTransform = view.ScopeRail.transform;

@@ -18,5 +18,7 @@ MonoBehaviour:
   _weapon2: 50
   _weapon3: 51
   _changeMod: 102
-  _fire: 323
+  _singleFire: 323
+  _autoFire: 323
+  _reload: 114
   _safety: 98

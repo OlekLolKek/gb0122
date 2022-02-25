@@ -11,7 +11,9 @@
     public IInputKeyPress Weapon2 { get; }
     public IInputKeyPress Weapon3 { get; }
     public IInputKeyPress ChangeMod { get; }
-    public IInputKeyPress Fire { get; }
+    public IInputKeyPress SingleFire { get; }
+    public IInputKeyHold AutoFire { get; }
+    public IInputKeyPress Reload { get; }
     public IInputKeyPress Safety { get; }
 
 
@@ -28,7 +30,9 @@
         Weapon2 = new PCInputKeyDown(inputData.Weapon2);
         Weapon3 = new PCInputKeyDown(inputData.Weapon3);
         ChangeMod = new PCInputKeyDown(inputData.ChangeMod);
-        Fire = new PCInputKeyDown(inputData.Fire);
+        SingleFire = new PCInputKeyDown(inputData.SingleFire);
+        AutoFire = new PCInputKeyHold(inputData.AutoFire);
+        Reload = new PCInputKeyDown(inputData.Reload);
         Safety = new PCInputKeyDown(inputData.Safety);
     }
 }

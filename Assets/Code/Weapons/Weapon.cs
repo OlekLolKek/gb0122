@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using DG.Tweening;
 using Photon.Pun;
 using UniRx;
 using UnityEngine;
@@ -14,19 +15,22 @@ public sealed class Weapon : IWeapon
     private readonly LayerMask _hitLayerMask;
     private readonly Transform _cameraTransform;
     private readonly Transform _baseBarrel;
+    private readonly HudView _hudView;
     private readonly Camera _camera;
-    private readonly Vector3 _position;
-    private readonly Quaternion _startRotation;
 
     private Vector3 _newWeaponRotation;
     private Vector3 _newWeaponRotationVelocity;
-    
+
     private Vector3 _targetWeaponRotation;
     private Vector3 _targetWeaponRotationVelocity;
     private float _deltaTime;
+    private int _ammo;
+    private bool _isReloading;
+    private bool _isReadyToShoot = true;
 
     private readonly float _tracerFadeMultiplier;
     private readonly float _maxShotDistance;
+    private IDisposable _reloadingRoutine;
 
     private const float COLOR_FADE_MULTIPLIER = 15.0f;
     private const float WEAPON_SWAY_AMOUNT = 0.75f;
@@ -43,16 +47,18 @@ public sealed class Weapon : IWeapon
     public float Damage { get; }
     public float ShootCooldown { get; set; }
     public float ReloadTime { get; set; }
-    public bool IsFullAuto { get; set; }
+    public int MaxAmmo { get; set; }
+    public bool IsFullAuto { get; set; } = true;
 
     public Weapon(IWeaponFactory factory, IWeaponData data,
-        CameraModel cameraModel, PlayerModel playerModel)
+        CameraModel cameraModel, PlayerModel playerModel, HudView hudView)
     {
         _playerView = playerModel.PlayerView;
-        _position = data.Position;
         _hitLayerMask = data.HitLayerMask;
         Damage = data.Damage;
         ShootCooldown = data.ShootCooldown;
+        ReloadTime = data.ReloadTime;
+        MaxAmmo = data.MaxAmmo;
         _tracerFadeMultiplier = data.TracerFadeMultiplier;
         _maxShotDistance = data.MaxShotDistance;
 
@@ -67,15 +73,18 @@ public sealed class Weapon : IWeapon
         _camera = cameraModel.Camera;
 
         Instance.transform.parent = _cameraTransform;
-        Instance.transform.localPosition = _position;
-
-        _startRotation = Instance.transform.localRotation;
-        _newWeaponRotation = Instance.transform.localRotation.eulerAngles;
+        Instance.transform.localPosition = data.Position;
         
+        _newWeaponRotation = Instance.transform.localRotation.eulerAngles;
 
         _tracerFactory = new TracerFactory(data);
+
+        _hudView = hudView;
             
         Deactivate();
+
+        _ammo = MaxAmmo;
+        _hudView.SetAmmo(_ammo, MaxAmmo);
     }
 
     public void Execute(float deltaTime)
@@ -85,7 +94,7 @@ public sealed class Weapon : IWeapon
 
     public void Fire()
     {
-        if (!IsActive) return;
+        if (!IsActive || !_isReadyToShoot || _isReloading || _ammo == 0) return;
 
         _tracerFactory.Create();
         var line = _tracerFactory.LineRenderer;
@@ -106,8 +115,45 @@ public sealed class Weapon : IWeapon
         AudioSource.Play();
 
         TweenLineWidth(line).ToObservable().Subscribe();
+        StartShootCooldown().ToObservable().Subscribe();
+
+        _ammo -= 1;
+        _hudView.SetAmmo(_ammo, MaxAmmo);
     }
-    
+
+    public void AutoFire()
+    {
+        if (IsFullAuto)
+        {
+            Fire();
+        }
+    }
+
+    public void Reload()
+    {
+        if (_isReloading)
+            return;
+        
+        _reloadingRoutine = StartReloading().ToObservable().Subscribe();
+    }
+
+    private IEnumerator StartReloading()
+    {
+        _isReloading = true;
+        var localEulerAngles = Instance.transform.localEulerAngles;
+        var startRotation = localEulerAngles;
+        startRotation.x = -1.0f;
+        localEulerAngles = startRotation;
+        Instance.transform.localEulerAngles = localEulerAngles;
+        Instance.transform.DOLocalRotate(new Vector3(-359, localEulerAngles.y), ReloadTime);
+        
+        yield return new WaitForSeconds(ReloadTime);
+        
+        _isReloading = false;
+        _ammo = MaxAmmo;
+        _hudView.SetAmmo(_ammo, MaxAmmo);
+    }
+
     private void TryDamage(RaycastHit hitInfo)
     {
         if (hitInfo.collider.TryGetComponent(out PlayerView playerView))
@@ -138,9 +184,16 @@ public sealed class Weapon : IWeapon
             Object.Destroy(line.gameObject);
     }
 
+    private IEnumerator StartShootCooldown()
+    {
+        _isReadyToShoot = false;
+        yield return new WaitForSeconds(ShootCooldown);
+        _isReadyToShoot = true;
+    }
+
     public void Rotate(float mouseX, float mouseY, float deltaTime)
     {
-        if (!IsActive)
+        if (!IsActive || _isReloading)
             return;
 
         _targetWeaponRotation.y += WEAPON_SWAY_AMOUNT *  mouseX;
@@ -155,7 +208,6 @@ public sealed class Weapon : IWeapon
             ref _newWeaponRotationVelocity, WEAPON_SWAY_SMOOTHING);
 
         Instance.transform.localRotation = Quaternion.Euler(_newWeaponRotation);
-
     }
 
     public void SetModdedValues(Transform barrel, AudioSource audioSource)
@@ -180,5 +232,10 @@ public sealed class Weapon : IWeapon
     {
         IsActive = false;
         Instance.SetActive(false);
+    }
+
+    public void Cleanup()
+    {
+        _reloadingRoutine?.Dispose();
     }
 }

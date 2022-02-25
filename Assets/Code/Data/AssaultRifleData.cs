@@ -15,7 +15,9 @@ public sealed class AssaultRifleData : ScriptableObject, IWeaponData
     [SerializeField] private float _maxShotDistance;
     [SerializeField] private float _tracerWidth;
     [SerializeField] private float _shootCooldown;
+    [SerializeField] private float _reloadTime;
     [SerializeField] private float _damage;
+    [SerializeField] private int _maxAmmo;
 
 
     public WeaponView Prefab => _prefab;
@@ -25,8 +27,10 @@ public sealed class AssaultRifleData : ScriptableObject, IWeaponData
     public Vector3 Position => _position;
     public string TracerName => _tracerName;
     public float ShootCooldown => _shootCooldown;
+    public float ReloadTime => _reloadTime;
     public float Damage => _damage;
     public float TracerWidth => _tracerWidth;
     public float TracerFadeMultiplier => _tracerFadeMultiplier;
     public float MaxShotDistance => _maxShotDistance;
+    public int MaxAmmo => _maxAmmo;
 }

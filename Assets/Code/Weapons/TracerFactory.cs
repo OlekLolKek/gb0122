@@ -17,7 +17,16 @@ public sealed class TracerFactory : IFactory
         
     public GameObject Create()
     {
-        GameObject = PhotonNetwork.Instantiate(_data.TracerPrefab.name, Vector3.zero, Quaternion.identity);
+        if (PhotonNetwork.IsConnected)
+        {
+            GameObject = PhotonNetwork.Instantiate(_data.TracerPrefab.name, Vector3.zero, Quaternion.identity);
+        }
+        else
+        {
+            GameObject = Object.Instantiate(_data.TracerPrefab, Vector3.zero, Quaternion.identity).gameObject;
+        }
+        
+        
         var view = GameObject.GetComponentInChildren<TracerView>();
         LineRenderer = view.LineRenderer;
             

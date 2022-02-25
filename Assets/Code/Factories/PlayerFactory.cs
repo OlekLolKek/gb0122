@@ -19,9 +19,19 @@ public sealed class PlayerFactory : IFactory
 
     public GameObject Create()
     {
-        var player = PhotonNetwork.Instantiate(_playerData.PlayerPrefab.name,
-            _playerData.SpawnPosition, Quaternion.identity);
-
+        GameObject player;
+        
+        if (PhotonNetwork.IsConnected)
+        {
+            player = PhotonNetwork.Instantiate(_playerData.PlayerPrefab.name,
+                _playerData.SpawnPosition, Quaternion.identity);
+        }
+        else
+        { 
+            player = Object.Instantiate(_playerData.PlayerPrefab,
+                _playerData.SpawnPosition, Quaternion.identity).gameObject;
+        }
+        
         player.name = $"Player {Random.Range(0, 1000)}";
 
         PlayerView = player.GetComponentInChildren<PlayerView>();

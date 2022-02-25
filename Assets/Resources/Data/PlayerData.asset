@@ -25,6 +25,7 @@ MonoBehaviour:
   _groundCheckRadius: 0.3
   _startHealth: 100
   _maxHealth: 100
+  _respawnTime: 3
   _deathMessages:
   - YOU ARE DEAD
   - YOU DIED

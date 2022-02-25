@@ -5,18 +5,20 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-public sealed class HealthController : ICleanable
+public sealed class HealthController : IExecutable, ICleanable
 {
     private readonly PlayerModel _playerModel;
     private readonly PlayerView _playerView;
     private readonly Renderer[] _renderers;
     private readonly HudView _hudView;
     private readonly float _maxHealth;
+    private readonly float _respawnTime;
     private readonly string[] _deathMessages;
 
     private float _health;
 
     private IDisposable _respawnCoroutine;
+    private float _deltaTime;
 
     public HealthController(PlayerModel playerModel, PlayerData playerData,
         HudView hudView)
@@ -25,6 +27,7 @@ public sealed class HealthController : ICleanable
         _playerView = playerModel.PlayerView;
         _maxHealth = playerData.MaxHealth;
         _health = playerData.StartHealth;
+        _respawnTime = playerData.RespawnTime;
         _deathMessages = playerData.DeathMessages;
         _hudView = hudView;
 
@@ -56,8 +59,14 @@ public sealed class HealthController : ICleanable
         _playerModel.Transform.position = new Vector3(25, 10, -25);
         _hudView.SetDead(true, _deathMessages[Random.Range(0, _deathMessages.Length)]);
         SwitchRenderers(false);
-        
-        yield return new WaitForSeconds(1);
+
+        var timer = _respawnTime;
+        while (timer > 0)
+        {
+            timer -= _deltaTime;
+            _hudView.SetTimer(timer);
+            yield return new WaitForEndOfFrame();
+        }
         
         SwitchRenderers(true);
         _hudView.SetDead(false, "");
@@ -76,5 +85,10 @@ public sealed class HealthController : ICleanable
     {
         _respawnCoroutine?.Dispose();
         _playerView.OnReceivedDamage -= ReceivedDamage;
+    }
+
+    public void Execute(float deltaTime)
+    {
+        _deltaTime = deltaTime;
     }
 }

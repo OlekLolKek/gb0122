@@ -23,5 +23,7 @@ MonoBehaviour:
   _tracerFadeMultiplier: 0.5
   _maxShotDistance: 100
   _tracerWidth: 0.05
-  _shootCooldown: 0.28
-  _damage: 33
+  _shootCooldown: 0.11
+  _reloadTime: 0.5
+  _damage: 25
+  _maxAmmo: 30

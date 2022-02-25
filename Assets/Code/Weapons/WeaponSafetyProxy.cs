@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public class WeaponSafetyProxy : IWeapon
+public sealed class WeaponSafetyProxy : IWeapon
 {
     private readonly IWeapon _weapon;
     private readonly AudioSource _audioSource;
@@ -28,6 +28,16 @@ public class WeaponSafetyProxy : IWeapon
         {
             _weapon.Fire();
         }
+    }
+
+    public void AutoFire()
+    {
+        _weapon.AutoFire();
+    }
+
+    public void Reload()
+    {
+        _weapon.Reload();
     }
 
     public void SwitchSafety()
@@ -64,5 +74,10 @@ public class WeaponSafetyProxy : IWeapon
     public void Execute(float deltaTime)
     {
         _weapon.Execute(deltaTime);
+    }
+
+    public void Cleanup()
+    {
+        _weapon.Cleanup();
     }
 }

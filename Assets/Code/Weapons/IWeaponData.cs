@@ -10,8 +10,10 @@ public interface IWeaponData : IData
     Vector3 Position { get; }
     string TracerName { get; }
     float ShootCooldown { get; }
+    float ReloadTime { get; }
     float Damage { get; }
     float TracerWidth { get; }
     float TracerFadeMultiplier { get; }
     float MaxShotDistance { get; }
+    int MaxAmmo { get; }
 }

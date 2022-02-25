@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 
 public abstract class WeaponModification : IWeapon
@@ -31,6 +32,16 @@ public abstract class WeaponModification : IWeapon
         _weapon.Fire();
     }
 
+    public void AutoFire()
+    {
+        _weapon.AutoFire();
+    }
+
+    public void Reload()
+    {
+        _weapon.Reload();
+    }
+
     public void Activate()
     {
         _weapon.Activate();
@@ -59,5 +70,10 @@ public abstract class WeaponModification : IWeapon
     public void Execute(float deltaTime)
     {
         _weapon.Execute(deltaTime);
+    }
+
+    public void Cleanup()
+    {
+        _weapon.Cleanup();
     }
 }

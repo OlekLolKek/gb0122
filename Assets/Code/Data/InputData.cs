@@ -10,7 +10,9 @@ public sealed class InputData : ScriptableObject, IData
     [SerializeField] private KeyCode _weapon2;
     [SerializeField] private KeyCode _weapon3;
     [SerializeField] private KeyCode _changeMod;
-    [SerializeField] private KeyCode _fire;
+    [SerializeField] private KeyCode _singleFire;
+    [SerializeField] private KeyCode _autoFire;
+    [SerializeField] private KeyCode _reload;
     [SerializeField] private KeyCode _safety;
 
     public KeyCode Crouch => _crouch;
@@ -19,6 +21,8 @@ public sealed class InputData : ScriptableObject, IData
     public KeyCode Weapon2 => _weapon2;
     public KeyCode Weapon3 => _weapon3;
     public KeyCode ChangeMod => _changeMod;
-    public KeyCode Fire => _fire;
+    public KeyCode SingleFire => _singleFire;
+    public KeyCode AutoFire => _autoFire;
+    public KeyCode Reload => _reload;
     public KeyCode Safety => _safety;
 }

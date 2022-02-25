@@ -52,6 +52,9 @@ public sealed class HudView : MonoBehaviour
 
     public void SetTimer(float timer)
     {
+        if (timer < 0.0f) 
+            timer = 0.0f;
+        
         _deathTimerText.text = $"{timer:F2}";
     }
 }

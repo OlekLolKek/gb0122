@@ -3,8 +3,10 @@
     private readonly IInputKeyPress _primary;
     private readonly IInputKeyPress _secondary;
     private readonly IInputKeyPress _melee;
-    private readonly IInputKeyPress _fire;
+    private readonly IInputKeyPress _singleFire;
+    private readonly IInputKeyHold _autoFire;
     private readonly IInputKeyPress _changeMod;
+    private readonly IInputKeyPress _reload;
     private readonly IInputKeyPress _switchSafety;
     private readonly IInputAxisChange _mouseXInput;
     private readonly IInputAxisChange _mouseYInput;
@@ -16,7 +18,7 @@
     private float _mouseY;
         
     public WeaponController(InputModel inputModel, WeaponData data,
-        CameraModel cameraModel, PlayerModel playerModel)
+        CameraModel cameraModel, PlayerModel playerModel, HudView hudView)
     {
         _inventory = new WeaponInventory();
         var weaponFactory = new WeaponFactory();
@@ -29,19 +31,23 @@
         _mouseXInput = inputModel.MouseX;
         _mouseYInput = inputModel.MouseY;
         _changeMod = inputModel.ChangeMod;
-        _fire = inputModel.Fire;
+        _singleFire = inputModel.SingleFire;
+        _autoFire = inputModel.AutoFire;
+        _reload = inputModel.Reload;
         _switchSafety = inputModel.Safety;
 
         _primary.OnKeyPressed += SelectPrimaryWeapon;
         _secondary.OnKeyPressed += SelectSecondaryWeapon;
         _melee.OnKeyPressed += SelectMeleeWeapon;
-        _fire.OnKeyPressed += Shoot;
+        _singleFire.OnKeyPressed += Shoot;
+        _autoFire.OnKeyHeld += AutoFire;
         _changeMod.OnKeyPressed += ChangeModification;
         _mouseXInput.OnAxisChanged += MouseXChange;
         _mouseYInput.OnAxisChanged += MouseYChange;
+        _reload.OnKeyPressed += Reload;
         _switchSafety.OnKeyPressed += SwitchSafety;
         
-        var weapon = new Weapon(weaponFactory, data.AssaultRifleData, cameraModel, playerModel);
+        var weapon = new Weapon(weaponFactory, data.AssaultRifleData, cameraModel, playerModel, hudView);
         var safetyFactory = new SafetyFactory(data.SafetyData);
         _arSafetyProxy = new WeaponSafetyProxy(weapon, safetyFactory);
         _inventory.AddWeapon(_arSafetyProxy);
@@ -62,12 +68,12 @@
     {
         _inventory.SwitchWeapons(0);
     }
-        
+
     private void SelectSecondaryWeapon()
     {
         _inventory.SwitchWeapons(1);
     }
-        
+
     private void SelectMeleeWeapon()
     {
         _inventory.SwitchWeapons(2);
@@ -88,6 +94,19 @@
         _inventory.ActiveWeapon.Fire();
     }
 
+    private void AutoFire(bool isKeyHeld)
+    {
+        if (isKeyHeld)
+        {
+            _inventory.ActiveWeapon.AutoFire();
+        }
+    }
+
+    private void Reload()
+    {
+        _inventory.ActiveWeapon.Reload();
+    }
+
     private void ChangeModification()
     {
         _modification.SwitchModifications(_inventory.ActiveWeapon);
@@ -103,10 +122,12 @@
         _primary.OnKeyPressed -= SelectPrimaryWeapon;
         _secondary.OnKeyPressed -= SelectSecondaryWeapon;
         _melee.OnKeyPressed -= SelectMeleeWeapon;
-        _fire.OnKeyPressed -= Shoot;
+        _singleFire.OnKeyPressed -= Shoot;
+        _autoFire.OnKeyHeld -= AutoFire;
         _changeMod.OnKeyPressed -= ChangeModification;
         _mouseXInput.OnAxisChanged -= MouseXChange;
         _mouseYInput.OnAxisChanged -= MouseYChange;
+        _reload.OnKeyPressed -= Reload;
         _switchSafety.OnKeyPressed -= SwitchSafety;
     }
 }
