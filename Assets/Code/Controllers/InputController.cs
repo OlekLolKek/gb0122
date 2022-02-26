@@ -16,11 +16,9 @@
         _inputs.Add(inputModel.Weapon1);
         _inputs.Add(inputModel.Weapon2);
         _inputs.Add(inputModel.Weapon3);
-        _inputs.Add(inputModel.ChangeMod);
         _inputs.Add(inputModel.SingleFire);
         _inputs.Add(inputModel.AutoFire);
         _inputs.Add(inputModel.Reload);
-        _inputs.Add(inputModel.Safety);
     }
 
     public void Execute(float deltaTime)
