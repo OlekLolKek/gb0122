@@ -8,7 +8,9 @@ public interface IWeaponData : IData
     Material TracerMaterial { get; }
     LayerMask HitLayerMask { get; }
     Vector3 Position { get; }
-    string TracerName { get; }
+    AudioClip ShotAudioClip { get; }
+    AudioClip EmptyAudioClip { get; }
+    AudioClip ReloadAudioClip { get; }
     float ShootCooldown { get; }
     float ReloadTime { get; }
     float Damage { get; }

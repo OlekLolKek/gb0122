@@ -19,6 +19,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 63
   _position: {x: 0.25, y: -0.38, z: 0.35}
+  _shotAudioClip: {fileID: 8300000, guid: 2203773368e4340d98c114f55c2dd7fd, type: 3}
+  _emptyAudioClip: {fileID: 8300000, guid: 2d9bc8ad56321f640902db6e2a2fc53a, type: 3}
+  _reloadAudioClip: {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
   _tracerName: Tracer
   _tracerFadeMultiplier: 0.5
   _maxShotDistance: 100

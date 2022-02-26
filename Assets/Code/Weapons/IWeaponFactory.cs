@@ -5,7 +5,7 @@ public interface IWeaponFactory
 {
     Transform BarrelTransform { get; }
     Transform ScopeRailTransform { get; }
-    AudioSource AudioSource { get; }
-        
+    AudioSource ShotAudioSource { get; }
+
     GameObject Create(IWeaponData data);
 }

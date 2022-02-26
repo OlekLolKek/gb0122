@@ -18,6 +18,10 @@ public sealed class Weapon : IWeapon
     private readonly HudView _hudView;
     private readonly Camera _camera;
 
+    private readonly AudioClip _shotAudioClip;
+    private readonly AudioClip _emptyAudioClip;
+    private readonly AudioClip _reloadAudioClip;
+
     private Vector3 _newWeaponRotation;
     private Vector3 _newWeaponRotationVelocity;
 
@@ -42,7 +46,7 @@ public sealed class Weapon : IWeapon
     public GameObject Instance { get; }
     public Transform ScopeRail { get; private set; }
     public Transform Barrel { get; private set; }
-    public AudioSource AudioSource { get; private set; }
+    private AudioSource AudioSource { get; set; }
     public bool IsActive { get; private set; }
     public float Damage { get; }
     public float ShootCooldown { get; set; }
@@ -62,11 +66,15 @@ public sealed class Weapon : IWeapon
         _tracerFadeMultiplier = data.TracerFadeMultiplier;
         _maxShotDistance = data.MaxShotDistance;
 
+        _shotAudioClip = data.ShotAudioClip;
+        _emptyAudioClip = data.EmptyAudioClip;
+        _reloadAudioClip = data.ReloadAudioClip;
+
         Instance = factory.Create(data);
         Barrel = factory.BarrelTransform;
         _baseBarrel = Barrel;
         ScopeRail = factory.ScopeRailTransform;
-        AudioSource = factory.AudioSource;
+        AudioSource = factory.ShotAudioSource;
         _baseAudioSource = AudioSource;
 
         _cameraTransform = cameraModel.CameraTransform;
@@ -94,8 +102,30 @@ public sealed class Weapon : IWeapon
 
     public void Fire()
     {
-        if (!IsActive || !_isReadyToShoot || _isReloading || _ammo == 0) return;
+        if (!IsActive || !_isReadyToShoot || _isReloading) return;
 
+        if (_ammo <= 0)
+        {
+            AudioSource.clip = _emptyAudioClip;
+            AudioSource.Play();
+            return;
+        }
+        
+
+        var line = CreateTracer();
+
+        AudioSource.clip = _shotAudioClip;
+        AudioSource.Play();
+
+        TweenLineWidth(line).ToObservable().Subscribe();
+        StartShootCooldown().ToObservable().Subscribe();
+
+        _ammo -= 1;
+        _hudView.SetAmmo(_ammo, MaxAmmo);
+    }
+
+    private LineRenderer CreateTracer()
+    {
         _tracerFactory.Create();
         var line = _tracerFactory.LineRenderer;
 
@@ -112,17 +142,14 @@ public sealed class Weapon : IWeapon
             line.SetPosition(1, _cameraTransform.localPosition + _cameraTransform.forward * _maxShotDistance);
         }
 
-        AudioSource.Play();
-
-        TweenLineWidth(line).ToObservable().Subscribe();
-        StartShootCooldown().ToObservable().Subscribe();
-
-        _ammo -= 1;
-        _hudView.SetAmmo(_ammo, MaxAmmo);
+        return line;
     }
 
     public void AutoFire()
     {
+        if (_ammo <= 0) 
+            return;
+        
         if (IsFullAuto)
         {
             Fire();
@@ -140,18 +167,26 @@ public sealed class Weapon : IWeapon
     private IEnumerator StartReloading()
     {
         _isReloading = true;
-        var localEulerAngles = Instance.transform.localEulerAngles;
-        var startRotation = localEulerAngles;
-        startRotation.x = -1.0f;
-        localEulerAngles = startRotation;
-        Instance.transform.localEulerAngles = localEulerAngles;
-        Instance.transform.DOLocalRotate(new Vector3(-359, localEulerAngles.y), ReloadTime);
+        SpinWeapon();
+
+        AudioSource.clip = _reloadAudioClip;
+        AudioSource.Play();
         
         yield return new WaitForSeconds(ReloadTime);
         
         _isReloading = false;
         _ammo = MaxAmmo;
         _hudView.SetAmmo(_ammo, MaxAmmo);
+    }
+
+    private void SpinWeapon()
+    {
+        var localEulerAngles = Instance.transform.localEulerAngles;
+        var startRotation = localEulerAngles;
+        startRotation.x = -1.0f;
+        localEulerAngles = startRotation;
+        Instance.transform.localEulerAngles = localEulerAngles;
+        Instance.transform.DOLocalRotate(new Vector3(-359, localEulerAngles.y), ReloadTime);
     }
 
     private void TryDamage(RaycastHit hitInfo)
