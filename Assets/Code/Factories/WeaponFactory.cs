@@ -7,6 +7,8 @@ public sealed class WeaponFactory : IWeaponFactory
     public Transform BarrelTransform { get; private set; }
     public Transform ScopeRailTransform { get; private set; }
     public AudioSource ShotAudioSource { get; private set; }
+    public AudioSource EmptyClickAudioSource { get; private set; }
+    public AudioSource ReloadAudioSource { get; private set; }
 
     public GameObject Create(IWeaponData data)
     {
@@ -25,6 +27,8 @@ public sealed class WeaponFactory : IWeaponFactory
         BarrelTransform = view.Muzzle.transform;
         ScopeRailTransform = view.ScopeRail.transform;
         ShotAudioSource = view.ShotAudioSource;
+        EmptyClickAudioSource = view.EmptyClickAudioSource;
+        ReloadAudioSource = view.ReloadAudioSource;
 
         return gun.gameObject;
     }

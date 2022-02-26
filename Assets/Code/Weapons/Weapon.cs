@@ -10,17 +10,15 @@ using Object = UnityEngine.Object;
 public sealed class Weapon : IWeapon
 {
     private readonly PlayerView _playerView;
-    private readonly AudioSource _baseAudioSource;
     private readonly TracerFactory _tracerFactory;
     private readonly LayerMask _hitLayerMask;
     private readonly Transform _cameraTransform;
-    private readonly Transform _baseBarrel;
     private readonly HudView _hudView;
     private readonly Camera _camera;
 
-    private readonly AudioClip _shotAudioClip;
-    private readonly AudioClip _emptyAudioClip;
-    private readonly AudioClip _reloadAudioClip;
+    private readonly AudioSource _shotAudioSource;
+    private readonly AudioSource _emptyClickAudioSource;
+    private readonly AudioSource _reloadAudioSource;
 
     private Vector3 _newWeaponRotation;
     private Vector3 _newWeaponRotationVelocity;
@@ -46,7 +44,6 @@ public sealed class Weapon : IWeapon
     public GameObject Instance { get; }
     public Transform ScopeRail { get; private set; }
     public Transform Barrel { get; private set; }
-    private AudioSource AudioSource { get; set; }
     public bool IsActive { get; private set; }
     public float Damage { get; }
     public float ShootCooldown { get; set; }
@@ -66,16 +63,12 @@ public sealed class Weapon : IWeapon
         _tracerFadeMultiplier = data.TracerFadeMultiplier;
         _maxShotDistance = data.MaxShotDistance;
 
-        _shotAudioClip = data.ShotAudioClip;
-        _emptyAudioClip = data.EmptyAudioClip;
-        _reloadAudioClip = data.ReloadAudioClip;
-
         Instance = factory.Create(data);
         Barrel = factory.BarrelTransform;
-        _baseBarrel = Barrel;
         ScopeRail = factory.ScopeRailTransform;
-        AudioSource = factory.ShotAudioSource;
-        _baseAudioSource = AudioSource;
+        _shotAudioSource = factory.ShotAudioSource;
+        _emptyClickAudioSource = factory.EmptyClickAudioSource;
+        _reloadAudioSource = factory.ReloadAudioSource;
 
         _cameraTransform = cameraModel.CameraTransform;
         _camera = cameraModel.Camera;
@@ -106,16 +99,14 @@ public sealed class Weapon : IWeapon
 
         if (_ammo <= 0)
         {
-            AudioSource.clip = _emptyAudioClip;
-            AudioSource.Play();
+            _emptyClickAudioSource.Play();
             return;
         }
         
 
         var line = CreateTracer();
 
-        AudioSource.clip = _shotAudioClip;
-        AudioSource.Play();
+        _shotAudioSource.Play();
 
         TweenLineWidth(line).ToObservable().Subscribe();
         StartShootCooldown().ToObservable().Subscribe();
@@ -169,8 +160,7 @@ public sealed class Weapon : IWeapon
         _isReloading = true;
         SpinWeapon();
 
-        AudioSource.clip = _reloadAudioClip;
-        AudioSource.Play();
+        _reloadAudioSource.Play();
         
         yield return new WaitForSeconds(ReloadTime);
         
@@ -245,18 +235,6 @@ public sealed class Weapon : IWeapon
         Instance.transform.localRotation = Quaternion.Euler(_newWeaponRotation);
     }
 
-    public void SetModdedValues(Transform barrel, AudioSource audioSource)
-    {
-        Barrel = barrel;
-        AudioSource = audioSource;
-    }
-
-    public void SetDefaultValues()
-    {
-        Barrel = _baseBarrel;
-        AudioSource = _baseAudioSource;
-    }
-        
     public void Activate()
     {
         IsActive = true;

@@ -38,6 +38,7 @@
         _reload.OnKeyPressed += Reload;
 
         var weapon = new Weapon(weaponFactory, data.AssaultRifleData, cameraModel, playerModel, hudView);
+        _inventory.AddWeapon(weapon);
     }
 
     public void Execute(float deltaTime)

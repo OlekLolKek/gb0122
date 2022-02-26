@@ -11,6 +11,4 @@ public interface IWeapon : IExecutable, ICleanable
     void Activate();
     void Deactivate();
     void Rotate(float mouseX, float mouseY, float deltaTime);
-    void SetModdedValues(Transform barrel, AudioSource audioSource);
-    void SetDefaultValues();
 }
