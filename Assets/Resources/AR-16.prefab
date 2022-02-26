@@ -271,6 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7f6e05658db4ef1a0e60fd6262b0dee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _photonView: {fileID: 311383965198796407}
   _shotAudioSource: {fileID: 1437802924}
   _emptyClickAudioSource: {fileID: 462880361254172759}
   _reloadAudioSource: {fileID: 7982513215235942152}

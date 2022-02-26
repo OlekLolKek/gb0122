@@ -4,6 +4,7 @@ using UnityEngine;
 
 public sealed class WeaponFactory : IWeaponFactory
 {
+    public WeaponView WeaponView { get; private set; }
     public Transform BarrelTransform { get; private set; }
     public Transform ScopeRailTransform { get; private set; }
     public AudioSource ShotAudioSource { get; private set; }
@@ -23,12 +24,12 @@ public sealed class WeaponFactory : IWeaponFactory
             gun = Object.Instantiate(data.Prefab, Vector3.zero, Quaternion.identity).gameObject;
         }
         
-        var view = gun.GetComponentInChildren<WeaponView>();
-        BarrelTransform = view.Muzzle.transform;
-        ScopeRailTransform = view.ScopeRail.transform;
-        ShotAudioSource = view.ShotAudioSource;
-        EmptyClickAudioSource = view.EmptyClickAudioSource;
-        ReloadAudioSource = view.ReloadAudioSource;
+        WeaponView = gun.GetComponentInChildren<WeaponView>();
+        BarrelTransform = WeaponView.Muzzle.transform;
+        ScopeRailTransform = WeaponView.ScopeRail.transform;
+        ShotAudioSource = WeaponView.ShotAudioSource;
+        EmptyClickAudioSource = WeaponView.EmptyClickAudioSource;
+        ReloadAudioSource = WeaponView.ReloadAudioSource;
 
         return gun.gameObject;
     }

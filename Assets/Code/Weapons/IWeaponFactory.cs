@@ -3,6 +3,7 @@
 
 public interface IWeaponFactory
 {
+    public WeaponView WeaponView { get; }
     Transform BarrelTransform { get; }
     Transform ScopeRailTransform { get; }
     AudioSource ShotAudioSource { get; }

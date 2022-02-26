@@ -9,16 +9,13 @@ using Object = UnityEngine.Object;
 
 public sealed class Weapon : IWeapon
 {
+    private readonly WeaponView _weaponView;
     private readonly PlayerView _playerView;
     private readonly TracerFactory _tracerFactory;
     private readonly LayerMask _hitLayerMask;
     private readonly Transform _cameraTransform;
     private readonly HudView _hudView;
     private readonly Camera _camera;
-
-    private readonly AudioSource _shotAudioSource;
-    private readonly AudioSource _emptyClickAudioSource;
-    private readonly AudioSource _reloadAudioSource;
 
     private Vector3 _newWeaponRotation;
     private Vector3 _newWeaponRotationVelocity;
@@ -64,11 +61,9 @@ public sealed class Weapon : IWeapon
         _maxShotDistance = data.MaxShotDistance;
 
         Instance = factory.Create(data);
+        _weaponView = factory.WeaponView;
         Barrel = factory.BarrelTransform;
         ScopeRail = factory.ScopeRailTransform;
-        _shotAudioSource = factory.ShotAudioSource;
-        _emptyClickAudioSource = factory.EmptyClickAudioSource;
-        _reloadAudioSource = factory.ReloadAudioSource;
 
         _cameraTransform = cameraModel.CameraTransform;
         _camera = cameraModel.Camera;
@@ -99,14 +94,14 @@ public sealed class Weapon : IWeapon
 
         if (_ammo <= 0)
         {
-            _emptyClickAudioSource.Play();
+            _weaponView.PlayEmptyClickAudio();
             return;
         }
         
 
         var line = CreateTracer();
 
-        _shotAudioSource.Play();
+        _weaponView.PlayShotAudio();
 
         TweenLineWidth(line).ToObservable().Subscribe();
         StartShootCooldown().ToObservable().Subscribe();
@@ -160,7 +155,7 @@ public sealed class Weapon : IWeapon
         _isReloading = true;
         SpinWeapon();
 
-        _reloadAudioSource.Play();
+        _weaponView.PlayReloadAudio();
         
         yield return new WaitForSeconds(ReloadTime);
         

@@ -28,5 +28,5 @@ MonoBehaviour:
   _tracerWidth: 0.05
   _shootCooldown: 0.11
   _reloadTime: 0.5
-  _damage: 25
+  _damage: 18
   _maxAmmo: 30

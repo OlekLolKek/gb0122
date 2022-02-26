@@ -23,7 +23,7 @@ MonoBehaviour:
     m_Bits: 0
   _cameraName: Camera
   _weaponCameraName: WeaponCamera
-  _fov: 80
+  _fov: 85
   _clippingPlaneFar: 500
   _clippingPlaneNear: 0.05
   _sensitivity: 1
