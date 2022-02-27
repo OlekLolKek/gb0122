@@ -39,7 +39,6 @@ public sealed class Weapon : IWeapon
     private const float SWAY_CLAMP_Y = 4.0f;
 
     public GameObject Instance { get; }
-    public Transform ScopeRail { get; private set; }
     public Transform Barrel { get; private set; }
     public bool IsActive { get; private set; }
     public float Damage { get; }
@@ -62,8 +61,6 @@ public sealed class Weapon : IWeapon
 
         Instance = factory.Create(data);
         _weaponView = factory.WeaponView;
-        Barrel = factory.BarrelTransform;
-        ScopeRail = factory.ScopeRailTransform;
 
         _cameraTransform = cameraModel.CameraTransform;
         _camera = cameraModel.Camera;

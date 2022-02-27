@@ -10,8 +10,7 @@ public sealed class WeaponView : MonoBehaviour
     [SerializeField] private AudioSource _reloadAudioSource;
     [SerializeField] private GameObject _scopeRail;
     [SerializeField] private GameObject _muzzle;
-
-    public PhotonView PhotonView => _photonView;
+    
     public AudioSource ShotAudioSource => _shotAudioSource;
     public AudioSource EmptyClickAudioSource => _emptyClickAudioSource;
     public AudioSource ReloadAudioSource => _reloadAudioSource;
