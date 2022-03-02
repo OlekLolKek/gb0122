@@ -82,9 +82,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 125
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -92,10 +92,19 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
+      time: 0.005
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -3.8657146
+      outSlope: -3.8657146
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.26247638
+    - serializedVersion: 3
+      time: 0.2802751
+      value: 0.3062662
+      inSlope: -1.0050253
+      outSlope: -1.0050253
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
@@ -107,8 +116,8 @@ AudioSource:
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0.23256387
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -275,7 +284,6 @@ MonoBehaviour:
   _shotAudioSource: {fileID: 1437802924}
   _emptyClickAudioSource: {fileID: 462880361254172759}
   _reloadAudioSource: {fileID: 7982513215235942152}
-  _scopeRail: {fileID: 738052469}
   _muzzle: {fileID: 1437802922}
 --- !u!114 &311383965198796407
 MonoBehaviour:
@@ -901,7 +909,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 9158afb6966d445db9caf1dccf7acbcc, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.65
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -910,9 +918,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 125
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -1404,7 +1412,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 2d9bc8ad56321f640902db6e2a2fc53a, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.65
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1413,9 +1421,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 125
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0

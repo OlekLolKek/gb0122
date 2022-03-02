@@ -9,10 +9,12 @@ public sealed class Data : ScriptableObject, IData
     [SerializeField] private string _playerDataPath;
     [SerializeField] private string _cameraDataPath;
     [SerializeField] private string _inputDataPath;
+    [SerializeField] private string _botDataPath;
 
     private CameraData _cameraData;
     private PlayerData _playerData;
     private InputData _inputData;
+    private BotData _botData;
         
         
     public PlayerData PlayerData
@@ -53,6 +55,19 @@ public sealed class Data : ScriptableObject, IData
             return _inputData;
         }
     }
+    public BotData BotData
+    {
+        get
+        {
+            if (_botData == null)
+            {
+                _botData = Load<BotData>(_dataRootPath + _botDataPath);
+            }
+
+            return _botData;
+        }
+    }
+
     private T Load<T>(string resourcesPath) where T : Object
     {
         return Resources.Load<T>(Path.ChangeExtension(resourcesPath, null));

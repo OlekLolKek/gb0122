@@ -32,11 +32,14 @@ public sealed class GameController : MonoBehaviour
 
         var cursorController = new CursorController();
 
+        var aiController = new AiController(_data.BotData);
+
         _controllers.Add(inputController);
         _controllers.Add(playerController);
         _controllers.Add(cameraController);
         _controllers.Add(weaponController);
         _controllers.Add(cursorController);
+        _controllers.Add(aiController);
 
         _controllers.Initialize();
     }

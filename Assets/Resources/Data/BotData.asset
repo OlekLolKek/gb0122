@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acee067ab9604b409d09a3963d292797, type: 3}
-  m_Name: Data
+  m_Script: {fileID: 11500000, guid: d30bf75079584d9fac88c1edd6c6b339, type: 3}
+  m_Name: BotData
   m_EditorClassIdentifier: 
-  _dataRootPath: Data/
-  _playerDataPath: PlayerData
-  _cameraDataPath: CameraData
-  _inputDataPath: InputData
+  _botPrefab: {fileID: 8186069092212808062, guid: fa7156704a11ff64d83702e8f7562447, type: 3}
+  _botRespawnTime: 3
+  _botHealth: 75
+  _botDamage: 10
+  _botAmount: 8

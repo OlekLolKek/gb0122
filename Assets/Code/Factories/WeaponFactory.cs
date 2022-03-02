@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class WeaponFactory : IWeaponFactory
 {
     public WeaponView WeaponView { get; private set; }
+    public GameObject Barrel { get; private set; }
 
     public GameObject Create(IWeaponData data)
     {
@@ -20,6 +21,7 @@ public sealed class WeaponFactory : IWeaponFactory
         }
         
         WeaponView = gun.GetComponentInChildren<WeaponView>();
+        Barrel = WeaponView.Muzzle;
 
         return gun.gameObject;
     }

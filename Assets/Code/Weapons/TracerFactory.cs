@@ -8,7 +8,7 @@ public sealed class TracerFactory : IFactory
     public GameObject GameObject { get; private set; }
     public LineRenderer LineRenderer { get; private set; }
 
-    private IWeaponData _data;
+    private readonly IWeaponData _data;
         
     public TracerFactory(IWeaponData data)
     {

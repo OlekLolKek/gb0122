@@ -61,19 +61,20 @@ public sealed class Weapon : IWeapon
 
         Instance = factory.Create(data);
         _weaponView = factory.WeaponView;
+        Barrel = factory.Barrel.transform;
 
         _cameraTransform = cameraModel.CameraTransform;
         _camera = cameraModel.Camera;
 
         Instance.transform.parent = _cameraTransform;
         Instance.transform.localPosition = data.Position;
-        
+
         _newWeaponRotation = Instance.transform.localRotation.eulerAngles;
 
         _tracerFactory = new TracerFactory(data);
 
         _hudView = hudView;
-            
+
         Deactivate();
 
         _ammo = MaxAmmo;
@@ -94,7 +95,7 @@ public sealed class Weapon : IWeapon
             _weaponView.PlayEmptyClickAudio();
             return;
         }
-        
+
 
         var line = CreateTracer();
 
@@ -130,9 +131,9 @@ public sealed class Weapon : IWeapon
 
     public void AutoFire()
     {
-        if (_ammo <= 0) 
+        if (_ammo <= 0)
             return;
-        
+
         if (IsFullAuto)
         {
             Fire();
@@ -143,7 +144,7 @@ public sealed class Weapon : IWeapon
     {
         if (_isReloading)
             return;
-        
+
         _reloadingRoutine = StartReloading().ToObservable().Subscribe();
     }
 
@@ -153,9 +154,9 @@ public sealed class Weapon : IWeapon
         SpinWeapon();
 
         _weaponView.PlayReloadAudio();
-        
+
         yield return new WaitForSeconds(ReloadTime);
-        
+
         _isReloading = false;
         _ammo = MaxAmmo;
         _hudView.SetAmmo(_ammo, MaxAmmo);
@@ -173,9 +174,16 @@ public sealed class Weapon : IWeapon
 
     private void TryDamage(RaycastHit hitInfo)
     {
-        if (hitInfo.collider.TryGetComponent(out PlayerView playerView))
+        if (hitInfo.collider.TryGetComponent(out IDamageable enemy))
         {
-            _playerView.SendPlayerToDamage(playerView.OwnerActorNumber, Damage);
+            if (enemy.CheckIfMine())
+            {
+                enemy.Damage(Damage);
+            }
+            else
+            {
+                _playerView.SendIdToDamage(enemy.ID, Damage);
+            }
         }
     }
 
@@ -213,7 +221,7 @@ public sealed class Weapon : IWeapon
         if (!IsActive || _isReloading)
             return;
 
-        _targetWeaponRotation.y += WEAPON_SWAY_AMOUNT *  mouseX;
+        _targetWeaponRotation.y += WEAPON_SWAY_AMOUNT * mouseX;
         _targetWeaponRotation.x += WEAPON_SWAY_AMOUNT * -mouseY;
 
         _targetWeaponRotation.x = Mathf.Clamp(_targetWeaponRotation.x, -SWAY_CLAMP_X, SWAY_CLAMP_X);

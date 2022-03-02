@@ -43,8 +43,8 @@ GameObject:
   - component: {fileID: 2446654402756951895}
   - component: {fileID: 3925682032940776838}
   - component: {fileID: 2446654402756951890}
-  - component: {fileID: 7445710555537451111}
   - component: {fileID: 3168184026959708657}
+  - component: {fileID: 7445710555537451111}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -152,6 +152,22 @@ MonoBehaviour:
   _groundCheck: {fileID: 4399800445170464413}
   _head: {fileID: 2446654401211577145}
   _health: 0
+--- !u!114 &3168184026959708657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2446654402756951893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 1
+  m_UseLocal: 1
 --- !u!114 &7445710555537451111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,22 +192,6 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &3168184026959708657
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2446654402756951893}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
-  m_SynchronizeScale: 1
-  m_UseLocal: 1
 --- !u!1 &4399800445170464413
 GameObject:
   m_ObjectHideFlags: 0

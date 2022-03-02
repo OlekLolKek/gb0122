@@ -55,6 +55,7 @@ public sealed class HealthController : IExecutable, ICleanable
         _health = _maxHealth;
         _hudView.SetHealth(_health);
         _playerView.SetHealth(_health);
+        _playerView.SetDead(true);
         _playerModel.CharacterController.enabled = false;
         _playerModel.Transform.position = new Vector3(25, 10, -25);
         _hudView.SetDead(true, _deathMessages[Random.Range(0, _deathMessages.Length)]);
@@ -69,6 +70,7 @@ public sealed class HealthController : IExecutable, ICleanable
         }
         
         SwitchRenderers(true);
+        _playerView.SetDead(false);
         _hudView.SetDead(false, "");
         _playerModel.CharacterController.enabled = true;
     }

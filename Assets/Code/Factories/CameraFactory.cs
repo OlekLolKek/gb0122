@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public class CameraFactory : IFactory
+public sealed class CameraFactory : IFactory
 {
     private readonly CameraData _cameraData;
     public Camera Camera { get; set; }
