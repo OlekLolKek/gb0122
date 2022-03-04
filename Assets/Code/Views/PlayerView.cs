@@ -22,6 +22,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     public PhotonView PhotonView => _photonView;
     public GameObject GroundCheck => _groundCheck;
     public GameObject Head => _head;
+    public GameObject Instance => gameObject;
     public int ID => _photonView.Owner.ActorNumber;
 
     private void Awake()

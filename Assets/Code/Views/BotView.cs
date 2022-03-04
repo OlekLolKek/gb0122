@@ -10,20 +10,20 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private Collider _collider;
     [SerializeField] private float _health;
-    
-    private Renderer[] _renderers;
-    private DamageableUnitsManager _manager;
 
-    public event Action<float> OnReceivedDamage = delegate {  };
-    
+    private Renderer[] _renderers;
     private bool _isDead;
 
+    public event Action<float> OnReceivedDamage = delegate {  };
+
+    public DamageableUnitsManager Manager { get; private set; }
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
+    public GameObject Instance => gameObject;
     public int ID { get; private set; }
 
     public void Awake()
     {
-        _manager = FindObjectOfType<DamageableUnitsManager>();
+        Manager = FindObjectOfType<DamageableUnitsManager>();
         _renderers = GetComponentsInChildren<Renderer>();
     }
 
@@ -44,7 +44,7 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
             SetDead(_isDead);
         }
     }
-    
+
     public void SetHealth(float health)
     {
         _health = health;
@@ -66,14 +66,14 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     [PunRPC]
     public void RpcSendIdToDamage(int idToDamage, float damage)
     {
-        var enemy = _manager.GetDamageable(idToDamage);
+        var enemy = Manager.GetDamageable(idToDamage);
         enemy?.Damage(damage);
     }
 
     public void SetId(int id)
     {
         ID = id;
-        _manager.Register(ID, this);
+        Manager.Register(ID, this);
     }
 
     public bool CheckIfMine()

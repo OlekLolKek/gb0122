@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _botPrefab: {fileID: 8186069092212808062, guid: fa7156704a11ff64d83702e8f7562447, type: 3}
   _botRespawnTime: 3
+  _botVision: 15
   _botHealth: 75
   _botDamage: 10
   _botAmount: 8

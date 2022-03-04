@@ -1,32 +1,37 @@
 using System;
 using System.Collections;
-using Photon.Pun;
 using UniRx;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 
-public sealed class BotController : IExecutable, ICleanable
+public sealed class BotController : IInitialization, IExecutable, ICleanable
 {
+    private readonly DamageableUnitsManager _damageableUnitsManager;
     private readonly BotSpawnPointView[] _spawnPoints;
     private readonly GameObject _instance;
     private readonly BotView _botView;
 
     private readonly float _respawnTime;
     private readonly float _maxHealth;
+    private readonly float _vision;
     private readonly float _damage;
-    private float _health;
 
+    private IDamageable[] _players;
+    private IDamageable _target;
     private IDisposable _respawnCoroutine;
 
     private float _deltaTime;
-    
+    private float _health;
+    private bool _isDead;
+
     public BotController(BotData botData, BotFactory botFactory, int id,
         BotSpawnPointView[] spawnPoints)
     {
         _respawnTime = botData.BotRespawnTime;
         _maxHealth = botData.BotHealth;
         _health = botData.BotHealth;
+        _vision = botData.BotVision;
         _damage = botData.BotDamage;
 
         _instance = botFactory.Create();
@@ -35,8 +40,14 @@ public sealed class BotController : IExecutable, ICleanable
         _botView.SetId(id);
         _botView.SetHealth(_health);
         _botView.OnReceivedDamage += OnBotDamaged;
+        _damageableUnitsManager = _botView.Manager;
 
         _spawnPoints = spawnPoints;
+    }
+
+    public void Initialize()
+    {
+        _players = _damageableUnitsManager.GetAllPlayers();
     }
 
     private (Vector3, Quaternion) GetRandomPosition()
@@ -56,24 +67,59 @@ public sealed class BotController : IExecutable, ICleanable
     public void Execute(float deltaTime)
     {
         _deltaTime = deltaTime;
+
+        if (!_isDead)
+        {
+            ProcessStates(deltaTime);
+        }
+    }
+
+    private void ProcessStates(float deltaTime)
+    {
+        if (_target == null ||
+            (_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
+            Mathf.Pow(_vision, 2))
+        {
+            FindTarget();
+        }
+        else
+        {
+            _botView.NavMeshAgent.SetDestination(_target.Instance.transform.position);
+        }
+    }
+
+    private void FindTarget()
+    {
+        foreach (var player in _players)
+        {
+            if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
+                Mathf.Pow(_vision, 2))
+            {
+                _target = player;
+                return;
+            }
+        }
+
+        _botView.NavMeshAgent.SetDestination(_botView.transform.position);
     }
 
     private void OnBotDamaged(float damage)
     {
         _health -= damage;
         _botView.SetHealth(_health);
-        
+
         if (_health <= 0.0f)
         {
             _respawnCoroutine = Respawn().ToObservable().Subscribe();
         }
     }
-    
+
     private IEnumerator Respawn()
     {
         _health = _maxHealth;
         _botView.SetHealth(_health);
-        _botView.SetDead(true);
+        _isDead = true;
+        _botView.SetDead(_isDead);
         _botView.NavMeshAgent.enabled = false;
 
         var (position, rotation) = GetRandomPosition();
@@ -83,15 +129,16 @@ public sealed class BotController : IExecutable, ICleanable
         transform.rotation = rotation;
 
         yield return new WaitForSeconds(_respawnTime);
-        
-        _botView.SetDead(false);
+
+        _isDead = false;
+        _botView.SetDead(_isDead);
         _botView.NavMeshAgent.enabled = true;
     }
 
     public void Cleanup()
     {
         _botView.OnReceivedDamage -= OnBotDamaged;
-        
+
         _respawnCoroutine?.Dispose();
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -16,5 +17,12 @@ public sealed class DamageableUnitsManager : MonoBehaviour
     public IDamageable GetDamageable(int id)
     {
         return _damageables.TryGetValue(id, out var damageable) ? damageable : null;
+    }
+
+    public IDamageable[] GetAllPlayers()
+    {
+        var players = new List<IDamageable>();
+        players.AddRange(_damageables.Values.Where(enemy => enemy is PlayerView));
+        return players.ToArray();
     }
 }
