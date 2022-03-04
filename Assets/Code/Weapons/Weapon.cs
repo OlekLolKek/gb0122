@@ -212,7 +212,14 @@ public sealed class Weapon : IWeapon
     private IEnumerator StartShootCooldown()
     {
         _isReadyToShoot = false;
-        yield return new WaitForSeconds(ShootCooldown);
+        
+        var timer = 0.0f;
+        while (timer < ShootCooldown)
+        {
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
         _isReadyToShoot = true;
     }
 
