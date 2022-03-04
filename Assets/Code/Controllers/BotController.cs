@@ -21,6 +21,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     private IDamageable _target;
     private IDisposable _respawnCoroutine;
 
+    private BotState _state;
     private float _deltaTime;
     private float _health;
     private bool _isDead;
@@ -50,7 +51,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     public void Initialize()
     {
     }
-    
+
     private void GetPlayers()
     {
         _players = _damageableUnitsManager.GetAllPlayers();
@@ -82,11 +83,29 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
     private void ProcessStates(float deltaTime)
     {
+        switch (_state)
+        {
+            case BotState.Idle:
+                Idle();
+                break;
+            case BotState.Following:
+                Following();
+                break;
+            case BotState.Attacking:
+                Attacking();
+                break;
+            case BotState.Dead:
+                break;
+        }
+    }
+
+    private void Following()
+    {
         if (_target == null ||
             (_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
             Mathf.Pow(_vision, 2))
         {
-            FindTarget();
+            _state = BotState.Idle;
         }
         else
         {
@@ -94,24 +113,27 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         }
     }
 
-    private void FindTarget()
+    private void Attacking()
+    {
+    }
+
+    private void Idle()
     {
         if (_players == null)
         {
             return;
         }
-        
+
         foreach (var player in _players)
         {
             if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
                 Mathf.Pow(_vision, 2))
             {
                 _target = player;
+                _state = BotState.Following;
                 return;
             }
         }
-
-        _botView.NavMeshAgent.SetDestination(_botView.transform.position);
     }
 
     private void OnBotDamaged(float damage)
@@ -129,8 +151,8 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     {
         _health = _maxHealth;
         _botView.SetHealth(_health);
-        _isDead = true;
-        _botView.SetDead(_isDead);
+        _state = BotState.Dead;
+        _botView.SetDead(true);
         _botView.NavMeshAgent.enabled = false;
 
         var (position, rotation) = GetRandomPosition();
@@ -141,8 +163,8 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
         yield return new WaitForSeconds(_respawnTime);
 
-        _isDead = false;
-        _botView.SetDead(_isDead);
+        _state = BotState.Idle;
+        _botView.SetDead(false);
         _botView.NavMeshAgent.enabled = true;
     }
 

@@ -13,8 +13,13 @@ MonoBehaviour:
   m_Name: BotData
   m_EditorClassIdentifier: 
   _botPrefab: {fileID: 8186069092212808062, guid: fa7156704a11ff64d83702e8f7562447, type: 3}
+  _botAttackSpreadMultiplier: 1.5
+  _botMinAttackCooldown: 0.5
+  _botMaxAttackCooldown: 0.7
+  _botIdleDuration: 1.5
   _botRespawnTime: 3
-  _botVision: 15
+  _botAttackRange: 10
+  _botVision: 20
   _botHealth: 75
   _botDamage: 10
   _botAmount: 8

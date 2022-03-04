@@ -4,4 +4,5 @@ public enum BotState
     Idle = 1,
     Following = 2,
     Attacking = 3,
+    Dead,
 }
