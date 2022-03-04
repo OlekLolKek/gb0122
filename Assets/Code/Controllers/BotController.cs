@@ -41,11 +41,17 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         _botView.SetHealth(_health);
         _botView.OnReceivedDamage += OnBotDamaged;
         _damageableUnitsManager = _botView.Manager;
+        _damageableUnitsManager.OnPlayerAdded += GetPlayers;
+        GetPlayers();
 
         _spawnPoints = spawnPoints;
     }
 
     public void Initialize()
+    {
+    }
+    
+    private void GetPlayers()
     {
         _players = _damageableUnitsManager.GetAllPlayers();
     }
@@ -90,6 +96,11 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
     private void FindTarget()
     {
+        if (_players == null)
+        {
+            return;
+        }
+        
         foreach (var player in _players)
         {
             if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
@@ -137,6 +148,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
     public void Cleanup()
     {
+        _damageableUnitsManager.OnPlayerAdded -= GetPlayers;
         _botView.OnReceivedDamage -= OnBotDamaged;
 
         _respawnCoroutine?.Dispose();
