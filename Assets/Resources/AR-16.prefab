@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 2204968744206888694}
   - component: {fileID: 6675039023914300039}
   - component: {fileID: 311383965198796407}
+  - component: {fileID: 5994506627455925050}
   - component: {fileID: 272139168455752588}
   m_Layer: 6
   m_Name: AR-16
@@ -304,10 +305,24 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 5994506627455925050}
   - {fileID: 272139168455752588}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &5994506627455925050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403462578202070819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35144820bcc25444bb8f0fd767d9423e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SmoothingDelay: 5
 --- !u!114 &272139168455752588
 MonoBehaviour:
   m_ObjectHideFlags: 0

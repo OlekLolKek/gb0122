@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Photon.Pun;
+using UnityEngine;
 
 
 public sealed class GameController : MonoBehaviour
@@ -11,7 +12,7 @@ public sealed class GameController : MonoBehaviour
     private void Start()
     {
         _controllers = new Controllers();
-            
+
         var playerFactory = new PlayerFactory(_data.PlayerData);
         var cameraFactory = new CameraFactory(_data.CameraData);
 
@@ -20,26 +21,29 @@ public sealed class GameController : MonoBehaviour
         var cameraModel = new CameraModel(cameraFactory);
 
         var inputController = new InputController(inputModel);
-            
-        var playerController = new PlayerController(playerModel, inputModel, 
+
+        var playerController = new PlayerController(playerModel, inputModel,
             _data.PlayerData, _hudView);
-            
-        var cameraController = new CameraController(cameraModel, _data.CameraData, 
+
+        var cameraController = new CameraController(cameraModel, _data.CameraData,
             playerModel, inputModel);
 
-        var weaponController = new WeaponController(inputModel, _weaponData, 
+        var weaponController = new WeaponController(inputModel, _weaponData,
             cameraModel, playerModel, _hudView);
 
         var cursorController = new CursorController();
-
-        var aiController = new AiController(_data.BotData);
 
         _controllers.Add(inputController);
         _controllers.Add(playerController);
         _controllers.Add(cameraController);
         _controllers.Add(weaponController);
         _controllers.Add(cursorController);
-        _controllers.Add(aiController);
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            var aiController = new AiController(_data.BotData);
+            _controllers.Add(aiController);
+        }
 
         _controllers.Initialize();
     }
