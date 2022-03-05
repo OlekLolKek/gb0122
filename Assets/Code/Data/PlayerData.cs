@@ -20,6 +20,7 @@ public sealed class PlayerData : ScriptableObject, IData
     [SerializeField] private float _maxHealth;
     [SerializeField] private float _respawnTime;
     [SerializeField] private string[] _deathMessages;
+    [SerializeField] private int _playerLayerId;
 
 
     public PlayerView PlayerPrefab => _playerPrefab;
@@ -35,4 +36,5 @@ public sealed class PlayerData : ScriptableObject, IData
     public float MaxHealth => _maxHealth;
     public float RespawnTime => _respawnTime;
     public string[] DeathMessages => _deathMessages;
+    public int PlayerLayerId => _playerLayerId;
 }

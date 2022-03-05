@@ -23,6 +23,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     public GameObject GroundCheck => _groundCheck;
     public GameObject Head => _head;
     public GameObject Instance => gameObject;
+    public bool IsDead => _isDead;
     public int ID => _photonView.Owner.ActorNumber;
 
     private void Awake()
@@ -59,6 +60,8 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     
     public void Damage(float damage)
     {
+        Debug.Log($"Trying to damage player {name}");
+        
         if (_photonView.IsMine)
             OnReceivedDamage.Invoke(damage);
     }

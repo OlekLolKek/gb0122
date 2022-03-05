@@ -17,7 +17,7 @@ MonoBehaviour:
   _tracerMaterial: {fileID: 2100000, guid: d1d92fd630f96164894af21994d2c3c7, type: 2}
   _hitLayerMask:
     serializedVersion: 2
-    m_Bits: 63
+    m_Bits: 401
   _position: {x: 0.25, y: -0.38, z: 0.35}
   _shotAudioClip: {fileID: 8300000, guid: 2203773368e4340d98c114f55c2dd7fd, type: 3}
   _emptyAudioClip: {fileID: 8300000, guid: 2d9bc8ad56321f640902db6e2a2fc53a, type: 3}

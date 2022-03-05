@@ -8,13 +8,13 @@ public sealed class AiController : IInitialization, IExecutable, ICleanable
     private readonly BotSpawnPointView[] _spawnPositions;
     private readonly BotFactory _botFactory;
 
-    public AiController(BotData botData)
+    public AiController(BotData botData, IWeaponData weaponData)
     {
         _spawnPositions = Object.FindObjectsOfType<BotSpawnPointView>();
         
         _botFactory = new BotFactory(botData, _spawnPositions);
 
-        CreateBots(botData);
+        CreateBots(botData, weaponData);
     }
 
     public void Initialize()
@@ -25,12 +25,12 @@ public sealed class AiController : IInitialization, IExecutable, ICleanable
         }
     }
 
-    private void CreateBots(BotData botData)
+    private void CreateBots(BotData botData, IWeaponData weaponData)
     {
         for (var i = 0; i < botData.BotAmount; ++i)
         {
             _botControllers.Add(new BotController(botData, _botFactory, int.MinValue + i,
-                _spawnPositions));
+                _spawnPositions, weaponData));
         }
     }
 

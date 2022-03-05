@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using Photon.Pun;
 using UniRx;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 
@@ -9,10 +11,18 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 {
     private readonly DamageableUnitsManager _damageableUnitsManager;
     private readonly BotSpawnPointView[] _spawnPoints;
+    private readonly TracerFactory _tracerFactory;
     private readonly GameObject _instance;
+    private readonly LayerMask _hitLayerMask;
     private readonly BotView _botView;
 
+    private readonly float _attackSpreadMultiplier;
+    private readonly float _tracerFadeMultiplier;
+    private readonly float _maxAttackCooldown;
+    private readonly float _minAttackCooldown;
+    private readonly float _idleDuration;
     private readonly float _respawnTime;
+    private readonly float _attackRange;
     private readonly float _maxHealth;
     private readonly float _vision;
     private readonly float _damage;
@@ -21,15 +31,22 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     private IDamageable _target;
     private IDisposable _respawnCoroutine;
 
-    private BotState _state;
+    private BotState _state = BotState.Idle;
+    private bool _isReadyToShoot = true;
     private float _deltaTime;
     private float _health;
-    private bool _isDead;
+
+    private const float COLOR_FADE_MULTIPLIER = 15.0f;
 
     public BotController(BotData botData, BotFactory botFactory, int id,
-        BotSpawnPointView[] spawnPoints)
+        BotSpawnPointView[] spawnPoints, IWeaponData weaponData)
     {
+        _attackSpreadMultiplier = botData.BotAttackSpreadMultiplier;
+        _maxAttackCooldown = botData.BotMaxAttackCooldown;
+        _minAttackCooldown = botData.BotMinAttackCooldown;
+        _idleDuration = botData.BotIdleDuration;
         _respawnTime = botData.BotRespawnTime;
+        _attackRange = botData.BotAttackRange;
         _maxHealth = botData.BotHealth;
         _health = botData.BotHealth;
         _vision = botData.BotVision;
@@ -46,6 +63,10 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         GetPlayers();
 
         _spawnPoints = spawnPoints;
+        
+        _tracerFactory = new TracerFactory(weaponData);
+        _tracerFadeMultiplier = weaponData.TracerFadeMultiplier;
+        _hitLayerMask = botData.WeaponHitMask;
     }
 
     public void Initialize()
@@ -75,10 +96,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     {
         _deltaTime = deltaTime;
 
-        if (!_isDead)
-        {
-            ProcessStates(deltaTime);
-        }
+        ProcessStates(deltaTime);
     }
 
     private void ProcessStates(float deltaTime)
@@ -99,24 +117,6 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         }
     }
 
-    private void Following()
-    {
-        if (_target == null ||
-            (_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
-            Mathf.Pow(_vision, 2))
-        {
-            _state = BotState.Idle;
-        }
-        else
-        {
-            _botView.NavMeshAgent.SetDestination(_target.Instance.transform.position);
-        }
-    }
-
-    private void Attacking()
-    {
-    }
-
     private void Idle()
     {
         if (_players == null)
@@ -134,6 +134,143 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
                 return;
             }
         }
+    }
+
+    private void Following()
+    {
+        if (_target == null || _target.IsDead ||
+            (_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
+            Mathf.Pow(_vision, 2))
+        {
+            _state = BotState.Idle;
+        }
+        else
+        {
+            if ((_target.Instance.transform.position - _instance.transform.position).sqrMagnitude <=
+                Mathf.Pow(_attackRange, 2))
+            {
+                _state = BotState.Attacking;
+            }
+            else
+            {
+                _botView.NavMeshAgent.SetDestination(_target.Instance.transform.position);
+            }
+        }
+    }
+
+    private void Attacking()
+    {
+        if (_target == null || _target.IsDead ||
+            (_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
+            Mathf.Pow(_vision, 2))
+        {
+            _state = BotState.Idle;
+        }
+        else
+        {
+            if ((_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
+                Mathf.Pow(_attackRange, 2))
+            {
+                _state = BotState.Following;
+            }
+            else
+            {
+                _botView.NavMeshAgent.SetDestination(_botView.transform.position);
+                var transform = _botView.transform;
+                transform.LookAt(_target.Instance.transform);
+                var rotation = transform.eulerAngles;
+                rotation.x = 0.0f;
+                rotation.z = 0.0f;
+                transform.eulerAngles = rotation;
+
+                if (_isReadyToShoot)
+                {
+                    var line = CreateTracer();
+
+                    _botView.WeaponView.PlayShotAudio();
+
+                    TweenLineWidth(line).ToObservable().Subscribe();
+                    StartShootCooldown().ToObservable().Subscribe();
+                }
+            }
+        }
+    }
+    
+    private IEnumerator StartShootCooldown()
+    {
+        _isReadyToShoot = false;
+        
+        var timer = 0.0f;
+        var cooldown = Random.Range(_minAttackCooldown, _maxAttackCooldown);
+        while (timer < cooldown)
+        {
+            timer += Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        _isReadyToShoot = true;
+    }
+
+    private LineRenderer CreateTracer()
+    {
+        _tracerFactory.Create();
+        var line = _tracerFactory.LineRenderer;
+
+        var origin = _botView.WeaponView.Muzzle.transform.position;
+        line.SetPosition(0, origin);
+        var target = _target.Instance.transform.position + Random.insideUnitSphere * _attackSpreadMultiplier;
+        var direction = target - origin;
+
+        var ray = new Ray(origin, direction);
+        
+        if (Physics.Raycast(ray, out var hit, _attackRange, _hitLayerMask))
+        {
+            line.SetPosition(1, hit.point);
+            TryDamage(hit);
+        }
+        else
+        {
+            line.SetPosition(1, target);
+        }
+
+        return line;
+    }
+    
+    private void TryDamage(RaycastHit hitInfo)
+    {
+        if (hitInfo.collider.TryGetComponent(out IDamageable enemy))
+        {
+            if (enemy.CheckIfMine())
+            {
+                enemy.Damage(_damage);
+            }
+            else
+            {
+                _botView.SendIdToDamage(enemy.ID, _damage);
+            }
+        }
+    }
+    
+    private IEnumerator TweenLineWidth(LineRenderer line)
+    {
+        while (line.endWidth > 0)
+        {
+            var endWidth = line.endWidth;
+            endWidth -= _deltaTime * _tracerFadeMultiplier;
+            line.endWidth = endWidth;
+            line.startWidth = endWidth;
+
+            var color = line.material.color;
+            color.a -= _deltaTime * _tracerFadeMultiplier * COLOR_FADE_MULTIPLIER;
+            line.material.color = color;
+
+            yield return 0;
+        }
+
+        if (PhotonNetwork.IsConnected)
+            PhotonNetwork.Destroy(line.gameObject);
+        else
+            Object.Destroy(line.gameObject);
     }
 
     private void OnBotDamaged(float damage)

@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class BotData : ScriptableObject, IData
 {
     [SerializeField] private BotView _botPrefab;
+    [SerializeField] private LayerMask _weaponHitMask;
     [SerializeField] private float _botAttackSpreadMultiplier;
     [SerializeField] private float _botMinAttackCooldown;
     [SerializeField] private float _botMaxAttackCooldown;
@@ -17,6 +18,7 @@ public sealed class BotData : ScriptableObject, IData
     [SerializeField] private int _botAmount;
 
     public BotView BotPrefab => _botPrefab;
+    public LayerMask WeaponHitMask => _weaponHitMask;
     public float BotAttackSpreadMultiplier => _botAttackSpreadMultiplier;
     public float BotMaxAttackCooldown => _botMaxAttackCooldown;
     public float BotMinAttackCooldown => _botMinAttackCooldown;

@@ -41,7 +41,7 @@ public sealed class GameController : MonoBehaviour
 
         if (PhotonNetwork.IsMasterClient)
         {
-            var aiController = new AiController(_data.BotData);
+            var aiController = new AiController(_data.BotData, _weaponData.AssaultRifleData);
             _controllers.Add(aiController);
         }
 

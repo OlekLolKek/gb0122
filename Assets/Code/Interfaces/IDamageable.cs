@@ -7,5 +7,6 @@ public interface IDamageable
     void SendIdToDamage(int idToDamage, float damage);
     bool CheckIfMine();
     int ID { get; }
+    bool IsDead { get; }
     GameObject Instance { get; }
 }

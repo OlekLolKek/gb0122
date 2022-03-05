@@ -39,7 +39,16 @@ public sealed class PlayerFactory : IFactory
         PhotonView = PlayerView.PhotonView;
         GroundCheck = PlayerView.GroundCheck;
         Head = PlayerView.Head;
+        SetLayer(player, _playerData.PlayerLayerId);
 
         return player.gameObject;
+    }
+
+    private void SetLayer(GameObject player, int layerId)
+    {
+        foreach (var child in player.GetComponentsInChildren<Transform>())
+        {
+            child.gameObject.layer = layerId;
+        }
     }
 }

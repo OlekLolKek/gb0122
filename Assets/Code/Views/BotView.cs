@@ -7,6 +7,7 @@ using UnityEngine.AI;
 public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
 {
     [SerializeField] private NavMeshAgent _navMeshAgent;
+    [SerializeField] private WeaponView _weaponView;
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private Collider _collider;
     [SerializeField] private float _health;
@@ -18,7 +19,9 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
 
     public DamageableUnitsManager Manager { get; private set; }
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
+    public WeaponView WeaponView => _weaponView;
     public GameObject Instance => gameObject;
+    public bool IsDead => _isDead;
     public int ID { get; private set; }
 
     public void Awake()
