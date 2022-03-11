@@ -13,7 +13,9 @@ public sealed class GameController : MonoBehaviour
     {
         _controllers = new Controllers();
 
-        var playerFactory = new PlayerFactory(_data.PlayerData);
+        var spawnPoints = Object.FindObjectsOfType<PlayerSpawnPointView>();
+
+        var playerFactory = new PlayerFactory(_data.PlayerData, spawnPoints);
         var cameraFactory = new CameraFactory(_data.CameraData);
 
         var inputModel = new InputModel(_data.InputData);
@@ -23,7 +25,7 @@ public sealed class GameController : MonoBehaviour
         var inputController = new InputController(inputModel);
 
         var playerController = new PlayerController(playerModel, inputModel,
-            _data.PlayerData, _hudView);
+            _data.PlayerData, _hudView, spawnPoints);
 
         var cameraController = new CameraController(cameraModel, _data.CameraData,
             playerModel, inputModel);

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public sealed class PlayerFactory : IFactory
 {
+    private readonly PlayerSpawnPointView[] _spawnPoints;
     private readonly PlayerData _playerData;
 
     public CharacterController CharacterController { get; private set; }
@@ -12,25 +13,28 @@ public sealed class PlayerFactory : IFactory
     public GameObject GroundCheck { get; private set; }
     public GameObject Head { get; private set; }
 
-    public PlayerFactory(PlayerData playerData)
+    public PlayerFactory(PlayerData playerData, PlayerSpawnPointView[] spawnPoints)
     {
         _playerData = playerData;
+        _spawnPoints = spawnPoints;
     }
 
     public GameObject Create()
     {
         GameObject player;
+
+        var (position, rotation) = GetRandomPosition();
         
         if (PhotonNetwork.IsConnected)
         {
             player = PhotonNetwork.Instantiate(_playerData.PlayerPrefab.name,
-                _playerData.SpawnPosition, Quaternion.identity);
+                position, rotation);
             player.name = PhotonNetwork.NickName;
         }
         else
         { 
             player = Object.Instantiate(_playerData.PlayerPrefab,
-                _playerData.SpawnPosition, Quaternion.identity).gameObject;
+                position, rotation).gameObject;
             player.name = $"Player {Random.Range(0, 1000)}";
         }
 
@@ -42,6 +46,20 @@ public sealed class PlayerFactory : IFactory
         SetLayer(player, _playerData.PlayerLayerId);
 
         return player.gameObject;
+    }
+    
+    private (Vector3, Quaternion) GetRandomPosition()
+    {
+        var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)].transform;
+
+        var xOffset = Random.Range(-2, 2);
+        var zOffset = Random.Range(-2, 2);
+
+        var position = spawnPoint.position;
+        position.x += xOffset;
+        position.z += zOffset;
+
+        return (position, spawnPoint.rotation);
     }
 
     private void SetLayer(GameObject player, int layerId)

@@ -15,6 +15,9 @@ public sealed class PlayerModel
     public bool IsPressingJumpButton { get; set; }
     public bool IsCrouching { get; set; }
     public bool IsGrounded { get; set; }
+    public bool IsDead { get; set; }
+    public float MaxHealth { get; set; }
+    public float Health { get; set; }
 
     public PlayerModel(PlayerFactory factory)
     {
