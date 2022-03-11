@@ -58,7 +58,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
         _health = health;
     }
     
-    public void Damage(float damage)
+    public void Damage(float damage, IDamageable sender)
     {
         Debug.Log($"Trying to damage player {name}");
         
@@ -75,7 +75,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     public void RpcSendIdToDamage(int idToDamage, float damage)
     {
         var enemy = _manager.GetDamageable(idToDamage);
-        enemy?.Damage(damage);
+        enemy?.Damage(damage, this);
     }
     
     public bool CheckIfMine()

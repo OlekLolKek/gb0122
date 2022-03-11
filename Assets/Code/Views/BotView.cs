@@ -15,7 +15,7 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     private Renderer[] _renderers;
     private bool _isDead;
 
-    public event Action<float> OnReceivedDamage = delegate {  };
+    public event Action<float, IDamageable> OnReceivedDamage = delegate {  };
 
     public DamageableUnitsManager Manager { get; private set; }
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
@@ -53,11 +53,11 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
         _health = health;
     }
 
-    public void Damage(float damage)
+    public void Damage(float damage, IDamageable sender)
     {
         if (_photonView.IsMine)
         {
-            OnReceivedDamage.Invoke(damage);
+            OnReceivedDamage.Invoke(damage, sender);
         }
     }
 
@@ -70,7 +70,7 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     public void RpcSendIdToDamage(int idToDamage, float damage)
     {
         var enemy = Manager.GetDamageable(idToDamage);
-        enemy?.Damage(damage);
+        enemy?.Damage(damage, this);
     }
 
     public void SetId(int id)

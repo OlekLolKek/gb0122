@@ -3,7 +3,7 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void Damage(float damage);
+    void Damage(float damage, IDamageable sender);
     void SendIdToDamage(int idToDamage, float damage);
     bool CheckIfMine();
     int ID { get; }

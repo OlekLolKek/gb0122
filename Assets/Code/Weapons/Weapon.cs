@@ -178,7 +178,7 @@ public sealed class Weapon : IWeapon
         {
             if (enemy.CheckIfMine())
             {
-                enemy.Damage(Damage);
+                enemy.Damage(Damage, _playerView);
             }
             else
             {

@@ -124,25 +124,31 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
             return;
         }
 
-        foreach (var player in _players)
+        if (_target != null)
         {
-            if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
-                Mathf.Pow(_vision, 2))
+            _state = BotState.Following;
+        }
+        else
+        {
+            foreach (var player in _players)
             {
-                _target = player;
-                _state = BotState.Following;
-                return;
+                if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
+                    Mathf.Pow(_vision, 2))
+                {
+                    _target = player;
+                    _state = BotState.Following;
+                    break;
+                }
             }
         }
     }
 
     private void Following()
     {
-        if (_target == null || _target.IsDead ||
-            (_target.Instance.transform.position - _instance.transform.position).sqrMagnitude >=
-            Mathf.Pow(_vision, 2))
+        if (_target == null || _target.IsDead)
         {
             _state = BotState.Idle;
+            _target = null;
         }
         else
         {
@@ -165,6 +171,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
             Mathf.Pow(_vision, 2))
         {
             _state = BotState.Idle;
+            _target = null;
         }
         else
         {
@@ -242,7 +249,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         {
             if (enemy.CheckIfMine())
             {
-                enemy.Damage(_damage);
+                enemy.Damage(_damage, _botView);
             }
             else
             {
@@ -273,7 +280,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
             Object.Destroy(line.gameObject);
     }
 
-    private void OnBotDamaged(float damage)
+    private void OnBotDamaged(float damage, IDamageable sender)
     {
         _health -= damage;
         _botView.SetHealth(_health);
@@ -282,10 +289,15 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         {
             _respawnCoroutine = Respawn().ToObservable().Subscribe();
         }
+        else
+        {
+            _target ??= sender;
+        }
     }
 
     private IEnumerator Respawn()
     {
+        _target = null;
         _health = _maxHealth;
         _botView.SetHealth(_health);
         _state = BotState.Dead;
