@@ -9,12 +9,18 @@ public sealed class DamageableUnitsManager : MonoBehaviour
 {
     private readonly Dictionary<int, IDamageable> _damageables = new Dictionary<int, IDamageable>();
     
-    public event Action OnPlayerAdded = delegate {  };
+    public event Action OnPlayerListChanged = delegate {  };
 
     public void Register(int id, IDamageable damageable)
     {
         _damageables.Add(id, damageable);
-        OnPlayerAdded.Invoke();
+        OnPlayerListChanged.Invoke();
+    }
+
+    public void Unregister(int id)
+    {
+        _damageables.Remove(id);
+        OnPlayerListChanged.Invoke();
     }
 
     [CanBeNull]

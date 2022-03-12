@@ -12,13 +12,15 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
         
     [SerializeField] private float _health;
 
+    private DamageableUnitsManager _damageableUnitsManager;
+
     private Renderer[] _renderers;
-    private DamageableUnitsManager _manager;
 
     private bool _isDead;
-    public event Action<float> OnReceivedDamage = delegate {  };
+    public event Action<float, IDamageable> OnReceivedDamage = delegate {  };
 
     public CharacterController CharacterController => _characterController;
+    public ScoreManager ScoreManager { get; private set; }
     public PhotonView PhotonView => _photonView;
     public GameObject GroundCheck => _groundCheck;
     public GameObject Head => _head;
@@ -28,12 +30,14 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
 
     private void Awake()
     {
-        _manager = FindObjectOfType<DamageableUnitsManager>();
+        _damageableUnitsManager = FindObjectOfType<DamageableUnitsManager>();
+        ScoreManager = FindObjectOfType<ScoreManager>();
+        
         _renderers = GetComponentsInChildren<Renderer>();
         
         if (PhotonNetwork.IsConnected)
         {
-            _manager.Register(ID, this);
+            _damageableUnitsManager.Register(ID, this);
         }
     }
 
@@ -63,7 +67,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
         Debug.Log($"Trying to damage player {name}");
         
         if (_photonView.IsMine)
-            OnReceivedDamage.Invoke(damage);
+            OnReceivedDamage.Invoke(damage, sender);
     }
 
     public void SendIdToDamage(int idToDamage, float damage)
@@ -74,8 +78,14 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     [PunRPC]
     public void RpcSendIdToDamage(int idToDamage, float damage)
     {
-        var enemy = _manager.GetDamageable(idToDamage);
+        var enemy = _damageableUnitsManager.GetDamageable(idToDamage);
         enemy?.Damage(damage, this);
+    }
+    
+    [PunRPC]
+    public void AddStats(int id, int kills = 0, int deaths = 0, int score = 0)
+    {
+        ScoreManager.AddStats(id, kills, deaths, score);
     }
     
     public bool CheckIfMine()

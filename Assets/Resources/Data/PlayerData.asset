@@ -38,3 +38,4 @@ MonoBehaviour:
   - DEATH
   - SMERT'
   _playerLayerId: 3
+  _scoreForKill: 500

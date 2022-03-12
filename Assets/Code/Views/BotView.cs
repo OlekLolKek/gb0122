@@ -17,17 +17,27 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
 
     public event Action<float, IDamageable> OnReceivedDamage = delegate {  };
 
-    public DamageableUnitsManager Manager { get; private set; }
+    public DamageableUnitsManager DamageableUnitsManager { get; private set; }
+    public ScoreManager ScoreManager { get; private set; }
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
     public WeaponView WeaponView => _weaponView;
+    public PhotonView PhotonView => _photonView;
     public GameObject Instance => gameObject;
     public bool IsDead => _isDead;
     public int ID { get; private set; }
 
+
     public void Awake()
     {
-        Manager = FindObjectOfType<DamageableUnitsManager>();
+        DamageableUnitsManager = FindObjectOfType<DamageableUnitsManager>();
+        ScoreManager = FindObjectOfType<ScoreManager>();
         _renderers = GetComponentsInChildren<Renderer>();
+    }
+
+    public void SetId(int id)
+    {
+        ID = id;
+        DamageableUnitsManager.Register(ID, this);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -65,18 +75,18 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     {
         _photonView.RPC(nameof(RpcSendIdToDamage), RpcTarget.All, idToDamage, damage);
     }
-    
+
     [PunRPC]
     public void RpcSendIdToDamage(int idToDamage, float damage)
     {
-        var enemy = Manager.GetDamageable(idToDamage);
+        var enemy = DamageableUnitsManager.GetDamageable(idToDamage);
         enemy?.Damage(damage, this);
     }
-
-    public void SetId(int id)
+    
+    [PunRPC]
+    public void AddStats(int id, int kills = 0, int deaths = 0, int score = 0)
     {
-        ID = id;
-        Manager.Register(ID, this);
+        ScoreManager.AddStats(id, kills, deaths, score);
     }
 
     public bool CheckIfMine()
@@ -94,5 +104,10 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
         {
             renderer1.enabled = !_isDead;
         }
+    }
+
+    private void OnDestroy()
+    {
+        DamageableUnitsManager.Unregister(ID);
     }
 }

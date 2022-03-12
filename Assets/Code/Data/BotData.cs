@@ -16,6 +16,7 @@ public sealed class BotData : ScriptableObject, IData
     [SerializeField] private int _botHealth;
     [SerializeField] private int _botDamage;
     [SerializeField] private int _botAmount;
+    [SerializeField] private int _botScoreForKill;
 
     public BotView BotPrefab => _botPrefab;
     public LayerMask WeaponHitMask => _weaponHitMask;
@@ -29,4 +30,5 @@ public sealed class BotData : ScriptableObject, IData
     public int BotHealth => _botHealth;
     public int BotDamage => _botDamage;
     public int BotAmount => _botAmount;
+    public int ScoreForKill => _botScoreForKill;
 }

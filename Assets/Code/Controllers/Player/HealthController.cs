@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Photon.Pun;
 using UniRx;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -15,6 +16,7 @@ public sealed class HealthController : IExecutable, ICleanable
     private readonly HudView _hudView;
     private readonly float _respawnTime;
     private readonly string[] _deathMessages;
+    private readonly int _scoreForKill;
 
 
     private IDisposable _respawnCoroutine;
@@ -29,6 +31,7 @@ public sealed class HealthController : IExecutable, ICleanable
         _playerView = playerModel.PlayerView;
         _respawnTime = playerData.RespawnTime;
         _deathMessages = playerData.DeathMessages;
+        _scoreForKill = playerData.ScoreForKill;
         _hudView = hudView;
 
         _playerModel.MaxHealth = playerData.MaxHealth;
@@ -42,12 +45,11 @@ public sealed class HealthController : IExecutable, ICleanable
         
         var (position, rotation) = GetRandomPosition();
 
-        Debug.Log($"Setting {_playerModel.Transform.name} position to {position}, rotation to {rotation}");
         _playerModel.Transform.position = position;
         _playerModel.Transform.rotation = rotation;
     }
 
-    private void ReceivedDamage(float damage)
+    private void ReceivedDamage(float damage, IDamageable sender)
     {
         _playerModel.Health -= damage;
         _hudView.SetHealth(_playerModel.Health);
@@ -56,6 +58,12 @@ public sealed class HealthController : IExecutable, ICleanable
         if (_playerModel.Health <= 0.0f)
         {
             _respawnCoroutine = Respawn().ToObservable().Subscribe();
+
+            _playerView.PhotonView.RPC(nameof(_playerView.AddStats), RpcTarget.All,
+                sender.ID, 1, 0, _scoreForKill);
+            
+            _playerView.PhotonView.RPC(nameof(_playerView.AddStats), RpcTarget.All,
+                _playerView.ID, 0, 1, 0);
         }
     }
 

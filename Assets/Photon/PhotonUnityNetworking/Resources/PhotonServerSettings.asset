@@ -45,6 +45,8 @@ MonoBehaviour:
   - EmptyClickRPC
   - ReloadRPC
   - RpcSendIdToDamage
+  - SetScore
+  - AddStats
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

@@ -13,7 +13,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     private readonly BotSpawnPointView[] _spawnPoints;
     private readonly TracerFactory _tracerFactory;
     private readonly GameObject _instance;
-    private readonly LayerMask _hitLayerMask;
+    private readonly LayerMask _hitMask;
     private readonly BotView _botView;
 
     private readonly float _attackSpreadMultiplier;
@@ -26,6 +26,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     private readonly float _maxHealth;
     private readonly float _vision;
     private readonly float _damage;
+    private readonly int _scoreForKill;
 
     private IDamageable[] _players;
     private IDamageable _target;
@@ -51,6 +52,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         _health = botData.BotHealth;
         _vision = botData.BotVision;
         _damage = botData.BotDamage;
+        _scoreForKill = botData.ScoreForKill;
 
         _instance = botFactory.Create();
         _botView = botFactory.BotView;
@@ -58,15 +60,15 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         _botView.SetId(id);
         _botView.SetHealth(_health);
         _botView.OnReceivedDamage += OnBotDamaged;
-        _damageableUnitsManager = _botView.Manager;
-        _damageableUnitsManager.OnPlayerAdded += GetPlayers;
+        _damageableUnitsManager = _botView.DamageableUnitsManager;
+        _damageableUnitsManager.OnPlayerListChanged += GetPlayers;
         GetPlayers();
 
         _spawnPoints = spawnPoints;
         
         _tracerFactory = new TracerFactory(weaponData);
         _tracerFadeMultiplier = weaponData.TracerFadeMultiplier;
-        _hitLayerMask = botData.WeaponHitMask;
+        _hitMask = botData.WeaponHitMask;
     }
 
     public void Initialize()
@@ -230,7 +232,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
         var ray = new Ray(origin, direction);
         
-        if (Physics.Raycast(ray, out var hit, _attackRange, _hitLayerMask))
+        if (Physics.Raycast(ray, out var hit, _attackRange, _hitMask))
         {
             line.SetPosition(1, hit.point);
             TryDamage(hit);
@@ -288,6 +290,8 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         if (_health <= 0.0f)
         {
             _respawnCoroutine = Respawn().ToObservable().Subscribe();
+            _botView.PhotonView.RPC(nameof(_botView.AddStats), RpcTarget.All,
+                sender.ID, 1, 0, _scoreForKill);
         }
         else
         {
@@ -319,7 +323,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
     public void Cleanup()
     {
-        _damageableUnitsManager.OnPlayerAdded -= GetPlayers;
+        _damageableUnitsManager.OnPlayerListChanged -= GetPlayers;
         _botView.OnReceivedDamage -= OnBotDamaged;
 
         _respawnCoroutine?.Dispose();
