@@ -18,6 +18,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
 
     private bool _isDead;
     public event Action<float, IDamageable> OnReceivedDamage = delegate {  };
+    public event Action<int, int, int> OnUpdatedScore = delegate {  };
 
     public CharacterController CharacterController => _characterController;
     public ScoreManager ScoreManager { get; private set; }
@@ -39,6 +40,8 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
         {
             _damageableUnitsManager.Register(ID, this);
         }
+
+        OnUpdatedScore.Invoke(0, 0, 0);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -60,6 +63,11 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     public void SetHealth(float health)
     {
         _health = health;
+    }
+
+    public void SetScore(int kills, int deaths, int score)
+    {
+        OnUpdatedScore.Invoke(kills, deaths, score);
     }
     
     public void Damage(float damage, IDamageable sender)

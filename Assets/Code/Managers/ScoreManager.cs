@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 
@@ -29,6 +30,9 @@ public sealed class ScoreManager : MonoBehaviour
             playerScoreModel.Deaths += deaths;
             playerScoreModel.Score += score;
             _playerScores[id] = playerScoreModel;
+
+            _unitsManager.GetDamageable(id)?.SetScore(playerScoreModel.Kills,
+                playerScoreModel.Deaths, playerScoreModel.Score);
         }
     }
     

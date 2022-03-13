@@ -20,11 +20,14 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
                 playerData);
             var healthController = new HealthController(playerModel, playerData,
                 hudView, spawnPoints);
+            var scoreController = new PlayerScoreController(playerModel.PlayerView,
+                hudView);
         
             _controllers.Add(moveController);
             _controllers.Add(jumpController);
             _controllers.Add(crouchController);
             _controllers.Add(healthController);
+            _controllers.Add(scoreController);
         }
     }
     

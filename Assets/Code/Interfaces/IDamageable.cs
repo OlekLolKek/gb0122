@@ -9,4 +9,5 @@ public interface IDamageable
     int ID { get; }
     bool IsDead { get; }
     GameObject Instance { get; }
+    void SetScore(int kills, int deaths, int score);
 }

@@ -23,7 +23,9 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     public WeaponView WeaponView => _weaponView;
     public PhotonView PhotonView => _photonView;
     public GameObject Instance => gameObject;
+
     public bool IsDead => _isDead;
+
     public int ID { get; private set; }
 
 
@@ -33,6 +35,8 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
         ScoreManager = FindObjectOfType<ScoreManager>();
         _renderers = GetComponentsInChildren<Renderer>();
     }
+
+    public void SetScore(int kills, int deaths, int score) {  }
 
     public void SetId(int id)
     {
