@@ -39,6 +39,7 @@
 
         var weapon = new Weapon(weaponFactory, data.AssaultRifleData, cameraModel, playerModel, hudView);
         _inventory.AddWeapon(weapon);
+        SelectPrimaryWeapon();
     }
 
     public void Execute(float deltaTime)

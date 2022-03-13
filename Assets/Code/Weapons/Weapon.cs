@@ -20,16 +20,18 @@ public sealed class Weapon : IWeapon
     private Vector3 _newWeaponRotation;
     private Vector3 _newWeaponRotationVelocity;
 
+    private IDisposable _reloadingRoutine;
     private Vector3 _targetWeaponRotation;
     private Vector3 _targetWeaponRotationVelocity;
     private float _deltaTime;
-    private int _ammo;
     private bool _isReloading;
     private bool _isReadyToShoot = true;
+    private bool _isDead;
+    private int _ammo;
 
     private readonly float _tracerFadeMultiplier;
     private readonly float _maxShotDistance;
-    private IDisposable _reloadingRoutine;
+    private readonly int _maxAmmo;
 
     private const float COLOR_FADE_MULTIPLIER = 15.0f;
     private const float WEAPON_SWAY_AMOUNT = 0.75f;
@@ -44,18 +46,19 @@ public sealed class Weapon : IWeapon
     public float Damage { get; }
     public float ShootCooldown { get; set; }
     public float ReloadTime { get; set; }
-    public int MaxAmmo { get; set; }
     public bool IsFullAuto { get; set; } = true;
 
     public Weapon(IWeaponFactory factory, IWeaponData data,
         CameraModel cameraModel, PlayerModel playerModel, HudView hudView)
     {
         _playerView = playerModel.PlayerView;
+        playerModel.DeadChanged += OnPlayerDeadChanged;
+        
         _hitLayerMask = data.HitLayerMask;
         Damage = data.Damage;
         ShootCooldown = data.ShootCooldown;
         ReloadTime = data.ReloadTime;
-        MaxAmmo = data.MaxAmmo;
+        _maxAmmo = data.MaxAmmo;
         _tracerFadeMultiplier = data.TracerFadeMultiplier;
         _maxShotDistance = data.MaxShotDistance;
 
@@ -77,8 +80,22 @@ public sealed class Weapon : IWeapon
 
         Deactivate();
 
-        _ammo = MaxAmmo;
-        _hudView.SetAmmo(_ammo, MaxAmmo);
+        _ammo = _maxAmmo;
+        _hudView.SetAmmo(_ammo, _maxAmmo);
+    }
+
+    private void OnPlayerDeadChanged(bool isDead)
+    {
+        _isDead = isDead;
+
+        if (_isDead)
+        {
+            Deactivate();
+        }
+        else
+        {
+            Activate();
+        }
     }
 
     public void Execute(float deltaTime)
@@ -88,7 +105,7 @@ public sealed class Weapon : IWeapon
 
     public void Fire()
     {
-        if (!IsActive || !_isReadyToShoot || _isReloading) return;
+        if (!IsActive || !_isReadyToShoot || _isReloading || _isDead) return;
 
         if (_ammo <= 0)
         {
@@ -105,7 +122,7 @@ public sealed class Weapon : IWeapon
         StartShootCooldown().ToObservable().Subscribe();
 
         _ammo -= 1;
-        _hudView.SetAmmo(_ammo, MaxAmmo);
+        _hudView.SetAmmo(_ammo, _maxAmmo);
     }
 
     private LineRenderer CreateTracer()
@@ -158,8 +175,8 @@ public sealed class Weapon : IWeapon
         yield return new WaitForSeconds(ReloadTime);
 
         _isReloading = false;
-        _ammo = MaxAmmo;
-        _hudView.SetAmmo(_ammo, MaxAmmo);
+        _ammo = _maxAmmo;
+        _hudView.SetAmmo(_ammo, _maxAmmo);
     }
 
     private void SpinWeapon()
@@ -252,6 +269,7 @@ public sealed class Weapon : IWeapon
     {
         IsActive = false;
         Instance.SetActive(false);
+        _ammo = _maxAmmo;
     }
 
     public void Cleanup()
