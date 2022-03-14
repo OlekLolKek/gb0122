@@ -34,6 +34,11 @@ public sealed class CameraController : IExecutable
 
     public void Execute(float deltaTime)
     {
+        if (!_cameraTransform || !_headTransform )
+        {
+            return;
+        }
+        
         MoveCamera();
         RotateCamera();
     }

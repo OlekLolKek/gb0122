@@ -1,4 +1,4 @@
-﻿public sealed class WeaponController : IExecutable, ICleanable
+﻿public sealed class WeaponController : IExecutable, IMatchStateListener, ICleanable
 {
     private readonly IInputKeyPress _primary;
     private readonly IInputKeyPress _secondary;
@@ -10,9 +10,10 @@
     private readonly IInputAxisChange _mouseYInput;
     private readonly WeaponInventory _inventory;
 
+    private MatchState _matchState;
     private float _mouseX;
     private float _mouseY;
-        
+
     public WeaponController(InputModel inputModel, WeaponData data,
         CameraModel cameraModel, PlayerModel playerModel, HudView hudView)
     {
@@ -76,11 +77,23 @@
 
     private void Shoot()
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            return;
+        }
+        
+        
         _inventory.ActiveWeapon.Fire();
     }
 
     private void AutoFire(bool isKeyHeld)
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            return;
+        }
+        
+        
         if (isKeyHeld)
         {
             _inventory.ActiveWeapon.AutoFire();
@@ -89,7 +102,18 @@
 
     private void Reload()
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            return;
+        }
+        
+        
         _inventory.ActiveWeapon.Reload();
+    }
+
+    public void ChangeMatchState(MatchState matchState)
+    {
+        _matchState = matchState;
     }
 
     public void Cleanup()

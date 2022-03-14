@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 
-public sealed class BotController : IInitialization, IExecutable, ICleanable
+public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
 {
     private readonly DamageableUnitsManager _damageableUnitsManager;
     private readonly BotSpawnPointView[] _spawnPoints;
@@ -31,6 +31,7 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
     private IDamageable[] _players;
     private IDamageable _target;
     private IDisposable _respawnCoroutine;
+    private MatchState _matchState;
 
     private BotState _state = BotState.Idle;
     private bool _isReadyToShoot = true;
@@ -71,10 +72,6 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         _hitMask = botData.WeaponHitMask;
     }
 
-    public void Initialize()
-    {
-    }
-
     private void GetPlayers()
     {
         _players = _damageableUnitsManager.GetAllPlayers();
@@ -96,13 +93,25 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
 
     public void Execute(float deltaTime)
     {
+        if (!_botView)
+        {
+            return;
+        }
+        
+        
         _deltaTime = deltaTime;
-
         ProcessStates(deltaTime);
     }
 
     private void ProcessStates(float deltaTime)
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            _botView.NavMeshAgent.velocity = Vector3.zero;
+            return;
+        }
+        
+        
         switch (_state)
         {
             case BotState.Idle:
@@ -319,6 +328,11 @@ public sealed class BotController : IInitialization, IExecutable, ICleanable
         _state = BotState.Idle;
         _botView.SetDead(false);
         _botView.NavMeshAgent.enabled = true;
+    }
+
+    public void ChangeMatchState(MatchState matchState)
+    {
+        _matchState = matchState;
     }
 
     public void Cleanup()

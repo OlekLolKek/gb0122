@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public sealed class MoveController : IExecutable, ICleanable
+public sealed class MoveController : IExecutable, IMatchStateListener, ICleanable
 {
     private readonly CharacterController _characterController;
     private readonly PlayerModel _playerModel;
@@ -15,6 +15,8 @@ public sealed class MoveController : IExecutable, ICleanable
     private float _deltaTime;
     private float _horizontal;
     private float _vertical;
+
+    private MatchState _matchState;
 
     private const float MAX_VECTOR_LENGTH = 1.0f;
     
@@ -42,6 +44,11 @@ public sealed class MoveController : IExecutable, ICleanable
 
     private void Move()
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            return;
+        }
+        
         var moveVector = _playerModel.Transform.right * _horizontal + _playerModel.Transform.forward * _vertical;
         moveVector = Vector3.ClampMagnitude(moveVector, MAX_VECTOR_LENGTH);
         var speed = _playerModel.IsCrouching ? _crouchSpeed : _moveSpeed;
@@ -57,6 +64,11 @@ public sealed class MoveController : IExecutable, ICleanable
     private void VerticalAxisChanged(float value)
     {
         _vertical = value;
+    }
+
+    public void ChangeMatchState(MatchState matchState)
+    {
+        _matchState = matchState;
     }
 
     public void Cleanup()

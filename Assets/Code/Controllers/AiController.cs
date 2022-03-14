@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public sealed class AiController : IInitialization, IExecutable, ICleanable
+public sealed class AiController : IExecutable, IMatchStateListener, ICleanable
 {
     private readonly List<BotController> _botControllers = new List<BotController>();
     private readonly BotSpawnPointView[] _spawnPositions;
@@ -15,14 +15,6 @@ public sealed class AiController : IInitialization, IExecutable, ICleanable
         _botFactory = new BotFactory(botData, _spawnPositions);
 
         CreateBots(botData, weaponData);
-    }
-
-    public void Initialize()
-    {
-        foreach (var botController in _botControllers)
-        {
-            botController.Initialize();
-        }
     }
 
     private void CreateBots(BotData botData, IWeaponData weaponData)
@@ -39,6 +31,14 @@ public sealed class AiController : IInitialization, IExecutable, ICleanable
         foreach (var botController in _botControllers)
         {
             botController.Execute(deltaTime);
+        }
+    }
+
+    public void ChangeMatchState(MatchState matchState)
+    {
+        foreach (var botController in _botControllers)
+        {
+            botController.ChangeMatchState(matchState);
         }
     }
 

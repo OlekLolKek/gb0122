@@ -2,11 +2,13 @@
 using UnityEngine;
 
 
-public sealed class CrouchController : ICleanable
+public sealed class CrouchController : IMatchStateListener, ICleanable
 {
+    private MatchState _matchState;
+    
     private readonly IInputKeyPress _startCrouch;
     private readonly IInputKeyRelease _stopCrouch;
-    
+
     private readonly PlayerModel _playerModel;
     private readonly Transform _transform;
     private readonly Vector3 _crouchScale;
@@ -33,6 +35,11 @@ public sealed class CrouchController : ICleanable
 
     private void StartCrouch()
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            return;
+        }
+
         _playerModel.IsCrouching = true;
         _transform.DOScale(_crouchScale, CROUCH_TIME);
         var position = _transform.position;
@@ -41,10 +48,20 @@ public sealed class CrouchController : ICleanable
 
     private void StopCrouch()
     {
+        if (_matchState != MatchState.MatchProcess)
+        {
+            return;
+        }
+        
         _playerModel.IsCrouching = false;
         _transform.DOScale(_playerScale, CROUCH_TIME);
         var position = _transform.position;
         _transform.DOMoveY(position.y + CROUCH_HEIGHT, CROUCH_TIME);
+    }
+
+    public void ChangeMatchState(MatchState matchState)
+    {
+        _matchState = matchState;
     }
 
     public void Cleanup()

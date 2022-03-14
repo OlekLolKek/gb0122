@@ -9,11 +9,13 @@ public sealed class Data : ScriptableObject, IData
     [SerializeField] private string _playerDataPath;
     [SerializeField] private string _cameraDataPath;
     [SerializeField] private string _inputDataPath;
+    [SerializeField] private string _matchDataPath;
     [SerializeField] private string _botDataPath;
 
     private CameraData _cameraData;
     private PlayerData _playerData;
     private InputData _inputData;
+    private MatchData _matchData;
     private BotData _botData;
         
         
@@ -55,6 +57,20 @@ public sealed class Data : ScriptableObject, IData
             return _inputData;
         }
     }
+    
+    public MatchData MatchData
+    {
+        get
+        {
+            if (_matchData == null)
+            {
+                _matchData = Load<MatchData>(_dataRootPath + _matchDataPath);
+            }
+
+            return _matchData;
+        }
+    }
+    
     public BotData BotData
     {
         get

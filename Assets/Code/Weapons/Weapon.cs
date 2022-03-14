@@ -242,7 +242,7 @@ public sealed class Weapon : IWeapon
 
     public void Rotate(float mouseX, float mouseY, float deltaTime)
     {
-        if (!IsActive || _isReloading)
+        if (!IsActive || _isReloading || !Instance)
             return;
 
         _targetWeaponRotation.y += WEAPON_SWAY_AMOUNT * mouseX;

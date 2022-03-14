@@ -1,7 +1,7 @@
 ﻿using Photon.Pun;
 
 
-public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
+public sealed class PlayerController : IExecutable, IFixedExecutable, IMatchStateListener, ICleanable
 {
     private readonly Controllers _controllers;
 
@@ -12,9 +12,9 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
 
         if (playerModel.PhotonView.IsMine || !PhotonNetwork.IsConnected)
         {
-            var moveController = new MoveController(playerModel, playerData, 
+            var moveController = new MoveController(playerModel, playerData,
                 inputModel);
-            var jumpController = new JumpController(playerModel, playerData, 
+            var jumpController = new JumpController(playerModel, playerData,
                 inputModel);
             var crouchController = new CrouchController(inputModel, playerModel,
                 playerData);
@@ -39,6 +39,11 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, ICleanable
     public void FixedExecute()
     {
         _controllers.FixedExecute();
+    }
+
+    public void ChangeMatchState(MatchState matchState)
+    {
+        _controllers.ChangeMatchState(matchState);
     }
 
     public void Cleanup()

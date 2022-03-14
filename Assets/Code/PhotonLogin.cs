@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Photon.Pun;
@@ -40,12 +41,22 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        Connect();
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        StartCoroutine(Connect());
         PhotonNetwork.EnableCloseConnection = true;
     }
 
-    public void Connect()
+    public IEnumerator Connect()
     {
+        while (PhotonNetwork.NetworkClientState == ClientState.ConnectingToMasterServer ||
+               PhotonNetwork.NetworkClientState == ClientState.Authenticating ||
+               PhotonNetwork.NetworkClientState == ClientState.JoiningLobby ||
+               PhotonNetwork.NetworkClientState == ClientState.Leaving)
+        {
+            yield return 0;
+        }
+        
         if (PhotonNetwork.IsConnected)
         {
             PhotonNetwork.JoinRandomRoom();

@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acee067ab9604b409d09a3963d292797, type: 3}
-  m_Name: Data
+  m_Script: {fileID: 11500000, guid: fd74ce283b0344fdae031cf965721377, type: 3}
+  m_Name: MatchData
   m_EditorClassIdentifier: 
-  _dataRootPath: Data/
-  _playerDataPath: PlayerData
-  _cameraDataPath: CameraData
-  _inputDataPath: InputData
-  _matchDataPath: MatchData
-  _botDataPath: BotData
+  <TimeToLoad>k__BackingField: 3
+  <MatchStartCountdown>k__BackingField: 5
+  <MatchLength>k__BackingField: 5
+  <MatchEndCountdown>k__BackingField: 5
+  _mainMenuSceneIndex: 1
