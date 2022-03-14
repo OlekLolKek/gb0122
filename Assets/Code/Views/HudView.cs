@@ -15,9 +15,18 @@ public sealed class HudView : MonoBehaviour
     [SerializeField] private GameObject _deathPanel;
     [SerializeField] private TMP_Text _deadText;
     [SerializeField] private TMP_Text _deathTimerText;
+
+    [Header("Start countdown")]
+    [SerializeField] private GameObject _startCountdownPanel;
+    [SerializeField] private TMP_Text _startCountdownText;
+
+    [Header("End countdown")]
+    [SerializeField] private GameObject _endCountdownPanel;
+    [SerializeField] private TMP_Text _endCountdownText;
     
     [Header("Strings")]
     [SerializeField] private string _basicHealthText;
+    [SerializeField] private string _basicEndTimerText;
 
     public void SetHealth(float health)
     {
@@ -48,6 +57,24 @@ public sealed class HudView : MonoBehaviour
     {
         _deathPanel.SetActive(dead);
         _deadText.text = deathText;
+    }
+
+    public void SetStartCountdown(bool active, float countdown)
+    {
+        if (countdown < 0.0f) 
+            countdown = 0.0f;
+        
+        _startCountdownPanel.gameObject.SetActive(active);
+        _startCountdownText.text = $"{countdown:F2}";
+    }
+    
+    public void SetEndCountdown(bool active, float countdown)
+    {
+        if (countdown < 0.0f) 
+            countdown = 0.0f;
+        
+        _endCountdownPanel.gameObject.SetActive(active);
+        _endCountdownText.text = $"{_basicEndTimerText}{countdown:F2}";
     }
 
     public void SetTimer(float timer)

@@ -69,18 +69,21 @@ public sealed class GameController : MonoBehaviour
     
     private IEnumerator LoadingCountdown()
     {
+        var endOfFrame = new WaitForEndOfFrame();
+        
+        _hudView.SetStartCountdown(true, _data.MatchData.MatchStartCountdown);
         _controllers.ChangeMatchState(MatchState.LoadingCountdown);
         yield return new WaitForSeconds(_data.MatchData.TimeToLoad);
 
         _controllers.ChangeMatchState(MatchState.StartCountdown);
         _matchCountdown = _data.MatchData.MatchStartCountdown;
-        var endOfFrame = new WaitForEndOfFrame();
 
         while (_matchCountdown > 0)
         {
-            Debug.Log($"Starting in {_matchCountdown}");
+            _hudView.SetStartCountdown(true, _matchCountdown);
             yield return endOfFrame;
         }
+        _hudView.SetStartCountdown(false, _matchCountdown);
 
         _controllers.ChangeMatchState(MatchState.MatchProcess);
         _matchCountdown = _data.MatchData.MatchLength;
@@ -94,10 +97,11 @@ public sealed class GameController : MonoBehaviour
         _matchCountdown = _data.MatchData.MatchEndCountdown;
         while (_matchCountdown > 0)
         {
-            Debug.Log($"Going to menu in {_matchCountdown}");
+            _hudView.SetEndCountdown(true, _matchCountdown);
             yield return endOfFrame;
         }
 
+        _hudView.SetEndCountdown(false, _matchCountdown);
         Disconnect().ToObservable().Subscribe();
     }
 
