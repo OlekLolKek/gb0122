@@ -47,6 +47,10 @@ MonoBehaviour:
   - RpcSendIdToDamage
   - SetScore
   - AddStats
+  - StartCountdown
+  - StartFakeLoading
+  - StartMatchEndCountdown
+  - StartMatchProcess
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

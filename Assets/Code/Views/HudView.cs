@@ -1,9 +1,15 @@
+using System.Collections.Generic;
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
 
 public sealed class HudView : MonoBehaviour
 {
+    [Header("Managers")]
+    [SerializeField] private DamageableUnitsManager _damageableUnitsManager;
+    [SerializeField] private ScoreManager _scoreManager;
+    
     [Header("HUD")]
     [SerializeField] private TMP_Text _healthText;
     [SerializeField] private TMP_Text _ammoText;
@@ -21,12 +27,16 @@ public sealed class HudView : MonoBehaviour
     [SerializeField] private TMP_Text _startCountdownText;
 
     [Header("End countdown")]
+    [SerializeField] private MatchPlayerListElementView _matchPlayerListElementPrefab;
     [SerializeField] private GameObject _endCountdownPanel;
+    [SerializeField] private Transform _playerElementsRoot;
     [SerializeField] private TMP_Text _endCountdownText;
     
     [Header("Strings")]
     [SerializeField] private string _basicHealthText;
     [SerializeField] private string _basicEndTimerText;
+
+    private List<MatchPlayerListElementView> _playerListElements = new List<MatchPlayerListElementView>();
 
     public void SetHealth(float health)
     {
@@ -75,6 +85,21 @@ public sealed class HudView : MonoBehaviour
         
         _endCountdownPanel.gameObject.SetActive(active);
         _endCountdownText.text = $"{_basicEndTimerText}{countdown:F2}";
+
+        if (active && _playerListElements.Count == 0)
+        {
+            var players = _damageableUnitsManager.GetAllPlayers();
+
+            foreach (var player in players)
+            {
+                var score = _scoreManager.GetStats(player.ID);
+                var element = Instantiate(_matchPlayerListElementPrefab, _playerElementsRoot);
+                
+                element.SetTexts(score.Nickname, score.Kills, score.Deaths, score.Score);
+
+                _playerListElements.Add(element);
+            }
+        }
     }
 
     public void SetTimer(float timer)

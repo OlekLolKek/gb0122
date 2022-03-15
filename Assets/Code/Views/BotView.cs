@@ -24,6 +24,7 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
     public PhotonView PhotonView => _photonView;
     public GameObject Instance => gameObject;
 
+    public string Nickname => name;
     public bool IsDead => _isDead;
 
     public int ID { get; private set; }

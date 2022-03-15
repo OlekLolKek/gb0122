@@ -49,6 +49,14 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     public IEnumerator Connect()
     {
+        if (PhotonNetwork.IsConnected)
+        {
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.LeaveRoom();
+            }
+        }
+
         while (PhotonNetwork.NetworkClientState == ClientState.ConnectingToMasterServer ||
                PhotonNetwork.NetworkClientState == ClientState.Authenticating ||
                PhotonNetwork.NetworkClientState == ClientState.JoiningLobby ||
@@ -59,6 +67,16 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         
         if (PhotonNetwork.IsConnected)
         {
+            if (PhotonNetwork.InRoom)
+            {
+                PhotonNetwork.LeaveRoom();
+
+                while (PhotonNetwork.NetworkClientState == ClientState.Leaving)
+                {
+                    yield return 1;
+                }
+            }
+            
             PhotonNetwork.JoinRandomRoom();
         }
         else

@@ -11,6 +11,7 @@ public sealed class GameController : MonoBehaviour
     [SerializeField] private WeaponData _weaponData;
     [SerializeField] private HudView _hudView;
     [SerializeField] private Data _data;
+    [SerializeField] private PhotonView _photonView;
     
     private Controllers _controllers;
     private float _matchCountdown;
@@ -40,13 +41,15 @@ public sealed class GameController : MonoBehaviour
             cameraModel, playerModel, _hudView);
 
         var cursorController = new CursorController();
-
+        
         _controllers
             .Add(inputController)
             .Add(playerController)
             .Add(cameraController)
             .Add(weaponController)
             .Add(cursorController);
+        
+        _controllers.Initialize();
 
         if (PhotonNetwork.IsMasterClient || !PhotonNetwork.IsConnected)
         {
@@ -55,65 +58,84 @@ public sealed class GameController : MonoBehaviour
             
             LoadingCountdown().ToObservable().Subscribe();
         }
-
-        _controllers.Initialize();
     }
 
-    // init
-    // fake loading
-    // start cooldown
-    // start
-    // match length timer
-    // match end
-    // aftermatch cooldown
-    
     private IEnumerator LoadingCountdown()
     {
         var endOfFrame = new WaitForEndOfFrame();
+
+        _photonView.RPC(nameof(StartFakeLoading), RpcTarget.All);
         
-        _hudView.SetStartCountdown(true, _data.MatchData.MatchStartCountdown);
-        _controllers.ChangeMatchState(MatchState.LoadingCountdown);
         yield return new WaitForSeconds(_data.MatchData.TimeToLoad);
 
-        _controllers.ChangeMatchState(MatchState.StartCountdown);
-        _matchCountdown = _data.MatchData.MatchStartCountdown;
+        _photonView.RPC(nameof(StartCountdown), RpcTarget.All);
 
+        yield return new WaitForSeconds(_data.MatchData.MatchStartCountdown);
+
+        _photonView.RPC(nameof(StartMatchProcess), RpcTarget.All);
+
+        yield return new WaitForSeconds(_data.MatchData.MatchLength);
+
+        _photonView.RPC(nameof(StartMatchEndCountdown), RpcTarget.All);
+
+        yield return new WaitForSeconds(_data.MatchData.MatchEndCountdown);
+        
+        //_hudView.SetEndCountdown(false, _matchCountdown);
+        Disconnect();
+    }
+
+    [PunRPC]
+    private void StartFakeLoading()
+    {
+        _controllers.ChangeMatchState(MatchState.LoadingCountdown);
+        _hudView.SetStartCountdown(true, _data.MatchData.MatchStartCountdown);
+    }
+    
+    [PunRPC]
+    private void StartCountdown()
+    {
+        _controllers.ChangeMatchState(MatchState.StartCountdown);
+
+        StartingTimer().ToObservable().Subscribe();
+    }
+
+    private IEnumerator StartingTimer()
+    {
+        _matchCountdown = _data.MatchData.MatchStartCountdown;
         while (_matchCountdown > 0)
         {
             _hudView.SetStartCountdown(true, _matchCountdown);
-            yield return endOfFrame;
+            yield return 1;
         }
+    }
+    
+    [PunRPC]
+    private void StartMatchProcess()
+    {
         _hudView.SetStartCountdown(false, _matchCountdown);
-
         _controllers.ChangeMatchState(MatchState.MatchProcess);
-        _matchCountdown = _data.MatchData.MatchLength;
-        while (_matchCountdown > 0)
-        {
-            Debug.Log($"Ending in {_matchCountdown}");
-            yield return endOfFrame;
-        }
-
+    }
+    
+    [PunRPC]
+    private void StartMatchEndCountdown()
+    {
         _controllers.ChangeMatchState(MatchState.MatchEndCountdown);
+
+        EndingTimer().ToObservable().Subscribe();
+    }
+    
+    private IEnumerator EndingTimer()
+    {
         _matchCountdown = _data.MatchData.MatchEndCountdown;
         while (_matchCountdown > 0)
         {
             _hudView.SetEndCountdown(true, _matchCountdown);
-            yield return endOfFrame;
+            yield return 1;
         }
-
-        _hudView.SetEndCountdown(false, _matchCountdown);
-        Disconnect().ToObservable().Subscribe();
     }
 
-    private IEnumerator Disconnect()
+    private void Disconnect()
     {
-        PhotonNetwork.LeaveRoom();
-
-        while (PhotonNetwork.NetworkClientState == ClientState.Leaving)
-        {
-            yield return 0;
-        }
-        
         PhotonNetwork.LoadLevel(_data.MatchData.MainMenuScene);
     }
 

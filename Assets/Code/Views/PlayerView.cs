@@ -26,6 +26,7 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     public GameObject GroundCheck => _groundCheck;
     public GameObject Head => _head;
     public GameObject Instance => gameObject;
+    public string Nickname => _photonView.Owner.NickName;
     public bool IsDead => _isDead;
     public int ID => _photonView.Owner.ActorNumber;
 

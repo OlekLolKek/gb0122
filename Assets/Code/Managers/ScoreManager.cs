@@ -11,13 +11,13 @@ public sealed class ScoreManager : MonoBehaviour
     private void Start()
     {
         _unitsManager = FindObjectOfType<DamageableUnitsManager>();
-        _unitsManager.OnPlayerListChanged += GetPlayers;
+        _unitsManager.OnPlayerListChanged += FetchPlayers;
         
         var players = _unitsManager.GetAllPlayers();
 
         foreach (var player in players)
         {
-            _playerScores.Add(player.ID, new PlayerScoreModel());
+            _playerScores.Add(player.ID, new PlayerScoreModel { Nickname = player.Nickname });
         }
     }
     
@@ -34,8 +34,13 @@ public sealed class ScoreManager : MonoBehaviour
                 playerScoreModel.Deaths, playerScoreModel.Score);
         }
     }
+
+    public PlayerScoreModel GetStats(int id)
+    {
+        return _playerScores.ContainsKey(id) ? _playerScores[id] : new PlayerScoreModel();
+    }
     
-    private void GetPlayers()
+    private void FetchPlayers()
     {
         var players = _unitsManager.GetAllPlayers();
 
@@ -43,13 +48,13 @@ public sealed class ScoreManager : MonoBehaviour
         {
             if (!_playerScores.ContainsKey(player.ID))
             {
-                _playerScores.Add(player.ID, new PlayerScoreModel());
+                _playerScores.Add(player.ID, new PlayerScoreModel { Nickname = player.Nickname });
             }
         }
     }
 
     private void OnDestroy()
     {
-        _unitsManager.OnPlayerListChanged -= GetPlayers;
+        _unitsManager.OnPlayerListChanged -= FetchPlayers;
     }
 }
