@@ -9,6 +9,8 @@ public sealed class BotData : ScriptableObject, IData
     [SerializeField] private float _botAttackSpreadMultiplier;
     [SerializeField] private float _botMinAttackCooldown;
     [SerializeField] private float _botMaxAttackCooldown;
+    [SerializeField] private float _botIdlePositionRange;
+    [SerializeField] private float _botIdleTimeRandom;
     [SerializeField] private float _botIdleDuration;
     [SerializeField] private float _botRespawnTime;
     [SerializeField] private float _botAttackRange;
@@ -23,6 +25,8 @@ public sealed class BotData : ScriptableObject, IData
     public float BotAttackSpreadMultiplier => _botAttackSpreadMultiplier;
     public float BotMaxAttackCooldown => _botMaxAttackCooldown;
     public float BotMinAttackCooldown => _botMinAttackCooldown;
+    public float BotIdlePositionRange => _botIdlePositionRange;
+    public float BotIdleTimeRandom => _botIdleTimeRandom;
     public float BotIdleDuration => _botIdleDuration;
     public float BotRespawnTime => _botRespawnTime;
     public float BotAttackRange => _botAttackRange;

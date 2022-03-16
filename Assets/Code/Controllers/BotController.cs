@@ -3,6 +3,7 @@ using System.Collections;
 using Photon.Pun;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AI;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -20,6 +21,8 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
     private readonly float _tracerFadeMultiplier;
     private readonly float _maxAttackCooldown;
     private readonly float _minAttackCooldown;
+    private readonly float _idlePositionRange;
+    private readonly float _idleTimeRandom;
     private readonly float _idleDuration;
     private readonly float _respawnTime;
     private readonly float _attackRange;
@@ -35,9 +38,11 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
 
     private BotState _state = BotState.Idle;
     private bool _isReadyToShoot = true;
+    private bool _isReadyToWalk;
+    private float _idleTimer;
     private float _deltaTime;
     private float _health;
-
+    
     private const float COLOR_FADE_MULTIPLIER = 15.0f;
 
     public BotController(BotData botData, BotFactory botFactory, int id,
@@ -46,6 +51,8 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
         _attackSpreadMultiplier = botData.BotAttackSpreadMultiplier;
         _maxAttackCooldown = botData.BotMaxAttackCooldown;
         _minAttackCooldown = botData.BotMinAttackCooldown;
+        _idlePositionRange = botData.BotIdlePositionRange;
+        _idleTimeRandom = botData.BotIdleTimeRandom;
         _idleDuration = botData.BotIdleDuration;
         _respawnTime = botData.BotRespawnTime;
         _attackRange = botData.BotAttackRange;
@@ -70,6 +77,8 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
         _tracerFactory = new TracerFactory(weaponData);
         _tracerFadeMultiplier = weaponData.TracerFadeMultiplier;
         _hitMask = botData.WeaponHitMask;
+        _idleTimer = Random.Range(_idleDuration - _idleTimeRandom,
+            _idleDuration + _idleTimeRandom);
     }
 
     private void GetPlayers()
@@ -110,7 +119,7 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
             _botView.NavMeshAgent.velocity = Vector3.zero;
             return;
         }
-        
+
         
         switch (_state)
         {
@@ -134,22 +143,45 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
         {
             return;
         }
-
+        
         if (_target != null)
         {
             _state = BotState.Following;
+            return;
         }
-        else
+
+        
+        foreach (var player in _players)
         {
-            foreach (var player in _players)
+            if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
+                Mathf.Pow(_vision, 2))
             {
-                if ((player.Instance.transform.position - _instance.transform.position).sqrMagnitude <
-                    Mathf.Pow(_vision, 2))
-                {
-                    _target = player;
-                    _state = BotState.Following;
-                    break;
-                }
+                _target = player;
+                _state = BotState.Following;
+                return;
+            }
+        }
+
+        if (!_isReadyToWalk)
+        {
+            _idleTimer -= _deltaTime;
+            if (_idleTimer <= 0.0f)
+            {
+                _isReadyToWalk = true;
+            }
+        }
+
+
+        if (_isReadyToWalk)
+        {
+            Vector3 direction = Random.insideUnitCircle * _idlePositionRange;
+            (direction.y, direction.z) = (direction.z, direction.y);
+            if (NavMesh.SamplePosition(direction, out var hit, _idlePositionRange, _hitMask))
+            {
+                _isReadyToWalk = false;
+                _idleTimer = Random.Range(_idleDuration - _idleTimeRandom,
+                    _idleDuration + _idleTimeRandom);
+                _botView.NavMeshAgent.SetDestination(hit.position);
             }
         }
     }
