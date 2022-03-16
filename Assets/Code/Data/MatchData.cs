@@ -9,7 +9,5 @@ public sealed class MatchData : ScriptableObject
     [field: SerializeField] public float MatchStartCountdown { get; private set; }
     [field: SerializeField] public float MatchLength { get; private set; }
     [field: SerializeField] public float MatchEndCountdown { get; private set; }
-
-    [SerializeField] private int _mainMenuSceneIndex;
-    public int MainMenuScene => _mainMenuSceneIndex;
+    [field: SerializeField] public int MainMenuSceneIndex { get; private set; }
 }

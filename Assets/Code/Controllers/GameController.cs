@@ -1,9 +1,7 @@
 ﻿using System.Collections;
 using Photon.Pun;
-using Photon.Realtime;
 using UniRx;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
 public sealed class GameController : MonoBehaviour
@@ -136,7 +134,7 @@ public sealed class GameController : MonoBehaviour
 
     private void Disconnect()
     {
-        PhotonNetwork.LoadLevel(_data.MatchData.MainMenuScene);
+        PhotonNetwork.LoadLevel(_data.MatchData.MainMenuSceneIndex);
     }
 
     private void Update()

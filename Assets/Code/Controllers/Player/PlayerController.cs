@@ -19,7 +19,7 @@ public sealed class PlayerController : IExecutable, IFixedExecutable, IMatchStat
             var crouchController = new CrouchController(inputModel, playerModel,
                 playerData);
             var healthController = new HealthController(playerModel, playerData,
-                hudView, spawnPoints);
+                hudView, spawnPoints, playerData.ScoreForDeath);
             var scoreController = new PlayerScoreController(playerModel.PlayerView,
                 hudView);
         

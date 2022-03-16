@@ -22,6 +22,7 @@ public sealed class PlayerData : ScriptableObject, IData
     [SerializeField] private string[] _deathMessages;
     [SerializeField] private int _playerLayerId;
     [SerializeField] private int _scoreForKill;
+    [SerializeField] private int _scoreForDeath;
 
 
     public PlayerView PlayerPrefab => _playerPrefab;
@@ -39,4 +40,5 @@ public sealed class PlayerData : ScriptableObject, IData
     public string[] DeathMessages => _deathMessages;
     public int PlayerLayerId => _playerLayerId;
     public int ScoreForKill => _scoreForKill;
+    public int ScoreForDeath => _scoreForDeath;
 }

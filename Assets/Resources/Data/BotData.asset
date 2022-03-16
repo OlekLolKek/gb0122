@@ -28,4 +28,4 @@ MonoBehaviour:
   _botHealth: 75
   _botDamage: 10
   _botAmount: 8
-  _botScoreForKill: 100
+  _botScoreForKill: 25

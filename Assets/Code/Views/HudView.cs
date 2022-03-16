@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public sealed class HudView : MonoBehaviour
@@ -29,14 +30,24 @@ public sealed class HudView : MonoBehaviour
     [Header("End countdown")]
     [SerializeField] private MatchPlayerListElementView _matchPlayerListElementPrefab;
     [SerializeField] private GameObject _endCountdownPanel;
+    [SerializeField] private GameObject _progressBarObject;
     [SerializeField] private Transform _playerElementsRoot;
     [SerializeField] private TMP_Text _endCountdownText;
-    
+    [SerializeField] private TMP_Text _nextLevelXpText;
+    [SerializeField] private TMP_Text _totalXpText;
+    [SerializeField] private TMP_Text _levelText;
+    [SerializeField] private Image _progressBar;
+
     [Header("Strings")]
     [SerializeField] private string _basicHealthText;
     [SerializeField] private string _basicEndTimerText;
 
-    private List<MatchPlayerListElementView> _playerListElements = new List<MatchPlayerListElementView>();
+    private readonly List<MatchPlayerListElementView> _playerListElements = new List<MatchPlayerListElementView>();
+
+    private void Start()
+    {
+        _progressBarObject.SetActive(false);
+    }
 
     public void SetHealth(float health)
     {
@@ -84,7 +95,7 @@ public sealed class HudView : MonoBehaviour
             countdown = 0.0f;
         
         _endCountdownPanel.gameObject.SetActive(active);
-        _endCountdownText.text = $"{_basicEndTimerText}{countdown:F2}";
+        _endCountdownText.text = $"{_basicEndTimerText}{countdown:F1}";
 
         if (active && _playerListElements.Count == 0)
         {
@@ -100,6 +111,15 @@ public sealed class HudView : MonoBehaviour
                 _playerListElements.Add(element);
             }
         }
+    }
+
+    public void SetLevelProgress(int currentXp, int nextLevelXp, int level, float progressBarFill)
+    {
+        _progressBarObject.SetActive(true);
+        _totalXpText.text = currentXp.ToString();
+        _nextLevelXpText.text = nextLevelXp.ToString();
+        _levelText.text = level.ToString();
+        _progressBar.fillAmount = progressBarFill;
     }
 
     public void SetTimer(float timer)

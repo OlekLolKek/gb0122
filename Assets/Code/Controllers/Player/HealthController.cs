@@ -17,16 +17,18 @@ public sealed class HealthController : IExecutable, ICleanable
     private readonly float _respawnTime;
     private readonly string[] _deathMessages;
     private readonly int _scoreForKill;
+    private readonly int _scoreForDeath;
 
 
     private IDisposable _respawnCoroutine;
     private float _deltaTime;
 
     public HealthController(PlayerModel playerModel, PlayerData playerData,
-        HudView hudView, PlayerSpawnPointView[] spawnPoints)
+        HudView hudView, PlayerSpawnPointView[] spawnPoints, int scoreForDeath)
     {
         _spawnPoints = spawnPoints;
-        
+        _scoreForDeath = scoreForDeath;
+
         _playerModel = playerModel;
         _playerView = playerModel.PlayerView;
         _respawnTime = playerData.RespawnTime;
@@ -63,7 +65,7 @@ public sealed class HealthController : IExecutable, ICleanable
                 sender.ID, 1, 0, _scoreForKill);
             
             _playerView.PhotonView.RPC(nameof(_playerView.AddStats), RpcTarget.All,
-                _playerView.ID, 0, 1, 0);
+                _playerView.ID, 0, 1, _scoreForDeath);
         }
     }
 
