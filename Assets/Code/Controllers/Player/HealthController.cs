@@ -75,7 +75,11 @@ public sealed class HealthController : IExecutable, ICleanable
         _playerModel.Health = _playerModel.MaxHealth;
         
         _playerModel.CharacterController.enabled = !_playerModel.IsDead;
-        _playerModel.Transform.position = new Vector3(25, 10, -25);
+        
+        var (position, rotation) = GetRandomPosition();
+        
+        _playerModel.Transform.position = position;
+        _playerModel.Transform.rotation = rotation;
 
         _playerView.SetHealth(_playerModel.Health);
         _playerView.SetDead(_playerModel.IsDead);
@@ -94,11 +98,6 @@ public sealed class HealthController : IExecutable, ICleanable
         }
 
         _playerModel.IsDead = false;
-        
-        var (position, rotation) = GetRandomPosition();
-        
-        _playerModel.Transform.position = position;
-        _playerModel.Transform.rotation = rotation;
 
         yield return new WaitForEndOfFrame();
         
