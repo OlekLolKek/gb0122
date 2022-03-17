@@ -263,14 +263,16 @@ public sealed class Weapon : IWeapon
     public void Activate()
     {
         IsActive = true;
-        Instance.SetActive(true);
+
+        _weaponView.EnableRenderers(true);
     }
 
     public void Deactivate()
     {
         IsActive = false;
-        Instance.SetActive(false);
         _ammo = _maxAmmo;
+
+        _weaponView.EnableRenderers(false);
     }
 
     public void Cleanup()

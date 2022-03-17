@@ -9,8 +9,15 @@ public sealed class WeaponView : MonoBehaviour
     [SerializeField] private AudioSource _emptyClickAudioSource;
     [SerializeField] private AudioSource _reloadAudioSource;
     [SerializeField] private GameObject _muzzle;
+
+    private Renderer[] _renderers;
     
     public GameObject Muzzle => _muzzle;
+
+    private void Awake()
+    {
+        _renderers = GetComponentsInChildren<Renderer>();
+    }
 
     public void PlayShotAudio()
     {
@@ -48,21 +55,42 @@ public sealed class WeaponView : MonoBehaviour
         }
     }
 
+    public void EnableRenderers(bool enable)
+    {
+        if (PhotonNetwork.IsConnected)
+        {
+            _photonView.RPC(nameof(EnableRenderersRpc), RpcTarget.All, enable);
+        }
+        else
+        {
+            EnableRenderersRpc(enable);
+        }
+    }
+
     [PunRPC]
     private void ShotRPC()
     {
         _shotAudioSource.Play();
     }
-    
+
     [PunRPC]
     private void ReloadRPC()
     {
         _reloadAudioSource.Play();
     }
-    
+
     [PunRPC]
     private void EmptyClickRPC()
     {
         _emptyClickAudioSource.Play();
+    }
+
+    [PunRPC]
+    private void EnableRenderersRpc(bool enable)
+    {
+        foreach (var renderer1 in _renderers)
+        {
+            renderer1.enabled = enable;
+        }
     }
 }
