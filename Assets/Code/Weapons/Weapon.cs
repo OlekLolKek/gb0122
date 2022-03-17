@@ -105,7 +105,8 @@ public sealed class Weapon : IWeapon
 
     public void Fire()
     {
-        if (!IsActive || !_isReadyToShoot || _isReloading || _isDead) return;
+        if (!IsActive || !_isReadyToShoot || _isReloading || _isDead)
+            return;
 
         if (_ammo <= 0)
         {
@@ -159,7 +160,7 @@ public sealed class Weapon : IWeapon
 
     public void Reload()
     {
-        if (_isReloading)
+        if (_isReloading || _isDead)
             return;
 
         _reloadingRoutine = StartReloading().ToObservable().Subscribe();

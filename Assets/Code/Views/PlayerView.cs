@@ -73,8 +73,6 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     
     public void Damage(float damage, IDamageable sender)
     {
-        Debug.Log($"Trying to damage player {name}");
-        
         if (_photonView.IsMine)
             OnReceivedDamage.Invoke(damage, sender);
     }
