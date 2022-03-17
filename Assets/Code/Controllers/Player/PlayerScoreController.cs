@@ -38,7 +38,6 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
         if (matchState == MatchState.MatchEndCountdown)
         {
             GetAccountInfo();
-            Debug.Log("LETS GOOOO");
         }
     }
 
@@ -50,10 +49,10 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
 
     private void GotUserData(GetAccountInfoResult result)
     {
-        GetUserData(result.AccountInfo.PlayFabId);
+        GetUserData();
     }
 
-    private void GetUserData(string myPlayFabId)
+    private void GetUserData()
     {
         PlayFabClientAPI.GetUserData(new GetUserDataRequest()
             {
@@ -86,14 +85,10 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
         var scoreForNextLevel = (int)(5 * Mathf.Pow(data.Level, 2) + 50 * data.Level + 100);
         var totalScoreForNextLevel = CountTotalXpForLevel(data.Level + 1);
 
-        Debug.Log("Before whiles");
-
         while (currentScore < data.Score)
         {
             ++currentScore;
             ++currentTotalScore;
-            
-            Debug.Log($"Current score: {currentScore}. Score after match: {data.Score}");
 
             if (currentScore >= scoreForNextLevel)
             {
@@ -105,7 +100,8 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
                 totalScoreForNextLevel = CountTotalXpForLevel(data.Level + 1);
             }
             
-            _hudView.SetLevelProgress(currentTotalScore, totalScoreForNextLevel, data.Level, (float)currentScore / (float)scoreForNextLevel);
+            _hudView.SetLevelProgress(currentTotalScore, totalScoreForNextLevel, data.Level,
+                (float)currentScore / (float)scoreForNextLevel);
             yield return new WaitForSeconds(0.01f);
         }
 
@@ -117,7 +113,10 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
                     { Constants.TOTAL_SCORE_DATA_ID, data.TotalScore.ToString() },
                     { Constants.LEVEL_DATA_ID, data.Level.ToString() }
                 }
-            }, dataResult => { Debug.Log($"Updated user data to {data.Score} / {data.TotalScore} / {data.Level}"); },
+            }, dataResult =>
+            {
+                Debug.Log($"Updated user data to {data.Score} / {data.TotalScore} / {data.Level}");
+            },
             Debug.LogError);
     }
 

@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -143,7 +145,50 @@ public sealed class PlayFabLogin : MonoBehaviour
         var message = "Successfully logged in PlayFab.";
         _text.text = message;
         _text.color = _successColor;
-        Debug.Log(message);
+        TryGetData();
+    }
+
+    private void TryGetData()
+    {
+        PlayFabClientAPI.GetUserData(new GetUserDataRequest()
+            {
+                Keys = new List<string>
+                    { Constants.SCORE_DATA_ID, Constants.TOTAL_SCORE_DATA_ID, Constants.LEVEL_DATA_ID }
+            }, GotUserData, Debug.LogError
+        );
+    }
+
+    private void GotUserData(GetUserDataResult result)
+    {
+        var dataToWrite = new Dictionary<string, string>();
+        var data = result.Data;
+
+        if (!data.ContainsKey(Constants.SCORE_DATA_ID))
+        {
+            dataToWrite.Add(Constants.SCORE_DATA_ID, 0.ToString());
+        }
+        
+        if (!data.ContainsKey(Constants.TOTAL_SCORE_DATA_ID))
+        {
+            dataToWrite.Add(Constants.TOTAL_SCORE_DATA_ID, 0.ToString());
+        }
+        
+        if (!data.ContainsKey(Constants.LEVEL_DATA_ID))
+        {
+            dataToWrite.Add(Constants.LEVEL_DATA_ID, 0.ToString());
+        }
+
+        if (dataToWrite.Count > 0)
+        {
+            PlayFabClientAPI.UpdateUserData(new UpdateUserDataRequest()
+                {
+                    Data = dataToWrite
+                }, dataResult =>
+                {
+                    Debug.Log($"Created initial user data");
+                },
+                Debug.LogError);
+        }
     }
 
     private void OnLoginFail(PlayFabError error)
