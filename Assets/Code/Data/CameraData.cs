@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
-
-//using UnityEngine.Rendering.PostProcessing;
 
 [CreateAssetMenu(fileName = "CameraData", menuName = "Data/CameraData")]
 public sealed class CameraData : ScriptableObject, IData
 {
-    //[SerializeField] private PostProcessResources _postProcessResources;
+    [SerializeField] private PostProcessResources _postProcessResources;
     [SerializeField] private LayerMask _postProcessingLayer;
     [SerializeField] private LayerMask _cullingLayerMask;
     [SerializeField] private LayerMask _weaponCameraCullingLayerMask;
@@ -18,7 +17,7 @@ public sealed class CameraData : ScriptableObject, IData
     [SerializeField] private float _sensitivity;
 
 
-    //public PostProcessResources PostProcessResources => _postProcessResources;
+    public PostProcessResources PostProcessResources => _postProcessResources;
     public LayerMask PostProcessingLayer => _postProcessingLayer;
     public LayerMask CullingLayerMask => _cullingLayerMask;
     public LayerMask WeaponCameraCullingLayerMask => _weaponCameraCullingLayerMask;

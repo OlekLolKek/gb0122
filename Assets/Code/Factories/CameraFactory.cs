@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 
 public sealed class CameraFactory : IFactory
@@ -26,11 +27,11 @@ public sealed class CameraFactory : IFactory
             
         camera.AddComponent<AudioListener>();
 
-        // var postProcessing = camera.AddComponent<PostProcessLayer>();
-        // postProcessing.Init(_cameraData.PostProcessResources);
-        // postProcessing.volumeTrigger = camera.transform;
-        // postProcessing.volumeLayer = _cameraData.PostProcessingLayer;
-        // postProcessing.antialiasingMode = PostProcessLayer.Antialiasing.TemporalAntialiasing;
+        var postProcessing = camera.AddComponent<PostProcessLayer>();
+        postProcessing.Init(_cameraData.PostProcessResources);
+        postProcessing.volumeTrigger = camera.transform;
+        postProcessing.volumeLayer = _cameraData.PostProcessingLayer;
+        postProcessing.antialiasingMode = PostProcessLayer.Antialiasing.TemporalAntialiasing;
 
         Camera.cullingMask = _cameraData.CullingLayerMask.value;
 
