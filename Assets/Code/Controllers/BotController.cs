@@ -268,7 +268,13 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
 
         var origin = _botView.WeaponView.Muzzle.transform.position;
         line.SetPosition(0, origin);
-        var target = _target.Instance.transform.position + Random.insideUnitSphere * _attackSpreadMultiplier;
+
+        var targetPosition = _target.Instance.transform.position;
+        var distance = targetPosition - origin;
+        var spread = Random.insideUnitSphere *
+                     (Mathf.Clamp(distance.magnitude, 2.5f, _attackRange) * _attackSpreadMultiplier);
+        var target = targetPosition + spread;
+
         var direction = target - origin;
 
         var ray = new Ray(origin, direction);
