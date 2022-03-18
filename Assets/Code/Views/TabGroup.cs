@@ -12,4 +12,5 @@ public abstract class TabGroup : MonoBehaviour
     public abstract void OnTabSelected(TabButton button);
 
     public abstract void SwitchToBasicTab();
+    public abstract void LockTabs(bool locked);
 }

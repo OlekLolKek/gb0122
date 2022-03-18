@@ -8,6 +8,7 @@ public sealed class UiNavigationManager : TabGroup
 {
     [Header("Buttons")]
     [SerializeField] private List<TabButton> _tabButtons = new List<TabButton>();
+    [SerializeField] private List<TabButton> _lockTabs = new List<TabButton>();
     [SerializeField] private Button _settingsButton;
 
     [Header("Panels")]
@@ -77,5 +78,13 @@ public sealed class UiNavigationManager : TabGroup
     public override void SwitchToBasicTab()
     {
         OnTabSelected(_tabButtons[0]);
+    }
+
+    public override void LockTabs(bool locked)
+    {
+        foreach (var lockTab in _lockTabs)
+        {
+            lockTab.Lock(locked);
+        }
     }
 }

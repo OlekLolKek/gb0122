@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -7,11 +8,18 @@ public sealed class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerCli
 {
     [SerializeField] private TabGroup _tabGroup;
     [SerializeField] private GameObject _linkedWindow;
+    [SerializeField] private Color _defaultTextColor;
+    [SerializeField] private Color _disabledTextColor;
+
+    private TMP_Text _text;
     private Image _background;
+
+    private bool _isLocked;
 
     private void Awake()
     {
-        _background = GetComponent<Image>();
+        _background = GetComponentInChildren<Image>();
+        _text = GetComponentInChildren<TMP_Text>();
         _tabGroup.Subscribe(this);
     }
 
@@ -33,18 +41,28 @@ public sealed class TabButton : MonoBehaviour, IPointerEnterHandler, IPointerCli
         }
     }
 
+    public void Lock(bool locked)
+    {
+        _isLocked = locked;
+
+        _text.color = locked ? _disabledTextColor : _defaultTextColor;
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        _tabGroup.OnTabEnter(this);
+        if (!_isLocked)
+            _tabGroup.OnTabEnter(this);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        _tabGroup.OnTabSelected(this);
+        if (!_isLocked)
+            _tabGroup.OnTabSelected(this);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        _tabGroup.OnTabExit(this);
+        if (!_isLocked)
+            _tabGroup.OnTabExit(this);
     }
 }

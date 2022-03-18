@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class BasicTabGroup : TabGroup
 {
     [SerializeField] private List<TabButton> _tabButtons = new List<TabButton>();
+    [SerializeField] private List<TabButton> _lockTabs = new List<TabButton>();
     private TabButton _selectedTab;
     
     private readonly Vector3 _normalScale = Vector3.one;
@@ -60,5 +61,13 @@ public sealed class BasicTabGroup : TabGroup
         ResetTabs();
         _selectedTab = _tabButtons[0];
         _tabButtons[0].Activate();
+    }
+
+    public override void LockTabs(bool locked)
+    {
+        foreach (var tab in _lockTabs)
+        {
+            tab.Lock(locked);
+        }
     }
 }

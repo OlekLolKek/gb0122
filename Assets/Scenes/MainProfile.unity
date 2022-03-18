@@ -949,6 +949,7 @@ MonoBehaviour:
   _tabButtons:
   - {fileID: 1199433470}
   - {fileID: 1802322831}
+  _lockTabs: []
 --- !u!114 &121559310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5610,6 +5611,8 @@ MonoBehaviour:
   _tabButtons:
   - {fileID: 1241961874}
   - {fileID: 1346079146}
+  _lockTabs:
+  - {fileID: 1346079146}
   _settingsButton: {fileID: 1924962592}
   _pauseMenu: {fileID: 5241443}
 --- !u!1 &660947209
@@ -8959,6 +8962,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tabGroup: {fileID: 121559308}
   _linkedWindow: {fileID: 1716390191}
+  _defaultTextColor: {r: 0, g: 0, b: 0, a: 0}
+  _disabledTextColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1214411688
 GameObject:
   m_ObjectHideFlags: 0
@@ -9325,6 +9330,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tabGroup: {fileID: 645253437}
   _linkedWindow: {fileID: 0}
+  _defaultTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _disabledTextColor: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
 --- !u!1 &1248838635
 GameObject:
   m_ObjectHideFlags: 0
@@ -9997,6 +10004,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tabGroup: {fileID: 645253437}
   _linkedWindow: {fileID: 121559306}
+  _defaultTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _disabledTextColor: {r: 0.6132076, g: 0.6132076, b: 0.6132076, a: 1}
 --- !u!1 &1349907381
 GameObject:
   m_ObjectHideFlags: 0
@@ -12855,6 +12864,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tabGroup: {fileID: 121559308}
   _linkedWindow: {fileID: 140851373}
+  _defaultTextColor: {r: 0, g: 0, b: 0, a: 0}
+  _disabledTextColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &1831373290
 GameObject:
   m_ObjectHideFlags: 0
