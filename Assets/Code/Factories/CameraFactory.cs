@@ -44,6 +44,8 @@ public sealed class CameraFactory : IFactory
         WeaponCamera.cullingMask = _cameraData.WeaponCameraCullingLayerMask.value;
         WeaponCamera.fieldOfView = _cameraData.FOV;
         WeaponCamera.useOcclusionCulling = false;
+        WeaponCamera.farClipPlane = _cameraData.ClippingPlaneFar;
+        WeaponCamera.nearClipPlane = _cameraData.ClippingPlaneNear;
 
         return Camera.gameObject;
     }

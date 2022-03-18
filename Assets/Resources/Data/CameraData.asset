@@ -18,10 +18,10 @@ MonoBehaviour:
     m_Bits: 2147483648
   _cullingLayerMask:
     serializedVersion: 2
-    m_Bits: 2147484151
+    m_Bits: 2147484087
   _weaponCameraCullingLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   _cameraName: Camera
   _weaponCameraName: WeaponCamera
   _fov: 85
