@@ -4,5 +4,7 @@ public enum MatchState
     LoadingCountdown = 1,
     StartCountdown = 2,
     MatchProcess = 3,
-    MatchEndCountdown = 4
+    EndCountdown = 4,
+    EndScreen = 5,
+    MainMenu = 6
 }

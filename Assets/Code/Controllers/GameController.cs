@@ -16,6 +16,8 @@ public sealed class GameController : MonoBehaviour
 
     private void Start()
     {
+        var musicPlayer = FindObjectOfType<MusicPlayer>();
+        
         _controllers = new Controllers();
 
         var spawnPoints = Object.FindObjectsOfType<PlayerSpawnPointView>();
@@ -41,6 +43,7 @@ public sealed class GameController : MonoBehaviour
         var cursorController = new CursorController();
         
         _controllers
+            .Add(musicPlayer)
             .Add(inputController)
             .Add(playerController)
             .Add(cameraController)
@@ -60,8 +63,6 @@ public sealed class GameController : MonoBehaviour
 
     private IEnumerator LoadingCountdown()
     {
-        var endOfFrame = new WaitForEndOfFrame();
-
         _photonView.RPC(nameof(StartFakeLoading), RpcTarget.All);
         
         yield return new WaitForSeconds(_data.MatchData.TimeToLoad);
@@ -78,7 +79,6 @@ public sealed class GameController : MonoBehaviour
 
         yield return new WaitForSeconds(_data.MatchData.MatchEndCountdown);
         
-        //_hudView.SetEndCountdown(false, _matchCountdown);
         Disconnect();
     }
 
@@ -117,7 +117,7 @@ public sealed class GameController : MonoBehaviour
     [PunRPC]
     private void StartMatchEndCountdown()
     {
-        _controllers.ChangeMatchState(MatchState.MatchEndCountdown);
+        _controllers.ChangeMatchState(MatchState.EndScreen);
 
         EndingTimer().ToObservable().Subscribe();
     }
@@ -134,6 +134,8 @@ public sealed class GameController : MonoBehaviour
 
     private void Disconnect()
     {
+        _controllers.ChangeMatchState(MatchState.MainMenu);
+        
         PhotonNetwork.LoadLevel(_data.MatchData.MainMenuSceneIndex);
     }
 

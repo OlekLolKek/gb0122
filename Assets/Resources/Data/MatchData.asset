@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd74ce283b0344fdae031cf965721377, type: 3}
   m_Name: MatchData
   m_EditorClassIdentifier: 
-  <TimeToLoad>k__BackingField: 3
-  <MatchStartCountdown>k__BackingField: 5
-  <MatchLength>k__BackingField: 60
+  <TimeToLoad>k__BackingField: 2
+  <MatchStartCountdown>k__BackingField: 3
+  <MatchLength>k__BackingField: 15
   <MatchEndCountdown>k__BackingField: 15
   <MainMenuSceneIndex>k__BackingField: 1

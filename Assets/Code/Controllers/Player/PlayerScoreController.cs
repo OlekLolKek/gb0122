@@ -14,7 +14,8 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
     private readonly ScoreManager _scoreManager;
     private readonly PlayerView _playerView;
     private readonly HudView _hudView;
-
+    
+    private const float UI_UPDATE_PAUSE_TIME = 2.5f;
 
     public PlayerScoreController(PlayerView playerView, HudView hudView)
     {
@@ -35,7 +36,7 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
 
     public void ChangeMatchState(MatchState matchState)
     {
-        if (matchState == MatchState.MatchEndCountdown)
+        if (matchState == MatchState.EndScreen)
         {
             GetAccountInfo();
         }
@@ -64,6 +65,8 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
 
     private IEnumerator GotUserScore(GetUserDataResult result)
     {
+        yield return new WaitForSeconds(UI_UPDATE_PAUSE_TIME);
+        
         var data = new PlayerLevelModel();
 
         if (result.Data != null)
@@ -72,8 +75,6 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
             data.TotalScore = Convert.ToInt32(result.Data[Constants.TOTAL_SCORE_DATA_ID].Value);
             data.Level = Convert.ToInt32(result.Data[Constants.LEVEL_DATA_ID].Value);
         }
-
-        Debug.Log($"Got user data: {data.Score} / {data.TotalScore} / {data.Level}");
 
         var matchScore = _scoreManager.GetStats(PhotonNetwork.LocalPlayer.ActorNumber);
         var currentTotalScore = data.TotalScore;
@@ -113,12 +114,10 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
                     { Constants.TOTAL_SCORE_DATA_ID, data.TotalScore.ToString() },
                     { Constants.LEVEL_DATA_ID, data.Level.ToString() }
                 }
-            }, dataResult =>
-            {
-                Debug.Log($"Updated user data to {data.Score} / {data.TotalScore} / {data.Level}");
-            },
+            }, Debug.Log,
             Debug.LogError);
-    }
+}
+
 
     public int CountTotalXpForLevel(int levelToCount)
     {
