@@ -65,8 +65,6 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
 
     private IEnumerator GotUserScore(GetUserDataResult result)
     {
-        yield return new WaitForSeconds(UI_UPDATE_PAUSE_TIME);
-        
         var data = new PlayerLevelModel();
 
         if (result.Data != null)
@@ -85,6 +83,11 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
         
         var scoreForNextLevel = (int)(5 * Mathf.Pow(data.Level, 2) + 50 * data.Level + 100);
         var totalScoreForNextLevel = CountTotalXpForLevel(data.Level + 1);
+        
+        _hudView.SetLevelProgress(currentTotalScore, totalScoreForNextLevel, data.Level,
+            (float)currentScore / (float)scoreForNextLevel);
+        
+        yield return new WaitForSeconds(UI_UPDATE_PAUSE_TIME);
 
         while (currentScore < data.Score)
         {

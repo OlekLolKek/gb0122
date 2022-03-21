@@ -10,13 +10,14 @@ public sealed class GameController : MonoBehaviour
     [SerializeField] private HudView _hudView;
     [SerializeField] private Data _data;
     [SerializeField] private PhotonView _photonView;
-    
+
+    private MusicPlayer _musicPlayer;
     private Controllers _controllers;
     private float _matchCountdown;
 
     private void Start()
     {
-        var musicPlayer = FindObjectOfType<MusicPlayer>();
+        _musicPlayer = FindObjectOfType<MusicPlayer>();
         
         _controllers = new Controllers();
 
@@ -43,7 +44,7 @@ public sealed class GameController : MonoBehaviour
         var cursorController = new CursorController();
         
         _controllers
-            .Add(musicPlayer)
+            .Add(_musicPlayer)
             .Add(inputController)
             .Add(playerController)
             .Add(cameraController)
@@ -103,7 +104,7 @@ public sealed class GameController : MonoBehaviour
         while (_matchCountdown > 0)
         {
             _hudView.SetStartCountdown(true, _matchCountdown);
-            yield return 1;
+            yield return 0;
         }
     }
     
@@ -112,11 +113,25 @@ public sealed class GameController : MonoBehaviour
     {
         _hudView.SetStartCountdown(false, _matchCountdown);
         _controllers.ChangeMatchState(MatchState.MatchProcess);
+
+        MatchProcess().ToObservable().Subscribe();
     }
-    
+
+    private IEnumerator MatchProcess()
+    {
+        _matchCountdown = _data.MatchData.MatchLength;
+        while (_matchCountdown > 0)
+        {
+            _hudView.SetMatchCountdown(true, _matchCountdown);
+            _musicPlayer.SetMatchCountdown(_matchCountdown);
+            yield return 0;
+        }
+    }
+
     [PunRPC]
     private void StartMatchEndCountdown()
     {
+        _hudView.SetMatchCountdown(false, _matchCountdown);
         _controllers.ChangeMatchState(MatchState.EndScreen);
 
         EndingTimer().ToObservable().Subscribe();
@@ -128,7 +143,7 @@ public sealed class GameController : MonoBehaviour
         while (_matchCountdown > 0)
         {
             _hudView.SetEndCountdown(true, _matchCountdown);
-            yield return 1;
+            yield return 0;
         }
     }
 

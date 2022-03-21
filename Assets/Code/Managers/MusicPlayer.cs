@@ -16,6 +16,8 @@ public sealed class MusicPlayer : MonoBehaviour, IMatchStateListener
     [SerializeField] private AudioClip _endMusic;
     [SerializeField] private AudioClip _endSound;
 
+    private MatchState _state;
+    
     private void Awake()
     {
         DontDestroyOnLoad(this);
@@ -35,6 +37,8 @@ public sealed class MusicPlayer : MonoBehaviour, IMatchStateListener
 
     public void ChangeMatchState(MatchState matchState)
     {
+        _state = matchState;
+        
         switch (matchState)
         {
             case MatchState.LoadingCountdown:
@@ -47,6 +51,7 @@ public sealed class MusicPlayer : MonoBehaviour, IMatchStateListener
                 PlaySfx(_startSound, false);
                 break;
             case MatchState.EndCountdown:
+                PlayMusic(_startMusic, true);
                 break;
             case MatchState.EndScreen:
                 PlayMusic(_endMusic, false);
@@ -77,5 +82,16 @@ public sealed class MusicPlayer : MonoBehaviour, IMatchStateListener
     private AudioClip GetRandomTrack(IReadOnlyList<AudioClip> tracks)
     {
         return tracks[Random.Range(0, tracks.Count)];
+    }
+
+    public void SetMatchCountdown(float matchCountdown)
+    {
+        if (matchCountdown < Constants.MATCH_END_TIME)
+        {
+            if (_state != MatchState.EndCountdown)
+            {
+                ChangeMatchState(MatchState.EndCountdown);
+            }
+        }
     }
 }

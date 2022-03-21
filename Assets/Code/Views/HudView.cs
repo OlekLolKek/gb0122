@@ -17,6 +17,9 @@ public sealed class HudView : MonoBehaviour
     [SerializeField] private TMP_Text _killsText;
     [SerializeField] private TMP_Text _deathsText;
     [SerializeField] private TMP_Text _scoreText;
+    [SerializeField] private TMP_Text _matchTimerText;
+    [SerializeField] private Color _normalTimerColor;
+    [SerializeField] private Color _endTimerColor;
     
     [Header("Death panel")]
     [SerializeField] private GameObject _deathPanel;
@@ -128,5 +131,17 @@ public sealed class HudView : MonoBehaviour
             timer = 0.0f;
         
         _deathTimerText.text = $"{timer:F2}";
+    }
+
+    public void SetMatchCountdown(bool active, float matchCountdown)
+    {
+        if (matchCountdown < 0.0f) 
+            matchCountdown = 0.0f;
+
+        _matchTimerText.text = $"{matchCountdown:F1}";
+
+        _matchTimerText.color = matchCountdown < Constants.MATCH_END_TIME ? _endTimerColor : _normalTimerColor;
+        
+        _matchTimerText.gameObject.SetActive(active);
     }
 }

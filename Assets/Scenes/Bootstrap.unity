@@ -2713,7 +2713,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 60543c0b6866f27438fad6dc346c5a76, type: 3}
   _startMusic: {fileID: 8300000, guid: 296903ebf22ba294997455261bb3852c, type: 3}
   _startSound: {fileID: 8300000, guid: ccd621804ff8f604f80d55d0d3da7bbc, type: 3}
-  _endMusic: {fileID: 8300000, guid: 0f4a9daf618ba8f4eaa3023c6332a5ae, type: 3}
+  _endMusic: {fileID: 8300000, guid: b46d3d2b5fb0aa14c9376a9561955785, type: 3}
   _endSound: {fileID: 8300000, guid: 0d0d768c41187754697c72fcd3353a59, type: 3}
 --- !u!82 &828381329
 AudioSource:
