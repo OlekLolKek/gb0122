@@ -15,6 +15,7 @@ public sealed class PlayFabLogin : MonoBehaviour
     [SerializeField] private TMP_Text _text;
     [SerializeField] private Button _signInButton;
     [SerializeField] private Button _deleteAccountButton;
+    [SerializeField] private Button _quitButton;
     [SerializeField] private Color _successColor;
     [SerializeField] private Color _loadingColor;
     [SerializeField] private Color _failureColor;
@@ -29,6 +30,7 @@ public sealed class PlayFabLogin : MonoBehaviour
     {
         _signInButton.onClick.AddListener(TryLogin);
         _deleteAccountButton.onClick.AddListener(DeleteAccount);
+        _quitButton.onClick.AddListener(Quit);
         CheckAccount();
     }
 
@@ -196,9 +198,15 @@ public sealed class PlayFabLogin : MonoBehaviour
         Debug.LogError($"{message} {error}");
     }
 
+    private void Quit()
+    {
+        Application.Quit();
+    }
+
     private void OnDestroy()
     {
         _signInButton.onClick.RemoveListener(TryLogin);
         _deleteAccountButton.onClick.RemoveListener(DeleteAccount);
+        _quitButton.onClick.RemoveListener(Quit);
     }
 }
