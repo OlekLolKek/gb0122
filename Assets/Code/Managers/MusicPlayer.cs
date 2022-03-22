@@ -37,6 +37,8 @@ public sealed class MusicPlayer : MonoBehaviour, IMatchStateListener
 
     public void ChangeMatchState(MatchState matchState)
     {
+        Debug.Log($"Changing state to {matchState}");
+        
         _state = matchState;
         
         switch (matchState)
@@ -88,7 +90,7 @@ public sealed class MusicPlayer : MonoBehaviour, IMatchStateListener
     {
         if (matchCountdown < Constants.MATCH_END_TIME)
         {
-            if (_state != MatchState.EndCountdown)
+            if (_state != MatchState.EndCountdown && _state != MatchState.EndScreen)
             {
                 ChangeMatchState(MatchState.EndCountdown);
             }

@@ -80,6 +80,8 @@ public sealed class GameController : MonoBehaviour
 
         yield return new WaitForSeconds(_data.MatchData.MatchEndCountdown);
         
+        _photonView.RPC(nameof(SetMainMenuState), RpcTarget.All);
+        
         Disconnect();
     }
 
@@ -147,10 +149,14 @@ public sealed class GameController : MonoBehaviour
         }
     }
 
-    private void Disconnect()
+    [PunRPC]
+    private void SetMainMenuState()
     {
         _controllers.ChangeMatchState(MatchState.MainMenu);
-        
+    }
+
+    private void Disconnect()
+    {
         PhotonNetwork.LoadLevel(_data.MatchData.MainMenuSceneIndex);
     }
 
