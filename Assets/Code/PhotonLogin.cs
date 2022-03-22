@@ -135,6 +135,8 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        _uiNavigationManager.SwitchToBasicTab();
+        
         _playerListManager.OnJoinedRoom();
         
         _leaveRoomButton.gameObject.SetActive(true);
