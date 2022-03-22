@@ -21,8 +21,6 @@ public sealed class PlayFabLogin : MonoBehaviour
     [SerializeField] private Color _failureColor;
 
     private string _username;
-    private string _password;
-    private string _email;
 
     private const string AUTH_KEY = "player-unique-id";
 
@@ -46,19 +44,9 @@ public sealed class PlayFabLogin : MonoBehaviour
         }
     }
 
-    public void UpdatePassword(string password)
-    {
-        _password = password;
-    }
-
     public void UpdateUsername(string username)
     {
         _username = username;
-    }
-
-    public void UpdateEmail(string email)
-    {
-        _email = email;
     }
 
     private void TryLogin()
@@ -111,32 +99,6 @@ public sealed class PlayFabLogin : MonoBehaviour
     {
         PlayerPrefs.DeleteKey(AUTH_KEY);
         CheckAccount();
-    }
-
-    public void CreateAccount()
-    {
-        PlayFabClientAPI.RegisterPlayFabUser(new RegisterPlayFabUserRequest
-        {
-            Username = _username,
-            Email = _email,
-            Password = _password,
-            RequireBothUsernameAndEmail = true
-        }, result =>
-        {
-            Debug.Log("Success");
-        }, error =>
-        {
-            Debug.LogError($"Error: {error}");
-        });
-    }
-
-    public void Login()
-    {
-        PlayFabClientAPI.LoginWithPlayFab(new LoginWithPlayFabRequest
-        {
-            Username = _username,
-            Password = _password,
-        }, OnLoginSuccess, Debug.LogError);
     }
 
     private void OnLoginSuccess(LoginResult result)
