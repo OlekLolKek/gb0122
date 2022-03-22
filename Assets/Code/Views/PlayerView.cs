@@ -42,7 +42,10 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
         {
             _damageableUnitsManager.Register(ID, this);
         }
+    }
 
+    private void Start()
+    {
         OnUpdatedScore.Invoke(0, 0, 0);
     }
 
