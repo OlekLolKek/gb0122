@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObservable
 {
     [SerializeField] private CharacterController _characterController;
+    [SerializeField] private AudioSource _hitAudioSource;
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private GameObject _groundCheck;
     [SerializeField] private GameObject _head;
@@ -74,7 +75,10 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
     public void Damage(float damage, IDamageable sender)
     {
         if (_photonView.IsMine)
+        {
             OnReceivedDamage.Invoke(damage, sender);
+            _photonView.RPC(nameof(PlayHitSoundRpc), RpcTarget.All);
+        }
     }
 
     public void SendIdToDamage(int idToDamage, float damage)
@@ -109,5 +113,11 @@ public sealed class PlayerView : MonoBehaviourPunCallbacks, IDamageable, IPunObs
         {
             renderer1.enabled = !_isDead;
         }
+    }
+
+    [PunRPC]
+    private void PlayHitSoundRpc()
+    {
+        _hitAudioSource.Play();
     }
 }

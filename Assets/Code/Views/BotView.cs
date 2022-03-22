@@ -7,6 +7,7 @@ using UnityEngine.AI;
 public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
 {
     [SerializeField] private NavMeshAgent _navMeshAgent;
+    [SerializeField] private AudioSource _hitAudioSource;
     [SerializeField] private WeaponView _weaponView;
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private Collider _collider;
@@ -73,6 +74,7 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
         if (_photonView.IsMine)
         {
             OnReceivedDamage.Invoke(damage, sender);
+            _photonView.RPC(nameof(PlayHitSoundRpc), RpcTarget.All);
         }
     }
 
@@ -109,6 +111,12 @@ public sealed class BotView : MonoBehaviour, IDamageable, IPunObservable
         {
             renderer1.enabled = !_isDead;
         }
+    }
+
+    [PunRPC]
+    private void PlayHitSoundRpc()
+    {
+        _hitAudioSource.Play();
     }
 
     private void OnDestroy()

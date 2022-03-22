@@ -56,7 +56,7 @@ public sealed class HealthController : IExecutable, ICleanable
         _playerModel.Health -= damage;
         _hudView.SetHealth(_playerModel.Health);
         _playerView.SetHealth(_playerModel.Health);
-        
+
         if (_playerModel.Health <= 0.0f)
         {
             _respawnCoroutine = Respawn().ToObservable().Subscribe();
