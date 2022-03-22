@@ -4,6 +4,7 @@ using UnityEngine;
 
 public sealed class WeaponView : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem _shotParticles;
     [SerializeField] private PhotonView _photonView;
     [SerializeField] private AudioSource _shotAudioSource;
     [SerializeField] private AudioSource _emptyClickAudioSource;
@@ -71,6 +72,7 @@ public sealed class WeaponView : MonoBehaviour
     private void ShotRPC()
     {
         _shotAudioSource.Play();
+        _shotParticles.Play();
     }
 
     [PunRPC]

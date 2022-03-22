@@ -1849,6 +1849,7 @@ MonoBehaviour:
   _text: {fileID: 1705407679}
   _signInButton: {fileID: 824249129}
   _deleteAccountButton: {fileID: 1935840652}
+  _quitButton: {fileID: 92980828}
   _successColor: {r: 0.23718405, g: 0.8490566, b: 0.1481844, a: 1}
   _loadingColor: {r: 1, g: 0.8581352, b: 0, a: 1}
   _failureColor: {r: 0.8584906, g: 0.17827256, b: 0.14173192, a: 1}

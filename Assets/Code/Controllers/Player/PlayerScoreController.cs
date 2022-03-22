@@ -75,6 +75,7 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
         }
 
         var matchScore = _scoreManager.GetStats(PhotonNetwork.LocalPlayer.ActorNumber);
+        matchScore.Score = matchScore.Score < 0 ? 0 : matchScore.Score;
         var currentTotalScore = data.TotalScore;
         var currentScore = data.Score;
 
