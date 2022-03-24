@@ -11,7 +11,7 @@ public sealed class ChangeUsernamePanelView : MonoBehaviour
     [SerializeField] private Button _confirmButton;
     [SerializeField] private Button _backButton;
 
-    private const string ERROR_TEXT = "The username should be between 3 and 25 characters long.";
+    private const string ERROR_TEXT = "The username should be between 3 and {0} characters long.";
     
     public event Action<string> OnConfirmButtonClicked = delegate { };
     public event Action OnBackButtonClicked = delegate { };
@@ -50,7 +50,9 @@ public sealed class ChangeUsernamePanelView : MonoBehaviour
 
     private void InputFieldValueChanged(string value)
     {
-        _usernameErrorText.text = CheckUsernameEligible(value) ? string.Empty : ERROR_TEXT;
+        _usernameErrorText.text = CheckUsernameEligible(value)
+            ? string.Empty 
+            : string.Format(ERROR_TEXT, _usernameInputField.characterLimit);
     }
 
     private void InputFieldSubmit(string value)
