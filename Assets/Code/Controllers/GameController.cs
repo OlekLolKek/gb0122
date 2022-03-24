@@ -121,6 +121,7 @@ public sealed class GameController : MonoBehaviour
 
     private IEnumerator MatchProcess()
     {
+        _hudView.SetStartCountdown(false, _matchCountdown);
         _matchCountdown = _data.MatchData.MatchLength;
         while (_matchCountdown > 0)
         {
