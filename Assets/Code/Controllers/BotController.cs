@@ -90,8 +90,8 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
     {
         var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)].transform;
 
-        var xOffset = Random.Range(-2, 2);
-        var zOffset = Random.Range(-2, 2);
+        var xOffset = Random.Range(-1, 1);
+        var zOffset = Random.Range(-1, 1);
 
         var position = spawnPoint.position;
         position.x += xOffset;

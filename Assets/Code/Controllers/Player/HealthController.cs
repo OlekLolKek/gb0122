@@ -113,8 +113,8 @@ public sealed class HealthController : IExecutable, ICleanable
     {
         var spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)].transform;
 
-        var xOffset = Random.Range(-2, 2);
-        var zOffset = Random.Range(-2, 2);
+        var xOffset = Random.Range(-1.5f, 1.5f);
+        var zOffset = Random.Range(-1.5f, 1.5f);
 
         var position = spawnPoint.position;
         position.x += xOffset;
