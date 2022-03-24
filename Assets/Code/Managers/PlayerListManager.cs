@@ -42,6 +42,8 @@ public sealed class PlayerListManager : MonoBehaviour
             }
         }
         
+        _playerElements.Clear();
+        
         _playerListPanelView.gameObject.SetActive(false);
     }
     
@@ -81,10 +83,12 @@ public sealed class PlayerListManager : MonoBehaviour
     public void OnPlayerLeftRoom(Player otherPlayer)
     {
         var elementToDelete = _playerElements.FirstOrDefault(element => element.PlayerActorNumber == otherPlayer.ActorNumber);
+        Debug.Log($"Player actor number: {otherPlayer.ActorNumber}, element: {elementToDelete}");
         if (elementToDelete)
         {
-            Destroy(elementToDelete.gameObject);
+            _playerElements.Remove(elementToDelete);
             elementToDelete.OnKickButtonClicked -= KickPlayer;
+            Destroy(elementToDelete.gameObject);
         }
     }
 }
