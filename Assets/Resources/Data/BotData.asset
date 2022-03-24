@@ -20,8 +20,8 @@ MonoBehaviour:
   _botMinAttackCooldown: 0.45
   _botMaxAttackCooldown: 0.8
   _botIdlePositionRange: 10
-  _botIdleTimeRandom: 2.5
-  _botIdleDuration: 5
+  _botIdleTimeRandom: 7.5
+  _botIdleDuration: 10
   _botRespawnTime: 3
   _botAttackRange: 10
   _botVision: 20

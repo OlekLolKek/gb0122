@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
@@ -9,6 +10,8 @@ public sealed class PauseMenuView : MonoBehaviour
     [SerializeField] private ChangeUsernamePanelView _changeUsernamePanel;
 
     [Header("Controls")]
+    [SerializeField] private TMP_Text _musicVolumeText;
+    [SerializeField] private TMP_Text _soundVolumeText;
     [SerializeField] private Slider _musicVolumeSlider;
     [SerializeField] private Slider _soundVolumeSlider;
     [SerializeField] private Button _closeMenuButton;
@@ -45,8 +48,13 @@ public sealed class PauseMenuView : MonoBehaviour
 
     public void Activate()
     {
-        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernamePanel.Deactivate();
+        
         _changeUsernameButton.gameObject.SetActive(true);
+        _musicVolumeSlider.gameObject.SetActive(true);
+        _soundVolumeSlider.gameObject.SetActive(true);
+        _musicVolumeText.gameObject.SetActive(true);
+        _soundVolumeText.gameObject.SetActive(true);
         _quitButton.gameObject.SetActive(true);
         
         gameObject.SetActive(true);
@@ -73,28 +81,44 @@ public sealed class PauseMenuView : MonoBehaviour
 
     private void ChangeUsernameButtonClicked()
     {
-        _changeUsernamePanel.gameObject.SetActive(true);
+        _changeUsernamePanel.Activate();
+        
         _changeUsernameButton.gameObject.SetActive(false);
+        _musicVolumeSlider.gameObject.SetActive(false);
+        _soundVolumeSlider.gameObject.SetActive(false);
+        _musicVolumeText.gameObject.SetActive(false);
+        _soundVolumeText.gameObject.SetActive(false);
         _quitButton.gameObject.SetActive(false);
     }
 
     private void CloseChangeUsernamePanel()
     {
-        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernamePanel.Deactivate();
+        
         _changeUsernameButton.gameObject.SetActive(true);
+        _musicVolumeSlider.gameObject.SetActive(true);
+        _soundVolumeSlider.gameObject.SetActive(true);
+        _musicVolumeText.gameObject.SetActive(true);
+        _soundVolumeText.gameObject.SetActive(true);
         _quitButton.gameObject.SetActive(true);
     }
 
     private void ConfirmChangeUsernameButtonClicked(string _)
     {
-        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernamePanel.Deactivate();
+        
         _changeUsernameButton.gameObject.SetActive(true);
+        _musicVolumeSlider.gameObject.SetActive(true);
+        _soundVolumeSlider.gameObject.SetActive(true);
+        _musicVolumeText.gameObject.SetActive(true);
+        _soundVolumeText.gameObject.SetActive(true);
         _quitButton.gameObject.SetActive(true);
     }
 
     private void CloseMenuButtonClicked()
     {
-        _changeUsernamePanel.gameObject.SetActive(false);
+        _changeUsernamePanel.Deactivate();
+        
         _changeUsernameButton.gameObject.SetActive(false);
         _quitButton.gameObject.SetActive(false);
         
