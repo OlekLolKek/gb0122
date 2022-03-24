@@ -22,6 +22,7 @@ public sealed class CameraFactory : IFactory
         Camera.farClipPlane = _cameraData.ClippingPlaneFar;
         Camera.nearClipPlane = _cameraData.ClippingPlaneNear;
         Camera.fieldOfView = _cameraData.FOV;
+        Camera.renderingPath = RenderingPath.DeferredShading;
 
         CameraTransform = Camera.transform;
             
