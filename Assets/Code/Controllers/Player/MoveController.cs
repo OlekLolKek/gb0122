@@ -51,7 +51,7 @@ public sealed class MoveController : IExecutable, IMatchStateListener, ICleanabl
         
         var moveVector = _playerModel.Transform.right * _horizontal + _playerModel.Transform.forward * _vertical;
         moveVector = Vector3.ClampMagnitude(moveVector, MAX_VECTOR_LENGTH);
-        var speed = _playerModel.IsCrouching ? _crouchSpeed : _moveSpeed;
+        var speed = _playerModel.IsCrouching && _playerModel.IsGrounded ? _crouchSpeed : _moveSpeed;
         
         _characterController.Move(moveVector * (speed * _deltaTime));
     }
