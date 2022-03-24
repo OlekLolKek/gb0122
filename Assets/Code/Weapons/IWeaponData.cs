@@ -8,9 +8,6 @@ public interface IWeaponData : IData
     Material TracerMaterial { get; }
     LayerMask HitLayerMask { get; }
     Vector3 Position { get; }
-    AudioClip ShotAudioClip { get; }
-    AudioClip EmptyAudioClip { get; }
-    AudioClip ReloadAudioClip { get; }
     float ShootCooldown { get; }
     float ReloadTime { get; }
     float Damage { get; }
@@ -18,4 +15,5 @@ public interface IWeaponData : IData
     float TracerFadeMultiplier { get; }
     float MaxShotDistance { get; }
     int MaxAmmo { get; }
+    int OtherWeaponsLayer { get; }
 }

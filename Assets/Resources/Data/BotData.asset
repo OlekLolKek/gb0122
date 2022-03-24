@@ -27,5 +27,5 @@ MonoBehaviour:
   _botVision: 20
   _botHealth: 75
   _botDamage: 10
-  _botAmount: 1
+  _botAmount: 8
   _botScoreForKill: 10

@@ -20,6 +20,17 @@ public sealed class WeaponView : MonoBehaviour
         _renderers = GetComponentsInChildren<Renderer>();
     }
 
+    public void SetLayer(int layer)
+    {
+        if (!_photonView.IsMine)
+        {
+            foreach (var child in GetComponentsInChildren<GameObject>())
+            {
+                child.layer = layer;
+            }
+        }
+    }
+
     public void PlayShotAudio()
     {
         if (PhotonNetwork.IsConnected)

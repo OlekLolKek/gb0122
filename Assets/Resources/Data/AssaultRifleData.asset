@@ -30,3 +30,4 @@ MonoBehaviour:
   _reloadTime: 0.5
   _damage: 18
   _maxAmmo: 30
+  _otherWeaponsLayer: 7
