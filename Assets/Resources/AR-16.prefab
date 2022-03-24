@@ -5119,6 +5119,7 @@ MonoBehaviour:
   _emptyClickAudioSource: {fileID: 462880361254172759}
   _reloadAudioSource: {fileID: 7982513215235942152}
   _muzzle: {fileID: 1437802922}
+  _otherPlayerLayer: 7
 --- !u!114 &311383965198796407
 MonoBehaviour:
   m_ObjectHideFlags: 0

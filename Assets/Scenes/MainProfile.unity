@@ -5972,9 +5972,6 @@ GameObject:
   m_Component:
   - component: {fileID: 645253432}
   - component: {fileID: 645253431}
-  - component: {fileID: 645253434}
-  - component: {fileID: 645253433}
-  - component: {fileID: 645253435}
   - component: {fileID: 645253436}
   - component: {fileID: 645253437}
   m_Layer: 0
@@ -6018,57 +6015,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &645253433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645253430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34a0744ec2ab4ab0809157d650286790, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _elementPrefab: {fileID: 4475906331580917172, guid: 73e5c643fdd4c154d81268458820d7ba, type: 3}
-  _elementsRoot: {fileID: 473925697}
---- !u!114 &645253434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645253430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c04dec9145c247f2a841808e4c8b6e0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _elementPrefab: {fileID: 4475906331580917172, guid: 73e5c643fdd4c154d81268458820d7ba, type: 3}
-  _elementsRoot: {fileID: 532050938}
-  _currencyText: {fileID: 1633783807}
---- !u!114 &645253435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 645253430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09c7e05f0a23480b91af9f64f556cfa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _characterNameInputField: {fileID: 436136502}
-  _createButton: {fileID: 1651726490}
-  _createPanel: {fileID: 530875027}
-  _plusPanel: {fileID: 795227205}
-  _plus1: {fileID: 131180680}
-  _character1: {fileID: 1508006202}
-  _characterName1: {fileID: 710512381}
-  _characterLevel1: {fileID: 481257203}
-  _characterName2: {fileID: 971151582}
-  _characterLevel2: {fileID: 671287491}
 --- !u!114 &645253436
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -22,7 +22,6 @@ public sealed class WeaponFactory : IWeaponFactory
         
         WeaponView = gun.GetComponentInChildren<WeaponView>();
         Barrel = WeaponView.Muzzle;
-        WeaponView.SetLayer(data.OtherWeaponsLayer);
 
         return gun.gameObject;
     }

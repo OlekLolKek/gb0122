@@ -10,6 +10,7 @@ public sealed class WeaponView : MonoBehaviour
     [SerializeField] private AudioSource _emptyClickAudioSource;
     [SerializeField] private AudioSource _reloadAudioSource;
     [SerializeField] private GameObject _muzzle;
+    [SerializeField] private int _otherPlayerLayer;
 
     private Renderer[] _renderers;
     
@@ -20,13 +21,13 @@ public sealed class WeaponView : MonoBehaviour
         _renderers = GetComponentsInChildren<Renderer>();
     }
 
-    public void SetLayer(int layer)
+    public void Start()
     {
         if (!_photonView.IsMine)
         {
-            foreach (var child in GetComponentsInChildren<GameObject>())
+            foreach (var child in GetComponentsInChildren<Transform>())
             {
-                child.layer = layer;
+                child.gameObject.layer = _otherPlayerLayer;
             }
         }
     }
