@@ -15,6 +15,8 @@ public sealed class GameController : MonoBehaviour
     private Controllers _controllers;
     private float _matchCountdown;
 
+    private MatchState _currentState;
+
     private void Start()
     {
         _musicPlayer = FindObjectOfType<MusicPlayer>();
@@ -88,14 +90,16 @@ public sealed class GameController : MonoBehaviour
     [PunRPC]
     private void StartFakeLoading()
     {
-        _controllers.ChangeMatchState(MatchState.LoadingCountdown);
+        _currentState = MatchState.LoadingCountdown;
+        _controllers.ChangeMatchState(_currentState);
         _hudView.SetStartCountdown(true, _data.MatchData.MatchStartCountdown);
     }
     
     [PunRPC]
     private void StartCountdown()
     {
-        _controllers.ChangeMatchState(MatchState.StartCountdown);
+        _currentState = MatchState.StartCountdown;
+        _controllers.ChangeMatchState(_currentState);
 
         StartingTimer().ToObservable().Subscribe();
     }
@@ -105,6 +109,11 @@ public sealed class GameController : MonoBehaviour
         _matchCountdown = _data.MatchData.MatchStartCountdown;
         while (_matchCountdown > 0)
         {
+            if (_currentState != MatchState.StartCountdown)
+            {
+                yield break;
+            }
+            
             _hudView.SetStartCountdown(true, _matchCountdown);
             yield return 0;
         }
@@ -114,17 +123,22 @@ public sealed class GameController : MonoBehaviour
     private void StartMatchProcess()
     {
         _hudView.SetStartCountdown(false, _matchCountdown);
-        _controllers.ChangeMatchState(MatchState.MatchProcess);
+        _currentState = MatchState.MatchProcess;
+        _controllers.ChangeMatchState(_currentState);
 
         MatchProcess().ToObservable().Subscribe();
     }
 
     private IEnumerator MatchProcess()
     {
-        _hudView.SetStartCountdown(false, _matchCountdown);
         _matchCountdown = _data.MatchData.MatchLength;
         while (_matchCountdown > 0)
         {
+            if (_currentState != MatchState.MatchProcess)
+            {
+                yield break;
+            }
+            
             _hudView.SetMatchCountdown(true, _matchCountdown);
             _musicPlayer.SetMatchCountdown(_matchCountdown);
             yield return 0;
@@ -135,7 +149,8 @@ public sealed class GameController : MonoBehaviour
     private void StartMatchEndCountdown()
     {
         _hudView.SetMatchCountdown(false, _matchCountdown);
-        _controllers.ChangeMatchState(MatchState.EndScreen);
+        _currentState = MatchState.EndScreen;
+        _controllers.ChangeMatchState(_currentState);
 
         EndingTimer().ToObservable().Subscribe();
     }
@@ -145,6 +160,11 @@ public sealed class GameController : MonoBehaviour
         _matchCountdown = _data.MatchData.MatchEndCountdown;
         while (_matchCountdown > 0)
         {
+            if (_currentState != MatchState.EndScreen)
+            {
+                yield break;
+            }
+            
             _hudView.SetEndCountdown(true, _matchCountdown);
             yield return 0;
         }
