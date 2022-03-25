@@ -14,7 +14,15 @@ public sealed class PlayerModel
 
 
     public float MaxHealth { get; set; }
-    public float Health { get; set; }
+    public float Health
+    {
+        get => _health;
+        set
+        {
+            _health = value;
+            OnHealthChanged.Invoke(_health);
+        }
+    }
     public bool IsPressingJumpButton { get; set; }
     public bool IsCrouching { get; set; }
     public bool IsGrounded { get; set; }
@@ -24,13 +32,15 @@ public sealed class PlayerModel
         set
         {
             _isDead = value;
-            DeadChanged.Invoke(_isDead);
+            OnDeadChanged.Invoke(_isDead);
         } 
     }
 
     private bool _isDead;
-    
-    public event Action<bool> DeadChanged = delegate {  };
+    private float _health;
+
+    public event Action<bool> OnDeadChanged = delegate {  };
+    public event Action<float> OnHealthChanged = delegate { };
 
     public PlayerModel(PlayerFactory factory)
     {

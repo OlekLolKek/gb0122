@@ -52,7 +52,7 @@ public sealed class Weapon : IWeapon
         CameraModel cameraModel, PlayerModel playerModel, HudView hudView)
     {
         _playerView = playerModel.PlayerView;
-        playerModel.DeadChanged += OnPlayerDeadChanged;
+        playerModel.OnDeadChanged += OnPlayerDeadChanged;
         
         _hitLayerMask = data.HitLayerMask;
         Damage = data.Damage;

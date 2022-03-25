@@ -8,6 +8,7 @@ public sealed class CameraFactory : IFactory
     public Camera Camera { get; set; }
     public Camera WeaponCamera { get; set; }
     public Transform CameraTransform { get; set; }
+    public Transform CameraParent { get; set; }
 
     public CameraFactory(CameraData cameraData)
     {
@@ -16,6 +17,8 @@ public sealed class CameraFactory : IFactory
         
     public GameObject Create()
     {
+        CameraParent = new GameObject().transform;
+        
         var camera = new GameObject(_cameraData.CameraName);
             
         Camera = camera.AddComponent<Camera>();
@@ -25,6 +28,7 @@ public sealed class CameraFactory : IFactory
         Camera.renderingPath = RenderingPath.DeferredShading;
 
         CameraTransform = Camera.transform;
+        CameraTransform.parent = CameraParent;
             
         camera.AddComponent<AudioListener>();
 
