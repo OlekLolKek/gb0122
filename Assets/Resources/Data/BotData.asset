@@ -16,16 +16,16 @@ MonoBehaviour:
   _weaponHitMask:
     serializedVersion: 2
     m_Bits: 393
-  _botAttackSpreadMultiplier: 0.15
-  _botMinAttackCooldown: 0.45
-  _botMaxAttackCooldown: 0.8
+  _botAttackSpreadMultiplier: 0.125
+  _botMinAttackCooldown: 0.25
+  _botMaxAttackCooldown: 0.65
   _botIdlePositionRange: 10
-  _botIdleTimeRandom: 7.5
+  _botIdleTimeRandom: 5
   _botIdleDuration: 10
   _botRespawnTime: 3
-  _botAttackRange: 10
+  _botAttackRange: 12.5
   _botVision: 20
   _botHealth: 75
-  _botDamage: 10
+  _botDamage: 15
   _botAmount: 8
   _botScoreForKill: 10
