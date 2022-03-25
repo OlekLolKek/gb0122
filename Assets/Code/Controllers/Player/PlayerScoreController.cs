@@ -14,8 +14,9 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
     private readonly ScoreManager _scoreManager;
     private readonly PlayerView _playerView;
     private readonly HudView _hudView;
-    
+
     private const float UI_UPDATE_PAUSE_TIME = 2.5f;
+    private const float XP_GAIN_TIME = 5.0f;
 
     public PlayerScoreController(PlayerView playerView, HudView hudView)
     {
@@ -76,24 +77,26 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
 
         var matchScore = _scoreManager.GetStats(PhotonNetwork.LocalPlayer.ActorNumber);
         matchScore.Score = matchScore.Score < 0 ? 0 : matchScore.Score;
+        var xpPerTick = (int)Mathf.Clamp((int)(XP_GAIN_TIME / 0.01f / matchScore.Score), 1.0f, int.MaxValue);
         var currentTotalScore = data.TotalScore;
         var currentScore = data.Score;
 
         data.TotalScore += matchScore.Score;
         data.Score += matchScore.Score;
-        
+
         var scoreForNextLevel = (int)(5 * Mathf.Pow(data.Level, 2) + 50 * data.Level + 100);
         var totalScoreForNextLevel = CountTotalXpForLevel(data.Level + 1);
-        
+
         _hudView.SetLevelProgress(currentTotalScore, totalScoreForNextLevel, data.Level,
             (float)currentScore / (float)scoreForNextLevel);
-        
+
         yield return new WaitForSeconds(UI_UPDATE_PAUSE_TIME);
 
         while (currentScore < data.Score)
         {
-            ++currentScore;
-            ++currentTotalScore;
+            var scoreToAdd = currentScore + xpPerTick > data.Score ? data.Score - currentScore : xpPerTick;
+            currentScore += scoreToAdd;
+            currentTotalScore += scoreToAdd;
 
             if (currentScore >= scoreForNextLevel)
             {
@@ -104,7 +107,7 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
                 scoreForNextLevel = (int)(5 * Math.Pow(data.Level, 2) + 50 * data.Level + 100);
                 totalScoreForNextLevel = CountTotalXpForLevel(data.Level + 1);
             }
-            
+
             _hudView.SetLevelProgress(currentTotalScore, totalScoreForNextLevel, data.Level,
                 (float)currentScore / (float)scoreForNextLevel);
             yield return new WaitForSeconds(0.01f);
@@ -120,7 +123,7 @@ public sealed class PlayerScoreController : IMatchStateListener, ICleanable
                 }
             }, Debug.Log,
             Debug.LogError);
-}
+    }
 
 
     public int CountTotalXpForLevel(int levelToCount)
