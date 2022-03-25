@@ -56,6 +56,18 @@ public sealed class RoomListPanelView : MonoBehaviour
 
     public void SetRooms(List<RoomInfo> roomList)
     {
+        for (var index = 0; index < roomList.Count;)
+        {
+            if (roomList[index].PlayerCount <= 0 || roomList[index].MaxPlayers <= 0)
+            {
+                roomList.Remove(roomList[index]);
+            }
+            else
+            {
+                ++index;
+            }
+        }
+
         var i = 0;
         for (; i < _roomListElements.Count && i < roomList.Count; ++i)
         {
