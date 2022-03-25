@@ -7,6 +7,7 @@ public sealed class BotData : ScriptableObject, IData
     [SerializeField] private BotView _botPrefab;
     [SerializeField] private LayerMask _weaponHitMask;
     [SerializeField] private float _botAttackSpreadMultiplier;
+    [SerializeField] private float _botShotPitchRandomness;
     [SerializeField] private float _botMinAttackCooldown;
     [SerializeField] private float _botMaxAttackCooldown;
     [SerializeField] private float _botIdlePositionRange;
@@ -23,6 +24,7 @@ public sealed class BotData : ScriptableObject, IData
     public BotView BotPrefab => _botPrefab;
     public LayerMask WeaponHitMask => _weaponHitMask;
     public float BotAttackSpreadMultiplier => _botAttackSpreadMultiplier;
+    public float BotShotPitchRandomness => _botShotPitchRandomness;
     public float BotMaxAttackCooldown => _botMaxAttackCooldown;
     public float BotMinAttackCooldown => _botMinAttackCooldown;
     public float BotIdlePositionRange => _botIdlePositionRange;

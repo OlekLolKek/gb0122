@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <TimeToLoad>k__BackingField: 2
   <MatchStartCountdown>k__BackingField: 3
-  <MatchLength>k__BackingField: 300
+  <MatchLength>k__BackingField: 120
   <MatchEndCountdown>k__BackingField: 15
   <MainMenuSceneIndex>k__BackingField: 1

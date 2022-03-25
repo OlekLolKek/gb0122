@@ -21,7 +21,7 @@ public sealed class AssaultRifleData : ScriptableObject, IWeaponData
     [SerializeField] private float _reloadTime;
     [SerializeField] private float _damage;
     [SerializeField] private int _maxAmmo;
-    [SerializeField] private int _otherWeaponsLayer;
+    [SerializeField] private float _shotPitchRandomness;
 
 
     public WeaponView Prefab => _prefab;
@@ -40,5 +40,5 @@ public sealed class AssaultRifleData : ScriptableObject, IWeaponData
     public float TracerFadeMultiplier => _tracerFadeMultiplier;
     public float MaxShotDistance => _maxShotDistance;
     public int MaxAmmo => _maxAmmo;
-    public int OtherWeaponsLayer => _otherWeaponsLayer;
+    public float ShotPitchRandomness => _shotPitchRandomness;
 }

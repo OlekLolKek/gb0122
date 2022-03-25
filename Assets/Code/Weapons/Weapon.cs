@@ -23,6 +23,7 @@ public sealed class Weapon : IWeapon
     private IDisposable _reloadingRoutine;
     private Vector3 _targetWeaponRotation;
     private Vector3 _targetWeaponRotationVelocity;
+    private float _shotPitchRandomness;
     private float _deltaTime;
     private bool _isReloading;
     private bool _isReadyToShoot = true;
@@ -59,6 +60,7 @@ public sealed class Weapon : IWeapon
         ShootCooldown = data.ShootCooldown;
         ReloadTime = data.ReloadTime;
         _maxAmmo = data.MaxAmmo;
+        _shotPitchRandomness = data.ShotPitchRandomness;
         _tracerFadeMultiplier = data.TracerFadeMultiplier;
         _maxShotDistance = data.MaxShotDistance;
 
@@ -117,7 +119,7 @@ public sealed class Weapon : IWeapon
 
         var line = CreateTracer();
 
-        _weaponView.PlayShotAudio();
+        _weaponView.PlayShotAudio(_shotPitchRandomness);
 
         TweenLineWidth(line).ToObservable().Subscribe();
         StartShootCooldown().ToObservable().Subscribe();

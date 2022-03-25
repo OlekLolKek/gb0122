@@ -15,5 +15,5 @@ public interface IWeaponData : IData
     float TracerFadeMultiplier { get; }
     float MaxShotDistance { get; }
     int MaxAmmo { get; }
-    int OtherWeaponsLayer { get; }
+    float ShotPitchRandomness { get; }
 }

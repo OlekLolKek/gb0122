@@ -13,12 +13,15 @@ public sealed class WeaponView : MonoBehaviour
     [SerializeField] private int _otherPlayerLayer;
 
     private Renderer[] _renderers;
+    private float _initialPitch;
     
     public GameObject Muzzle => _muzzle;
 
     private void Awake()
     {
         _renderers = GetComponentsInChildren<Renderer>();
+
+        _initialPitch = _shotAudioSource.pitch;
     }
 
     public void Start()
@@ -32,15 +35,15 @@ public sealed class WeaponView : MonoBehaviour
         }
     }
 
-    public void PlayShotAudio()
+    public void PlayShotAudio(float pitchRandomness)
     {
         if (PhotonNetwork.IsConnected)
         {
-            _photonView.RPC(nameof(ShotRPC), RpcTarget.All);
+            _photonView.RPC(nameof(ShotRPC), RpcTarget.All, pitchRandomness);
         }
         else
         {
-            ShotRPC();
+            ShotRPC(pitchRandomness);
         }
     }
 
@@ -81,8 +84,9 @@ public sealed class WeaponView : MonoBehaviour
     }
 
     [PunRPC]
-    private void ShotRPC()
+    private void ShotRPC(float pitchRandomness)
     {
+        _shotAudioSource.pitch = _initialPitch + Random.Range(-pitchRandomness, pitchRandomness);
         _shotAudioSource.Play();
         _shotParticles.Play();
     }

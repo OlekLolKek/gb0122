@@ -19,6 +19,7 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
 
     private readonly float _attackSpreadMultiplier;
     private readonly float _tracerFadeMultiplier;
+    private readonly float _shotPitchRandomness;
     private readonly float _maxAttackCooldown;
     private readonly float _minAttackCooldown;
     private readonly float _idlePositionRange;
@@ -49,6 +50,7 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
         BotSpawnPointView[] spawnPoints, IWeaponData weaponData)
     {
         _attackSpreadMultiplier = botData.BotAttackSpreadMultiplier;
+        _shotPitchRandomness = botData.BotShotPitchRandomness;
         _maxAttackCooldown = botData.BotMaxAttackCooldown;
         _minAttackCooldown = botData.BotMinAttackCooldown;
         _idlePositionRange = botData.BotIdlePositionRange;
@@ -237,7 +239,7 @@ public sealed class BotController : IExecutable, IMatchStateListener, ICleanable
                 {
                     var line = CreateTracer();
 
-                    _botView.WeaponView.PlayShotAudio();
+                    _botView.WeaponView.PlayShotAudio(_shotPitchRandomness);
 
                     TweenLineWidth(line).ToObservable().Subscribe();
                     StartShootCooldown().ToObservable().Subscribe();
