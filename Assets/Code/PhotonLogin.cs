@@ -95,17 +95,11 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
         var roomOptions = new RoomOptions { IsVisible = isVisible, MaxPlayers = maxPlayers};
 
         PhotonNetwork.CreateRoom(roomName, roomOptions);
-
-        _uiNavigationManager.LockTabs(true);
     }
 
     private void JoinSelectedRoom(string roomName)
     {
         PhotonNetwork.JoinRoom(roomName);
-
-        _roomListPanelView.gameObject.SetActive(false);
-        
-        _uiNavigationManager.LockTabs(true);
     }
 
     public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -127,6 +121,7 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     public override void OnCreatedRoom()
     {
+        _uiNavigationManager.LockTabs(true);
         _uiNavigationManager.SwitchToBasicTab();
         _roomAdminPanelView.gameObject.SetActive(true);
         _roomAdminPanelView.OnPrivacyButtonClicked += SwitchRoomPrivacy;
@@ -135,6 +130,7 @@ public sealed class PhotonLogin : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom()
     {
+        _uiNavigationManager.LockTabs(true);
         _uiNavigationManager.SwitchToBasicTab();
         
         _playerListManager.OnJoinedRoom();

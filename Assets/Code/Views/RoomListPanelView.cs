@@ -103,7 +103,10 @@ public sealed class RoomListPanelView : MonoBehaviour
 
     private void ConnectDirectlyButtonClicked()
     {
-        OnJoinRoomButtonClicked.Invoke(_roomToConnectInputField.text);
+        if (!string.IsNullOrEmpty(_roomToConnectInputField.text))
+        {
+            OnJoinRoomButtonClicked.Invoke(_roomToConnectInputField.text);
+        }
     }
 
     private void CreateRoomButtonClicked()
