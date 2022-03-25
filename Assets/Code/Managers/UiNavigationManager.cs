@@ -25,6 +25,7 @@ public sealed class UiNavigationManager : TabGroup
         SwitchToBasicTab();
         
         _settingsButton.onClick.AddListener(OnSettingsButtonClicked);
+        _pauseMenu.LoadData();
     }
 
     private void OnDestroy()
