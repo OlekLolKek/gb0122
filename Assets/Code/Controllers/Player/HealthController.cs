@@ -3,11 +3,13 @@ using System.Collections;
 using Photon.Pun;
 using UniRx;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 
 public sealed class HealthController : IExecutable, ICleanable
 {
+    private readonly PostProcessingManager _postProcessingManager;
     private readonly PlayerSpawnPointView[] _spawnPoints;
     private readonly PlayerModel _playerModel;
     private readonly PlayerView _playerView;
@@ -43,11 +45,15 @@ public sealed class HealthController : IExecutable, ICleanable
         _playerView.SetHealth(_playerModel.Health);
 
         _renderers = _playerModel.Transform.GetComponentsInChildren<Renderer>();
+
+        _postProcessingManager = Object.FindObjectOfType<PostProcessingManager>();
         
         var (position, rotation) = GetRandomPosition();
 
         _playerModel.Transform.position = position;
         _playerModel.Transform.rotation = rotation;
+        
+        _postProcessingManager.SetVignetteFromHealth(_playerModel.Health, _playerModel.MaxHealth);
     }
 
     private void ReceivedDamage(float damage, IDamageable sender)
@@ -66,6 +72,8 @@ public sealed class HealthController : IExecutable, ICleanable
             _playerView.PhotonView.RPC(nameof(_playerView.AddStats), RpcTarget.All,
                 _playerView.ID, 0, 1, _scoreForDeath);
         }
+        
+        _postProcessingManager.SetVignetteFromHealth(_playerModel.Health, _playerModel.MaxHealth);
     }
 
     private IEnumerator Respawn()
