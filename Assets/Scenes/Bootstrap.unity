@@ -301,7 +301,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\u041A\u0441\u043E\u0435\u043E\u043E\u0442\u044B\u0440\u044B \u043A\u0430\u043A\u0431\u0430\u0441\u0447\u043A\u043E\u0432
+    \u0430\u043A\u043E\u0442\u0441 \u0440\u044B\u043F\u043A\u0438 \u043F\u0440\u044B\u043A\u0438
+    \u043A\u043E\u0441\u0442\u0440\u044B \u043A\u0430\u0431\u0430\u0447\u043A\u043E
+    \u0443\u0445\u0438\u0445\u0438\u0430\u0445\u0430\u0445\u0430\u0430\u0430\u0445
+    \u043A\u0430\u043A \u0436\u0435 \u043C\u043D\u0435 \u0441\u043C\u0435\u0448\u043D\u043E
+    \u043A\u0441\u0442\u0440\u044B \u043A\u043E\u0441\u0442\u044B\u0440 \u043A\u0430\u0431\u0430\u0447\u043A\u043E"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2e8de33d3bb442a4ca6730fb27d25cc6, type: 2}
   m_sharedMaterial: {fileID: -4172816019891768494, guid: 2e8de33d3bb442a4ca6730fb27d25cc6, type: 2}
