@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Photon.Pun;
+using Photon.Realtime;
 using PlayFab;
 using PlayFab.ClientModels;
 using TMPro;
@@ -112,8 +113,18 @@ public sealed class ProfileManager : MonoBehaviour
             }, Debug.LogError);
     }
 
-    private void GoToBootstrap()
+    private async void GoToBootstrap()
     {
+        if (PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.LeaveRoom();
+        }
+
+        while (PhotonNetwork.NetworkClientState == ClientState.Leaving)
+        {
+            await Task.Delay(100);
+        }
+        
         SceneManager.LoadScene("Bootstrap");
     }
 
