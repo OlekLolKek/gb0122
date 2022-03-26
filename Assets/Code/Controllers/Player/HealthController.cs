@@ -58,6 +58,11 @@ public sealed class HealthController : IExecutable, ICleanable
 
     private void ReceivedDamage(float damage, IDamageable sender)
     {
+        if (_playerModel.IsDead)
+        {
+            return;
+        }
+        
         _playerModel.Health -= damage;
         _hudView.SetHealth(_playerModel.Health);
         _playerView.SetHealth(_playerModel.Health);
@@ -105,8 +110,11 @@ public sealed class HealthController : IExecutable, ICleanable
         }
 
         _playerModel.IsDead = false;
+        _playerModel.Health = _playerModel.MaxHealth;
 
         yield return new WaitForEndOfFrame();
+        
+        _playerModel.Health = _playerModel.MaxHealth;
         
         _playerModel.CharacterController.enabled = !_playerModel.IsDead;
 
