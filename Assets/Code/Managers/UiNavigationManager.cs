@@ -18,6 +18,7 @@ public sealed class UiNavigationManager : TabGroup
 
     private readonly Vector3 _normalScale = Vector3.one;
     private readonly Vector3 _selectedScale = Vector3.one * 1.05f;
+    
     private const float SCALE_DURATION = 0.05f;
 
     private void Start()

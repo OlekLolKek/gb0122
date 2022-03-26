@@ -4,18 +4,14 @@ using UnityEngine.Audio;
 using UnityEngine.UI;
 
 
-public sealed class PauseMenuView : MonoBehaviour
+public sealed class BootstrapPauseMenuView : MonoBehaviour
 {
-    [Header("Panels")]
-    [SerializeField] private ChangeUsernamePanelView _changeUsernamePanel;
-
     [Header("Controls")]
     [SerializeField] private TMP_Text _musicVolumeText;
     [SerializeField] private TMP_Text _soundVolumeText;
     [SerializeField] private Slider _musicVolumeSlider;
     [SerializeField] private Slider _soundVolumeSlider;
     [SerializeField] private Button _closeMenuButton;
-    [SerializeField] private Button _changeUsernameButton;
     [SerializeField] private Button _quitButton;
 
     [Header("Audio Mixer Groups")]
@@ -42,11 +38,7 @@ public sealed class PauseMenuView : MonoBehaviour
         _musicVolumeSlider.onValueChanged.AddListener(MusicVolumeChanged);
         _soundVolumeSlider.onValueChanged.AddListener(SoundVolumeChanged);
         _closeMenuButton.onClick.AddListener(CloseMenuButtonClicked);
-        _changeUsernameButton.onClick.AddListener(ChangeUsernameButtonClicked);
         _quitButton.onClick.AddListener(QuitButtonClicked);
-
-        _changeUsernamePanel.OnBackButtonClicked += CloseChangeUsernamePanel;
-        _changeUsernamePanel.OnConfirmButtonClicked += ConfirmChangeUsernameButtonClicked;
     }
 
     private void OnDestroy()
@@ -54,15 +46,11 @@ public sealed class PauseMenuView : MonoBehaviour
         _musicVolumeSlider.onValueChanged.RemoveListener(MusicVolumeChanged);
         _soundVolumeSlider.onValueChanged.RemoveListener(SoundVolumeChanged);
         _closeMenuButton.onClick.RemoveListener(CloseMenuButtonClicked);
-        _changeUsernameButton.onClick.RemoveListener(ChangeUsernameButtonClicked);
         _quitButton.onClick.RemoveListener(QuitButtonClicked);
     }
 
     public void Activate()
     {
-        _changeUsernamePanel.Deactivate();
-
-        _changeUsernameButton.gameObject.SetActive(true);
         _musicVolumeSlider.gameObject.SetActive(true);
         _soundVolumeSlider.gameObject.SetActive(true);
         _musicVolumeText.gameObject.SetActive(true);
@@ -91,47 +79,8 @@ public sealed class PauseMenuView : MonoBehaviour
         _audioMixer.SetFloat(_soundVolumeKey, GetDecibels(sliderValue));
     }
 
-    private void ChangeUsernameButtonClicked()
-    {
-        _changeUsernamePanel.Activate();
-
-        _changeUsernameButton.gameObject.SetActive(false);
-        _musicVolumeSlider.gameObject.SetActive(false);
-        _soundVolumeSlider.gameObject.SetActive(false);
-        _musicVolumeText.gameObject.SetActive(false);
-        _soundVolumeText.gameObject.SetActive(false);
-        _quitButton.gameObject.SetActive(false);
-    }
-
-    private void CloseChangeUsernamePanel()
-    {
-        _changeUsernamePanel.Deactivate();
-
-        _changeUsernameButton.gameObject.SetActive(true);
-        _musicVolumeSlider.gameObject.SetActive(true);
-        _soundVolumeSlider.gameObject.SetActive(true);
-        _musicVolumeText.gameObject.SetActive(true);
-        _soundVolumeText.gameObject.SetActive(true);
-        _quitButton.gameObject.SetActive(true);
-    }
-
-    private void ConfirmChangeUsernameButtonClicked(string _)
-    {
-        _changeUsernamePanel.Deactivate();
-
-        _changeUsernameButton.gameObject.SetActive(true);
-        _musicVolumeSlider.gameObject.SetActive(true);
-        _soundVolumeSlider.gameObject.SetActive(true);
-        _musicVolumeText.gameObject.SetActive(true);
-        _soundVolumeText.gameObject.SetActive(true);
-        _quitButton.gameObject.SetActive(true);
-    }
-
     private void CloseMenuButtonClicked()
     {
-        _changeUsernamePanel.Deactivate();
-
-        _changeUsernameButton.gameObject.SetActive(false);
         _quitButton.gameObject.SetActive(false);
 
         gameObject.SetActive(false);
@@ -153,7 +102,7 @@ public sealed class PauseMenuView : MonoBehaviour
         var soundVolume = PlayerPrefs.GetFloat(Constants.SOUND_VOLUME_PREFS_KEY);
         _audioMixer.SetFloat(_soundVolumeKey, soundVolume);
         _soundVolumeSlider.value = GetSliderValue(soundVolume);
-        
+
         var musicVolume = PlayerPrefs.GetFloat(Constants.MUSIC_VOLUME_PREFS_KEY);
         _audioMixer.SetFloat(_musicVolumeKey, musicVolume);
         _musicVolumeSlider.value = GetSliderValue(musicVolume);
